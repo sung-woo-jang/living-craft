@@ -2,6 +2,12 @@
   "compilerOptions": {
     "rootDir": ".",
     "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@shared/*": ["shared/*"],
+      "@widgets/*": ["widgets/*"],
+      "@pages/*": ["pages/*"]
+    },
     "target": "ESNext",
     "moduleResolution": "bundler",
     "lib": ["ESNext"],
