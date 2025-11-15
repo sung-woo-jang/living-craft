@@ -1,15 +1,6 @@
-import React from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Animated,
-  Dimensions,
-  Pressable,
-} from 'react-native';
 import { colors } from '@toss/tds-colors';
+import React from 'react';
+import { Animated, Dimensions, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface DrawerProps {
   isOpen: boolean;
@@ -21,7 +12,7 @@ const { width } = Dimensions.get('window');
 const DRAWER_WIDTH = Math.min(width * 0.8, 320);
 
 export const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose, children }) => {
-  const translateX = React.useRef(new Animated.Value(DRAWER_WIDTH)).current;
+  const [translateX] = React.useState(() => new Animated.Value(DRAWER_WIDTH));
 
   React.useEffect(() => {
     Animated.timing(translateX, {
@@ -36,12 +27,7 @@ export const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose, children }) => 
   }
 
   return (
-    <Modal
-      visible={isOpen}
-      transparent
-      animationType="none"
-      onRequestClose={onClose}
-    >
+    <Modal visible={isOpen} transparent animationType="none" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <Pressable style={styles.backdrop} onPress={onClose} />
         <Animated.View

@@ -116,7 +116,7 @@ const filePatterns = {
 
 // 디렉토리 무시 설정을 별도의 첫 번째 항목으로 추가
 const ignorePatterns = {
-  ignores: ['**/dist/**', '**/node_modules/**', '**/*.config.js', '!**/eslint.config.js'],
+  ignores: ['**/dist/**', '**/node_modules/**', '**/*.config.js', '!**/eslint.config.js', '**/.granite/**'],
 };
 
 const eslintConfig = typescriptEslint.config(

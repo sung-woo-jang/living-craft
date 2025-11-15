@@ -1,10 +1,10 @@
-import React from 'react';
-import type { PropsWithChildren } from 'react';
-import type { InitialProps } from "@granite-js/react-native";
 import { AppsInToss } from '@apps-in-toss/framework';
-import { context } from '../require.context';
+import type { InitialProps } from '@granite-js/react-native';
 import { TDSProvider } from '@toss/tds-react-native';
-import { PublicLayout } from './widgets/layouts';
+import { PublicLayout } from '@widgets/layouts';
+import type { PropsWithChildren } from 'react';
+
+import { context } from '../require.context';
 
 function AppContainer({ children }: PropsWithChildren<InitialProps>) {
   return (

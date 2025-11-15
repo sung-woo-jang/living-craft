@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { createRoute } from '@granite-js/react-native';
+import { HEADER_NAV_ITEMS } from '@shared/constants';
+import { Drawer } from '@shared/ui/drawer';
 import { colors } from '@toss/tds-colors';
-import { Drawer } from '../../../../shared/ui/drawer';
-import { HEADER_NAV_ITEMS } from '../../../../shared/constants';
-import { Header } from './Header';
+import React, { useState } from 'react';
+import { StyleSheet, Text,TouchableOpacity, View } from 'react-native';
+
 import { BottomNavigation } from './BottomNavigation';
+import { Header } from './Header';
 
 // 임시 라우트 생성 (네비게이션 훅 사용을 위해)
 const TempRoute = createRoute('/_layout' as any, { component: () => null });

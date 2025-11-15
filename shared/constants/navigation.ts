@@ -1,4 +1,4 @@
-import { NavigationItem } from '../types';
+import { NavigationItem } from '@shared/types';
 
 export const HEADER_NAV_ITEMS: NavigationItem[] = [
   { label: '홈', path: '/' },

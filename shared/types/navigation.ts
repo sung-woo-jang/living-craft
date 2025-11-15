@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export interface NavigationItem {
   label: string;
   path: string;
@@ -6,7 +8,7 @@ export interface NavigationItem {
 }
 
 export interface LayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
   showNavigation?: boolean;
   showBottomNav?: boolean;
 }

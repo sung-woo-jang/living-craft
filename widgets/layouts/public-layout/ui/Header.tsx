@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { createRoute } from '@granite-js/react-native';
 import { colors } from '@toss/tds-colors';
+import type React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // 임시 라우트 생성 (네비게이션 훅 사용을 위해)
 const TempRoute = createRoute('/_layout' as any, { component: () => null });
@@ -20,11 +20,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuPress }) => {
           <Text style={styles.logo}>리빙 크래프트</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={onMenuPress}
-          style={styles.menuButton}
-          accessibilityLabel="메뉴 열기"
-        >
+        <TouchableOpacity onPress={onMenuPress} style={styles.menuButton} accessibilityLabel="메뉴 열기">
           <View style={styles.menuIcon}>
             <View style={styles.menuLine} />
             <View style={styles.menuLine} />

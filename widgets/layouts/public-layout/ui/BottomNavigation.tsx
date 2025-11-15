@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { createRoute } from '@granite-js/react-native';
+import { BOTTOM_NAV_ITEMS } from '@shared/constants';
 import { colors } from '@toss/tds-colors';
 import { Asset } from '@toss/tds-react-native';
-import { BOTTOM_NAV_ITEMS } from '../../../../shared/constants';
+import type React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // 임시 라우트 생성 (네비게이션 훅 사용을 위해)
 const TempRoute = createRoute('/_layout' as any, { component: () => null });
@@ -12,9 +12,7 @@ interface BottomNavigationProps {
   onMorePress: () => void;
 }
 
-export const BottomNavigation: React.FC<BottomNavigationProps> = ({
-  onMorePress,
-}) => {
+export const BottomNavigation: React.FC<BottomNavigationProps> = ({ onMorePress }) => {
   const navigation = TempRoute.useNavigation();
   // TODO: 실제 라우트 경로 추적 로직 필요
   const currentPath = '/';
@@ -41,14 +39,8 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
               onPress={onMorePress}
               accessibilityLabel={item.label}
             >
-              <Asset.Icon
-                frameShape={Asset.frameShape.CleanW24}
-                name={item.iconName!}
-                color={iconColor}
-              />
-              <Text style={[styles.navLabel, { color: textColor }]}>
-                {item.label}
-              </Text>
+              <Asset.Icon frameShape={Asset.frameShape.CleanW24} name={item.iconName!} color={iconColor} />
+              <Text style={[styles.navLabel, { color: textColor }]}>{item.label}</Text>
             </TouchableOpacity>
           );
         }
@@ -60,14 +52,8 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onPress={() => navigation.navigate(item.path as any)}
             accessibilityLabel={item.label}
           >
-            <Asset.Icon
-              frameShape={Asset.frameShape.CleanW24}
-              name={item.iconName!}
-              color={iconColor}
-            />
-            <Text style={[styles.navLabel, { color: textColor }]}>
-              {item.label}
-            </Text>
+            <Asset.Icon frameShape={Asset.frameShape.CleanW24} name={item.iconName!} color={iconColor} />
+            <Text style={[styles.navLabel, { color: textColor }]}>{item.label}</Text>
           </TouchableOpacity>
         );
       })}

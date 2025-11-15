@@ -65,7 +65,9 @@
       "Bash(lsof:*)",
       "Bash(kill:*)",
       "Bash(npx tsc:*)",
-      "Bash(npx granite:*)"
+      "Bash(npx granite:*)",
+      "Bash(yarn add:*)",
+      "Bash(npm run typecheck:*)"
     ],
     "deny": [
       "Bash(npm run dev:*)",
