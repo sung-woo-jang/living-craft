@@ -1,6 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/', {
   component: Page,
@@ -14,7 +13,7 @@ function Page() {
       category: '메인 & 서비스',
       items: [
         { label: '서비스 목록', path: '/services' },
-        { label: '서비스 상세 (ID: 1)', path: '/services/1' },
+        { label: '서비스 상세', path: '/services/:id', params: { id: 'a' } },
         { label: '포트폴리오', path: '/portfolio' },
         { label: 'FAQ', path: '/faq' },
       ],
@@ -23,7 +22,7 @@ function Page() {
       category: '리뷰',
       items: [
         { label: '리뷰 목록', path: '/reviews' },
-        { label: '리뷰 작성 (ID: 1)', path: '/reviews/write/1' },
+        { label: '리뷰 작성', path: '/reviews/write/:reservationId', params: { reservationId: '1' } },
       ],
     },
     {
@@ -37,7 +36,7 @@ function Page() {
       category: '견적',
       items: [
         { label: '견적 작성', path: '/quote/builder' },
-        { label: '견적 보기 (ID: 1)', path: '/quote/1' },
+        { label: '견적 보기', path: '/quote/:id', params: { id: '1' } },
       ],
     },
     {
@@ -71,7 +70,13 @@ function Page() {
               <TouchableOpacity
                 key={item.path}
                 style={styles.button}
-                onPress={() => navigation.navigate(item.path)}
+                onPress={() => {
+                  if (item.params) {
+                    navigation.navigate(item.path as any, item.params);
+                  } else {
+                    navigation.navigate(item.path as any);
+                  }
+                }}
               >
                 <Text style={styles.buttonText}>{item.label}</Text>
               </TouchableOpacity>
