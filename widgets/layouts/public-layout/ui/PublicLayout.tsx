@@ -3,10 +3,10 @@ import { HEADER_NAV_ITEMS } from '@shared/constants';
 import { Drawer } from '@shared/ui/drawer';
 import { colors } from '@toss/tds-colors';
 import React, { useState } from 'react';
-import { StyleSheet, Text,TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BottomNavigation } from './BottomNavigation';
-import { Header } from './Header';
 
 // 임시 라우트 생성 (네비게이션 훅 사용을 위해)
 const TempRoute = createRoute('/_layout' as any, { component: () => null });
@@ -19,6 +19,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState('/');
   const navigation = TempRoute.useNavigation();
+  const insets = useSafeAreaInsets();
 
   const isActiveRoute = (path: string) => {
     if (path === '/') {
@@ -35,8 +36,8 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <Header onMenuPress={() => setIsDrawerOpen(true)} />
+      {/* Header - Safe Area */}
+      <View style={[styles.header, { paddingTop: insets.top }]} />
 
       {/* Main Content */}
       <View style={styles.mainContent}>{children}</View>
@@ -50,18 +51,10 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
           {HEADER_NAV_ITEMS.map((item) => (
             <TouchableOpacity
               key={item.path}
-              style={[
-                styles.drawerNavItem,
-                isActiveRoute(item.path) && styles.drawerNavItemActive,
-              ]}
+              style={[styles.drawerNavItem, isActiveRoute(item.path) && styles.drawerNavItemActive]}
               onPress={() => handleNavigate(item.path)}
             >
-              <Text
-                style={[
-                  styles.drawerNavItemText,
-                  isActiveRoute(item.path) && styles.drawerNavItemTextActive,
-                ]}
-              >
+              <Text style={[styles.drawerNavItemText, isActiveRoute(item.path) && styles.drawerNavItemTextActive]}>
                 {item.label}
               </Text>
             </TouchableOpacity>
@@ -69,10 +62,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
         </View>
 
         <View style={styles.drawerActions}>
-          <TouchableOpacity
-            style={styles.drawerActionBtn}
-            onPress={() => handleNavigate('/reservation/search')}
-          >
+          <TouchableOpacity style={styles.drawerActionBtn} onPress={() => handleNavigate('/reservation/search')}>
             <Text style={styles.drawerActionBtnText}>예약 조회</Text>
           </TouchableOpacity>
         </View>
@@ -84,6 +74,9 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.grey50,
+  },
+  header: {
     backgroundColor: colors.grey50,
   },
   mainContent: {
