@@ -1,15 +1,467 @@
 import { createRoute } from '@granite-js/react-native';
-import { StyleSheet,Text, View } from 'react-native';
+import { colors } from '@toss/tds-colors';
+import { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+import { Step, StepIndicator } from '@shared/ui/step-indicator';
 
 export const Route = createRoute('/reservation', {
   component: Page,
 });
 
+type StepKey = 'service' | 'datetime' | 'customer' | 'confirmation';
+
+interface Service {
+  id: string;
+  name: string;
+  type: 'fixed' | 'quote';
+  icon: string;
+  description: string;
+  features: string[];
+  price?: number;
+}
+
+interface TimeSlot {
+  id: string;
+  time: string;
+  available: boolean;
+}
+
+interface CustomerInfo {
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  detailAddress: string;
+  requirements: string;
+}
+
+const STEPS: Step[] = [
+  { key: 'service', title: '서비스 선택', number: 1 },
+  { key: 'datetime', title: '날짜/시간', number: 2 },
+  { key: 'customer', title: '고객 정보', number: 3 },
+  { key: 'confirmation', title: '예약 확인', number: 4 },
+];
+
+const SERVICES: Service[] = [
+  {
+    id: 'styling-fixed',
+    name: '홈 스타일링',
+    type: 'fixed',
+    icon: '🏡',
+    description: '전문 디자이너가 제안하는 맞춤형 인테리어',
+    features: ['현장 방문', '디자인 제안', '가구 배치', '3-4시간 소요'],
+    price: 150000,
+  },
+  {
+    id: 'furniture-quote',
+    name: '가구 제작',
+    type: 'quote',
+    icon: '🛋️',
+    description: '공간에 딱 맞는 맞춤 가구 제작',
+    features: ['맞춤 설계', '고급 자재', '설치 포함', '상담 필요'],
+  },
+  {
+    id: 'remodeling-quote',
+    name: '리모델링',
+    type: 'quote',
+    icon: '🔨',
+    description: '오래된 공간을 새롭게 변신',
+    features: ['전체 공사', '인테리어', 'A/S 보증', '1-2주 소요'],
+  },
+];
+
+const TIME_SLOTS: TimeSlot[] = [
+  { id: '09:00', time: '09:00', available: true },
+  { id: '10:00', time: '10:00', available: true },
+  { id: '11:00', time: '11:00', available: false },
+  { id: '13:00', time: '13:00', available: true },
+  { id: '14:00', time: '14:00', available: true },
+  { id: '15:00', time: '15:00', available: true },
+  { id: '16:00', time: '16:00', available: false },
+  { id: '17:00', time: '17:00', available: true },
+];
+
+/**
+ * 예약 페이지 - 멀티 스텝 폼
+ *
+ * 필요한 API 연결:
+ * 1. GET /api/services - 예약 가능한 서비스
+ * 2. GET /api/calendar/available - 예약 가능한 날짜
+ * 3. GET /api/calendar/slots?date={date} - 시간 슬롯
+ * 4. POST /api/reservations - 예약 생성
+ */
 function Page() {
+  const navigation = Route.useNavigation();
+  const [currentStep, setCurrentStep] = useState<StepKey>('service');
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
+  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    detailAddress: '',
+    requirements: '',
+  });
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const canProceedToNext = (): boolean => {
+    switch (currentStep) {
+      case 'service':
+        return selectedService !== null;
+      case 'datetime':
+        return selectedDate !== '' && selectedTimeSlot !== null;
+      case 'customer':
+        return (
+          customerInfo.name.trim() !== '' &&
+          customerInfo.phone.trim() !== '' &&
+          customerInfo.email.trim() !== '' &&
+          customerInfo.address.trim() !== ''
+        );
+      case 'confirmation':
+        return agreedToTerms;
+      default:
+        return false;
+    }
+  };
+
+  const handleNext = () => {
+    if (!canProceedToNext()) {
+      Alert.alert('알림', '필수 항목을 모두 입력해주세요.');
+      return;
+    }
+
+    const stepOrder: StepKey[] = ['service', 'datetime', 'customer', 'confirmation'];
+    const currentIndex = stepOrder.indexOf(currentStep);
+
+    if (currentIndex < stepOrder.length - 1) {
+      const nextStep = stepOrder[currentIndex + 1];
+      if (nextStep) {
+        setCurrentStep(nextStep);
+      }
+    }
+  };
+
+  const handlePrevious = () => {
+    const stepOrder: StepKey[] = ['service', 'datetime', 'customer', 'confirmation'];
+    const currentIndex = stepOrder.indexOf(currentStep);
+
+    if (currentIndex > 0) {
+      const prevStep = stepOrder[currentIndex - 1];
+      if (prevStep) {
+        setCurrentStep(prevStep);
+      }
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!canProceedToNext()) {
+      Alert.alert('알림', '이용약관에 동의해주세요.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // TODO: API 연동 - POST /api/reservations
+      const reservationData = {
+        serviceId: selectedService?.id,
+        date: selectedDate,
+        timeSlot: selectedTimeSlot?.time,
+        customerInfo,
+        type: selectedService?.type,
+      };
+
+      console.log('예약 데이터:', reservationData);
+
+      // Mock delay
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      Alert.alert('예약 완료', '예약이 성공적으로 완료되었습니다!', [
+        {
+          text: '확인',
+          onPress: () => navigation.navigate('/' as any),
+        },
+      ]);
+    } catch (error) {
+      Alert.alert('오류', '예약 처리 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 'service':
+        return (
+          <View style={styles.stepContent}>
+            <Text style={styles.stepDescription}>원하시는 서비스를 선택해주세요</Text>
+            {SERVICES.map((service) => (
+              <TouchableOpacity
+                key={service.id}
+                style={[styles.serviceCard, selectedService?.id === service.id && styles.serviceCardSelected]}
+                onPress={() => setSelectedService(service)}
+              >
+                {selectedService?.id === service.id && (
+                  <View style={styles.selectedBadge}>
+                    <Text style={styles.selectedBadgeText}>선택됨</Text>
+                  </View>
+                )}
+                <Text style={styles.serviceIcon}>{service.icon}</Text>
+                <Text style={styles.serviceName}>{service.name}</Text>
+                <Text style={styles.serviceDescription}>{service.description}</Text>
+                {service.price && (
+                  <Text style={styles.servicePrice}>₩{service.price.toLocaleString()}</Text>
+                )}
+                <View style={styles.serviceFeatures}>
+                  {service.features.map((feature, index) => (
+                    <View key={index} style={styles.featureTag}>
+                      <Text style={styles.featureText}>{feature}</Text>
+                    </View>
+                  ))}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        );
+
+      case 'datetime':
+        return (
+          <ScrollView style={styles.stepContent}>
+            <Text style={styles.stepDescription}>예약하실 날짜와 시간을 선택해주세요</Text>
+
+            <View style={styles.dateSection}>
+              <Text style={styles.sectionLabel}>날짜 선택</Text>
+              <TextInput
+                style={styles.dateInput}
+                placeholder="YYYY-MM-DD (예: 2025-01-20)"
+                placeholderTextColor={colors.grey400}
+                value={selectedDate}
+                onChangeText={setSelectedDate}
+              />
+              <Text style={styles.helperText}>* 실제 구현 시 캘린더 컴포넌트로 교체 예정</Text>
+            </View>
+
+            {selectedDate && (
+              <View style={styles.timeSlotSection}>
+                <Text style={styles.sectionLabel}>시간 선택</Text>
+                <View style={styles.timeSlotGrid}>
+                  {TIME_SLOTS.map((slot) => (
+                    <TouchableOpacity
+                      key={slot.id}
+                      style={[
+                        styles.timeSlot,
+                        selectedTimeSlot?.id === slot.id && styles.timeSlotSelected,
+                        !slot.available && styles.timeSlotDisabled,
+                      ]}
+                      onPress={() => slot.available && setSelectedTimeSlot(slot)}
+                      disabled={!slot.available}
+                    >
+                      <Text
+                        style={[
+                          styles.timeSlotText,
+                          selectedTimeSlot?.id === slot.id && styles.timeSlotTextSelected,
+                          !slot.available && styles.timeSlotTextDisabled,
+                        ]}
+                      >
+                        {slot.time}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            )}
+          </ScrollView>
+        );
+
+      case 'customer':
+        return (
+          <ScrollView style={styles.stepContent}>
+            <Text style={styles.stepDescription}>고객 정보를 입력해주세요</Text>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>이름 *</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="이름을 입력해주세요"
+                placeholderTextColor={colors.grey400}
+                value={customerInfo.name}
+                onChangeText={(text) => setCustomerInfo({ ...customerInfo, name: text })}
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>연락처 *</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="010-1234-5678"
+                placeholderTextColor={colors.grey400}
+                keyboardType="phone-pad"
+                value={customerInfo.phone}
+                onChangeText={(text) => setCustomerInfo({ ...customerInfo, phone: text })}
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>이메일 *</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="example@email.com"
+                placeholderTextColor={colors.grey400}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={customerInfo.email}
+                onChangeText={(text) => setCustomerInfo({ ...customerInfo, email: text })}
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>주소 *</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="기본 주소를 입력해주세요"
+                placeholderTextColor={colors.grey400}
+                value={customerInfo.address}
+                onChangeText={(text) => setCustomerInfo({ ...customerInfo, address: text })}
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>상세 주소</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="상세 주소를 입력해주세요"
+                placeholderTextColor={colors.grey400}
+                value={customerInfo.detailAddress}
+                onChangeText={(text) => setCustomerInfo({ ...customerInfo, detailAddress: text })}
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>추가 요청사항</Text>
+              <TextInput
+                style={[styles.input, styles.textArea]}
+                placeholder="추가로 요청하실 사항이 있으시면 입력해주세요"
+                placeholderTextColor={colors.grey400}
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+                value={customerInfo.requirements}
+                onChangeText={(text) => setCustomerInfo({ ...customerInfo, requirements: text })}
+              />
+            </View>
+          </ScrollView>
+        );
+
+      case 'confirmation':
+        return (
+          <ScrollView style={styles.stepContent}>
+            <Text style={styles.stepDescription}>예약 정보를 확인해주세요</Text>
+
+            <View style={styles.summaryCard}>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>서비스</Text>
+                <Text style={styles.summaryValue}>{selectedService?.name}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>날짜</Text>
+                <Text style={styles.summaryValue}>{selectedDate}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>시간</Text>
+                <Text style={styles.summaryValue}>{selectedTimeSlot?.time}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>고객명</Text>
+                <Text style={styles.summaryValue}>{customerInfo.name}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>연락처</Text>
+                <Text style={styles.summaryValue}>{customerInfo.phone}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>주소</Text>
+                <Text style={styles.summaryValue}>
+                  {customerInfo.address} {customerInfo.detailAddress}
+                </Text>
+              </View>
+              {selectedService?.price && (
+                <View style={[styles.summaryRow, styles.summaryRowHighlight]}>
+                  <Text style={styles.summaryLabel}>예상 비용</Text>
+                  <Text style={[styles.summaryValue, styles.summaryValuePrice]}>
+                    ₩{selectedService.price.toLocaleString()}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            <TouchableOpacity style={styles.termsCheckbox} onPress={() => setAgreedToTerms(!agreedToTerms)}>
+              <View style={[styles.checkbox, agreedToTerms && styles.checkboxChecked]}>
+                {agreedToTerms && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+              <Text style={styles.termsText}>이용약관 및 개인정보처리방침에 동의합니다</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>예약을 처리하고 있습니다...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>예약</Text>
-      <Text style={styles.subtitle}>준비중입니다</Text>
+      {/* 헤더 */}
+      <View style={styles.header}>
+        <Text style={styles.title}>서비스 예약</Text>
+        <Text style={styles.subtitle}>원하시는 서비스를 선택하고 편리한 시간에 예약하세요</Text>
+      </View>
+
+      {/* 스텝 인디케이터 */}
+      <StepIndicator steps={STEPS} currentStepKey={currentStep} />
+
+      {/* 스텝 콘텐츠 */}
+      <View style={styles.contentContainer}>{renderStepContent()}</View>
+
+      {/* 액션 버튼 */}
+      <View style={styles.actions}>
+        <TouchableOpacity
+          style={[styles.button, styles.buttonSecondary, currentStep === 'service' && styles.buttonDisabled]}
+          onPress={handlePrevious}
+          disabled={currentStep === 'service'}
+        >
+          <Text style={[styles.buttonText, styles.buttonTextSecondary]}>이전</Text>
+        </TouchableOpacity>
+
+        {currentStep === 'confirmation' ? (
+          <TouchableOpacity
+            style={[styles.button, styles.buttonPrimary, !canProceedToNext() && styles.buttonDisabled]}
+            onPress={handleSubmit}
+            disabled={!canProceedToNext()}
+          >
+            <Text style={styles.buttonText}>예약 완료</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={[styles.button, styles.buttonPrimary, !canProceedToNext() && styles.buttonDisabled]}
+            onPress={handleNext}
+            disabled={!canProceedToNext()}
+          >
+            <Text style={styles.buttonText}>다음</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 }
@@ -17,21 +469,291 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: 'white',
-    justifyContent: 'center',
+    backgroundColor: colors.grey50,
+  },
+  loadingContainer: {
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.grey50,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: colors.grey700,
+  },
+  header: {
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.grey200,
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#1A202C',
-    textAlign: 'center',
-    marginBottom: 16,
+    color: colors.grey900,
+    marginBottom: 8,
   },
   subtitle: {
+    fontSize: 14,
+    color: colors.grey600,
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  stepContent: {
+    flex: 1,
+    padding: 20,
+  },
+  stepDescription: {
+    fontSize: 16,
+    color: colors.grey700,
+    marginBottom: 20,
+  },
+  serviceCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: colors.grey200,
+    position: 'relative',
+  },
+  serviceCardSelected: {
+    borderColor: colors.blue500,
+  },
+  selectedBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: colors.blue500,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  selectedBadgeText: {
+    color: 'white',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  serviceIcon: {
+    fontSize: 40,
+    marginBottom: 12,
+  },
+  serviceName: {
     fontSize: 18,
-    color: '#4A5568',
-    textAlign: 'center',
+    fontWeight: '600',
+    color: colors.grey900,
+    marginBottom: 8,
+  },
+  serviceDescription: {
+    fontSize: 14,
+    color: colors.grey600,
+    marginBottom: 12,
+  },
+  servicePrice: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.blue600,
+    marginBottom: 12,
+  },
+  serviceFeatures: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  featureTag: {
+    backgroundColor: colors.grey100,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 6,
+  },
+  featureText: {
+    fontSize: 11,
+    color: colors.grey700,
+  },
+  dateSection: {
+    marginBottom: 24,
+  },
+  sectionLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.grey900,
+    marginBottom: 12,
+  },
+  dateInput: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: colors.grey300,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: colors.grey900,
+  },
+  helperText: {
+    fontSize: 12,
+    color: colors.grey500,
+    marginTop: 6,
+  },
+  timeSlotSection: {
+    marginBottom: 24,
+  },
+  timeSlotGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  timeSlot: {
+    flex: 0,
+    minWidth: 80,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: colors.grey300,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  timeSlotSelected: {
+    backgroundColor: colors.blue500,
+    borderColor: colors.blue500,
+  },
+  timeSlotDisabled: {
+    backgroundColor: colors.grey100,
+    borderColor: colors.grey200,
+  },
+  timeSlotText: {
+    fontSize: 14,
+    color: colors.grey900,
+    fontWeight: '500',
+  },
+  timeSlotTextSelected: {
+    color: 'white',
+  },
+  timeSlotTextDisabled: {
+    color: colors.grey400,
+  },
+  formGroup: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.grey900,
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: colors.grey300,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: colors.grey900,
+  },
+  textArea: {
+    minHeight: 100,
+    paddingTop: 12,
+  },
+  summaryCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 24,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.grey200,
+  },
+  summaryRowHighlight: {
+    backgroundColor: colors.blue50,
+    marginHorizontal: -20,
+    paddingHorizontal: 20,
+    marginBottom: -20,
+    paddingBottom: 20,
+    borderBottomWidth: 0,
+  },
+  summaryLabel: {
+    fontSize: 14,
+    color: colors.grey600,
+  },
+  summaryValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.grey900,
+    flex: 1,
+    textAlign: 'right',
+  },
+  summaryValuePrice: {
+    fontSize: 18,
+    color: colors.blue600,
+  },
+  termsCheckbox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderWidth: 2,
+    borderColor: colors.grey300,
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxChecked: {
+    backgroundColor: colors.blue500,
+    borderColor: colors.blue500,
+  },
+  checkmark: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  termsText: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.grey700,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderTopColor: colors.grey200,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonPrimary: {
+    backgroundColor: colors.blue500,
+  },
+  buttonSecondary: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: colors.grey300,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'white',
+  },
+  buttonTextSecondary: {
+    color: colors.grey700,
   },
 });
