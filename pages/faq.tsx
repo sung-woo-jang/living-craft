@@ -1,8 +1,7 @@
 import { createRoute } from '@granite-js/react-native';
+import { Accordion } from '@shared/ui/accordion';
 import { colors } from '@toss/tds-colors';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-
-import { Accordion } from '@shared/ui/accordion';
 
 export const Route = createRoute('/faq', {
   component: Page,

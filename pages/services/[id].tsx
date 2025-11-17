@@ -1,8 +1,7 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
+import type { Service } from '@shared/ui/service-card/ServiceCard';
 import { colors } from '@toss/tds-colors';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import type { Service } from '@shared/ui/service-card/ServiceCard';
 
 export const Route = createRoute('/services/:id', {
   validateParams: (params) => params as { id: string },

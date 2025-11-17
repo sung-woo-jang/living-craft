@@ -1,11 +1,10 @@
 import { createRoute } from '@granite-js/react-native';
-import { colors } from '@toss/tds-colors';
-import { useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
-
 import { EmptyState } from '@shared/ui/empty-state';
 import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { Service, ServiceCard } from '@shared/ui/service-card';
+import { colors } from '@toss/tds-colors';
+import { useState } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export const Route = createRoute('/services', {
   component: Page,

@@ -1,9 +1,8 @@
 import { createRoute } from '@granite-js/react-native';
+import { Step, StepIndicator } from '@shared/ui/step-indicator';
 import { colors } from '@toss/tds-colors';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-import { Step, StepIndicator } from '@shared/ui/step-indicator';
 
 export const Route = createRoute('/reservation', {
   component: Page,
@@ -178,7 +177,9 @@ function Page() {
       console.log('예약 데이터:', reservationData);
 
       // Mock delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1500);
+      });
 
       Alert.alert('예약 완료', '예약이 성공적으로 완료되었습니다!', [
         {
@@ -186,6 +187,7 @@ function Page() {
           onPress: () => navigation.navigate('/' as any),
         },
       ]);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       Alert.alert('오류', '예약 처리 중 오류가 발생했습니다.');
     } finally {
@@ -213,9 +215,7 @@ function Page() {
                 <Text style={styles.serviceIcon}>{service.icon}</Text>
                 <Text style={styles.serviceName}>{service.name}</Text>
                 <Text style={styles.serviceDescription}>{service.description}</Text>
-                {service.price && (
-                  <Text style={styles.servicePrice}>₩{service.price.toLocaleString()}</Text>
-                )}
+                {service.price && <Text style={styles.servicePrice}>₩{service.price.toLocaleString()}</Text>}
                 <View style={styles.serviceFeatures}>
                   {service.features.map((feature, index) => (
                     <View key={index} style={styles.featureTag}>

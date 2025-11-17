@@ -1,8 +1,7 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
+import { EmptyState } from '@shared/ui/empty-state';
 import { colors } from '@toss/tds-colors';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import { EmptyState } from '@shared/ui/empty-state';
 
 export const Route = createRoute('/my/reviews', {
   component: Page,

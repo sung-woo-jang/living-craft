@@ -1,10 +1,9 @@
 import { createRoute } from '@granite-js/react-native';
+import { EmptyState } from '@shared/ui/empty-state';
+import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
 import { useState } from 'react';
 import { FlatList, Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import { EmptyState } from '@shared/ui/empty-state';
-import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 
 export const Route = createRoute('/portfolio', {
   component: Page,

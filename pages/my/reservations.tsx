@@ -1,10 +1,9 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
+import { EmptyState } from '@shared/ui/empty-state';
+import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
 import { useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import { EmptyState } from '@shared/ui/empty-state';
-import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 
 export const Route = createRoute('/my/reservations', {
   component: Page,
