@@ -29,10 +29,10 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   mainContent: {
     flex: 1,

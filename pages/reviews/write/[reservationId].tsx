@@ -162,7 +162,7 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   textArea: {
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 16,
     fontSize: 15,
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   errorText: {
     fontSize: 16,

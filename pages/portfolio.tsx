@@ -191,7 +191,7 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   header: {
     backgroundColor: 'white',

@@ -56,11 +56,7 @@ export const HomePortfolioSection = () => {
 
       <View style={styles.grid}>
         {PORTFOLIO_ITEMS.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.card}
-            onPress={() => handlePortfolioPress(item.id)}
-          >
+          <TouchableOpacity key={item.id} style={styles.card} onPress={() => handlePortfolioPress(item.id)}>
             <Image source={{ uri: item.imageUrl }} style={styles.image} />
             <View style={styles.cardContent}>
               <Text style={styles.category}>{item.category}</Text>
@@ -79,7 +75,7 @@ export const HomePortfolioSection = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
     paddingVertical: 60,
     paddingHorizontal: 20,
   },

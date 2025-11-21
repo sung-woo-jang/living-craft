@@ -68,11 +68,7 @@ function Page() {
         {/* 메뉴 리스트 */}
         <View style={styles.menuSection}>
           {MENU_ITEMS.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.menuItem}
-              onPress={() => navigation.navigate(item.path as any)}
-            >
+            <TouchableOpacity key={index} style={styles.menuItem} onPress={() => navigation.navigate(item.path as any)}>
               <View style={styles.menuItemLeft}>
                 <Text style={styles.menuIcon}>{item.icon}</Text>
                 <View style={styles.menuText}>
@@ -127,7 +123,7 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -242,7 +238,7 @@ const styles = StyleSheet.create({
   quickItem: {
     width: '23%',
     aspectRatio: 1,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',

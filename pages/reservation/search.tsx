@@ -232,7 +232,7 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,

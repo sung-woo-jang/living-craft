@@ -205,7 +205,7 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   serviceOption: {
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
     borderRadius: 12,
     padding: 16,
     borderWidth: 2,
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     borderColor: colors.grey200,
   },
   textArea: {
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 16,
     fontSize: 15,

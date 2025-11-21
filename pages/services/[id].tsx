@@ -17,7 +17,14 @@ interface Review {
 }
 
 // Mock 데이터 (실제로는 API에서 가져와야 함)
-const MOCK_SERVICE_DETAILS: Record<string, Service & { images: string[]; detailedDescription: string; reviews: Review[] }> = {
+const MOCK_SERVICE_DETAILS: Record<
+  string,
+  Service & {
+    images: string[];
+    detailedDescription: string;
+    reviews: Review[];
+  }
+> = {
   '1': {
     id: 1,
     title: '아파트 전체 리모델링',
@@ -289,7 +296,7 @@ const styles = StyleSheet.create({
   },
   infoSection: {
     flexDirection: 'row',
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
@@ -364,7 +371,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   reviewCard: {
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,

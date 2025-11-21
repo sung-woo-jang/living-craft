@@ -515,13 +515,13 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   loadingText: {
     fontSize: 16,

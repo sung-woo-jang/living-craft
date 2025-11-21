@@ -82,7 +82,7 @@ export const HomeContactSection = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
     paddingVertical: 60,
     paddingHorizontal: 20,
   },

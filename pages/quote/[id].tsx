@@ -154,9 +154,7 @@ function Page() {
         {quote.status === 'completed' && quote.estimatedAmount && (
           <View style={styles.estimateSection}>
             <Text style={styles.estimateTitle}>견적 금액</Text>
-            <Text style={styles.estimateAmount}>
-              {quote.estimatedAmount.toLocaleString()}원
-            </Text>
+            <Text style={styles.estimateAmount}>{quote.estimatedAmount.toLocaleString()}원</Text>
 
             {quote.estimatedDuration && (
               <View style={styles.estimateDetail}>
@@ -184,9 +182,7 @@ function Page() {
         {quote.status === 'pending' && (
           <View style={styles.infoBox}>
             <Text style={styles.infoTitle}>⏳ 견적 검토 중</Text>
-            <Text style={styles.infoText}>
-              견적 요청이 접수되었습니다. 빠른 시일 내에 견적서를 발송해드리겠습니다.
-            </Text>
+            <Text style={styles.infoText}>견적 요청이 접수되었습니다. 빠른 시일 내에 견적서를 발송해드리겠습니다.</Text>
           </View>
         )}
       </ScrollView>
@@ -209,7 +205,7 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -406,7 +402,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: colors.grey50,
+    backgroundColor: colors.background,
   },
   errorText: {
     fontSize: 16,

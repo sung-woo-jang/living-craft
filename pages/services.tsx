@@ -1,9 +1,7 @@
 import { createRoute } from '@granite-js/react-native';
-import { EmptyState } from '@shared/ui/empty-state';
 import { Service, ServiceCard } from '@shared/ui/service-card';
 import { colors } from '@toss/tds-colors';
-import { useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 
 export const Route = createRoute('/services', {
   component: Page,
@@ -81,22 +79,9 @@ const MOCK_SERVICES: Service[] = [
  */
 function Page() {
   const navigation = Route.useNavigation();
-  const [activeFilter, setActiveFilter] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
 
   // TODO: API 연동 필요
-  const filteredServices = MOCK_SERVICES.filter((service) => {
-    const matchesFilter = activeFilter === 'all' || service.type === activeFilter;
-    const matchesSearch =
-      service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      service.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  const handleReset = () => {
-    setActiveFilter('all');
-    setSearchQuery('');
-  };
+  const filteredServices = MOCK_SERVICES;
 
   const handleServicePress = (serviceId: number) => {
     navigation.navigate('/services/:id' as any, { id: String(serviceId) });
@@ -108,32 +93,16 @@ function Page() {
 
   return (
     <View style={styles.container}>
-      {/* 헤더 */}
-      <View style={styles.header}>
-        <Text style={styles.title}>서비스</Text>
-        <Text style={styles.subtitle}>리빙크래프트의 다양한 서비스를 만나보세요</Text>
-      </View>
-
       {/* 서비스 목록 */}
-      {filteredServices.length === 0 ? (
-        <EmptyState
-          icon="🔍"
-          title="검색 결과가 없습니다"
-          description="다른 검색어를 입력하시거나 필터를 변경해보세요"
-          actionLabel="필터 초기화"
-          onActionPress={handleReset}
-        />
-      ) : (
-        <FlatList
-          data={filteredServices}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
-            <ServiceCard service={item} onPress={handleServicePress} onBookPress={handleBookPress} />
-          )}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+      <FlatList
+        data={filteredServices}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => (
+          <ServiceCard service={item} onPress={handleServicePress} onBookPress={handleBookPress} />
+        )}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 }
@@ -141,25 +110,7 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey50,
-  },
-  header: {
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.grey200,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.grey900,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: colors.grey600,
+    backgroundColor: colors.background,
   },
 
   listContent: {
