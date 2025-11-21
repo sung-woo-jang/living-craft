@@ -13,5 +13,4 @@ export const BOTTOM_NAV_ITEMS: NavigationItem[] = [
   { label: '서비스', path: '/services', iconName: 'icon-diamond-mono' },
   { label: '예약', path: '/reservation', iconName: 'icon-shopping-bag-mono' },
   { label: '마이페이지', path: '/my', iconName: 'icon-graph-up-mono' },
-  { label: '더보기', path: '#', iconName: 'icon-line-three-mono', isMore: true },
 ];

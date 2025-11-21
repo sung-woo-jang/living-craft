@@ -4,7 +4,6 @@ export interface NavigationItem {
   label: string;
   path: string;
   iconName?: string;
-  isMore?: boolean;
 }
 
 export interface LayoutProps {

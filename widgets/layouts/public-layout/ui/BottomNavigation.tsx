@@ -8,11 +8,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // 임시 라우트 생성 (네비게이션 훅 사용을 위해)
 const TempRoute = createRoute('/_layout' as any, { component: () => null });
 
-interface BottomNavigationProps {
-  onMorePress: () => void;
-}
-
-export const BottomNavigation: React.FC<BottomNavigationProps> = ({ onMorePress }) => {
+export const BottomNavigation: React.FC = () => {
   const navigation = TempRoute.useNavigation();
   // TODO: 실제 라우트 경로 추적 로직 필요
   const currentPath = '/';
@@ -27,23 +23,9 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({ onMorePress 
   return (
     <View style={styles.bottomNav}>
       {BOTTOM_NAV_ITEMS.map((item) => {
-        const isActive = !item.isMore && isActiveRoute(item.path);
+        const isActive = isActiveRoute(item.path);
         const iconColor = isActive ? colors.grey900 : colors.grey600;
         const textColor = isActive ? colors.grey900 : colors.grey600;
-
-        if (item.isMore) {
-          return (
-            <TouchableOpacity
-              key={item.label}
-              style={styles.navItem}
-              onPress={onMorePress}
-              accessibilityLabel={item.label}
-            >
-              <Asset.Icon frameShape={Asset.frameShape.CleanW24} name={item.iconName!} color={iconColor} />
-              <Text style={[styles.navLabel, { color: textColor }]}>{item.label}</Text>
-            </TouchableOpacity>
-          );
-        }
 
         return (
           <TouchableOpacity
