@@ -1,7 +1,9 @@
 import { createRoute } from '@granite-js/react-native';
+import { CalendarBottomSheet } from '@shared/ui/calendar-bottom-sheet';
+import { formatDateToString, parseStringToDate } from '@shared/ui/calendar-bottom-sheet/utils';
 import { Step, StepIndicator } from '@shared/ui/step-indicator';
 import { colors } from '@toss/tds-colors';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/reservation', {
@@ -29,7 +31,6 @@ interface TimeSlot {
 interface CustomerInfo {
   name: string;
   phone: string;
-  email: string;
   address: string;
   detailAddress: string;
   requirements: string;
@@ -70,16 +71,65 @@ const SERVICES: Service[] = [
   },
 ];
 
-const TIME_SLOTS: TimeSlot[] = [
+const ALL_TIME_SLOTS: TimeSlot[] = [
   { id: '09:00', time: '09:00', available: true },
   { id: '10:00', time: '10:00', available: true },
-  { id: '11:00', time: '11:00', available: false },
+  { id: '11:00', time: '11:00', available: true },
   { id: '13:00', time: '13:00', available: true },
   { id: '14:00', time: '14:00', available: true },
   { id: '15:00', time: '15:00', available: true },
-  { id: '16:00', time: '16:00', available: false },
+  { id: '16:00', time: '16:00', available: true },
   { id: '17:00', time: '17:00', available: true },
 ];
+
+/**
+ * 랜덤하게 예약 불가능한 날짜를 생성합니다.
+ * 향후 30일 중 랜덤하게 8~12개의 날짜를 선택합니다.
+ */
+function generateRandomDisabledDates(): Date[] {
+  const disabledDates: Date[] = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // 랜덤하게 8~12개의 날짜를 비활성화
+  const disabledCount = Math.floor(Math.random() * 5) + 8; // 8~12
+  const disabledDayIndices = new Set<number>();
+
+  while (disabledDayIndices.size < disabledCount) {
+    const randomDay = Math.floor(Math.random() * 30) + 1; // 1~30일
+    disabledDayIndices.add(randomDay);
+  }
+
+  disabledDayIndices.forEach((dayOffset) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + dayOffset);
+    disabledDates.push(date);
+  });
+
+  return disabledDates;
+}
+
+/**
+ * 날짜별 시간 슬롯 가용성을 랜덤하게 생성합니다.
+ * 각 날짜마다 3~7개의 시간대가 랜덤하게 활성화됩니다.
+ */
+function generateRandomTimeSlots(dateString: string): TimeSlot[] {
+  // 날짜 문자열을 시드로 사용하여 일관된 랜덤 결과 생성
+  const seed = dateString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+
+  // 시드 기반 랜덤 함수
+  let seedValue = seed;
+  const seededRandom = () => {
+    seedValue = (seedValue * 9301 + 49297) % 233280;
+    return seedValue / 233280;
+  };
+
+  // 각 시간 슬롯을 개별적으로 랜덤하게 활성화 (30~70% 확률)
+  return ALL_TIME_SLOTS.map((slot) => ({
+    ...slot,
+    available: seededRandom() > 0.3, // 70% 확률로 활성화
+  }));
+}
 
 /**
  * 예약 페이지 - 멀티 스텝 폼
@@ -99,13 +149,22 @@ function Page() {
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
     phone: '',
-    email: '',
     address: '',
     detailAddress: '',
     requirements: '',
   });
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+
+  // 랜덤하게 예약 불가능한 날짜 생성 (컴포넌트 마운트 시 한 번만)
+  const disabledDates = useMemo(() => generateRandomDisabledDates(), []);
+
+  // 선택된 날짜에 따른 시간 슬롯 생성
+  const timeSlots = useMemo(() => {
+    if (!selectedDate) return [];
+    return generateRandomTimeSlots(selectedDate);
+  }, [selectedDate]);
 
   const canProceedToNext = (): boolean => {
     switch (currentStep) {
@@ -117,7 +176,6 @@ function Page() {
         return (
           customerInfo.name.trim() !== '' &&
           customerInfo.phone.trim() !== '' &&
-          customerInfo.email.trim() !== '' &&
           customerInfo.address.trim() !== ''
         );
       case 'confirmation':
@@ -199,7 +257,7 @@ function Page() {
     switch (currentStep) {
       case 'service':
         return (
-          <View style={styles.stepContent}>
+          <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
             <Text style={styles.stepDescription}>원하시는 서비스를 선택해주세요</Text>
             {SERVICES.map((service) => (
               <TouchableOpacity
@@ -225,7 +283,7 @@ function Page() {
                 </View>
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
         );
 
       case 'datetime':
@@ -235,21 +293,18 @@ function Page() {
 
             <View style={styles.dateSection}>
               <Text style={styles.sectionLabel}>날짜 선택</Text>
-              <TextInput
-                style={styles.dateInput}
-                placeholder="YYYY-MM-DD (예: 2025-01-20)"
-                placeholderTextColor={colors.grey400}
-                value={selectedDate}
-                onChangeText={setSelectedDate}
-              />
-              <Text style={styles.helperText}>* 실제 구현 시 캘린더 컴포넌트로 교체 예정</Text>
+              <TouchableOpacity style={styles.dateInputButton} onPress={() => setIsCalendarVisible(true)}>
+                <Text style={selectedDate ? [styles.dateInputText, styles.dateInputTextSelected] : styles.dateInputText}>
+                  {selectedDate || '날짜를 선택해주세요'}
+                </Text>
+              </TouchableOpacity>
             </View>
 
             {selectedDate && (
               <View style={styles.timeSlotSection}>
                 <Text style={styles.sectionLabel}>시간 선택</Text>
                 <View style={styles.timeSlotGrid}>
-                  {TIME_SLOTS.map((slot) => (
+                  {timeSlots.map((slot) => (
                     <TouchableOpacity
                       key={slot.id}
                       style={[
@@ -302,19 +357,6 @@ function Page() {
                 keyboardType="phone-pad"
                 value={customerInfo.phone}
                 onChangeText={(text) => setCustomerInfo({ ...customerInfo, phone: text })}
-              />
-            </View>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>이메일 *</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="example@email.com"
-                placeholderTextColor={colors.grey400}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={customerInfo.email}
-                onChangeText={(text) => setCustomerInfo({ ...customerInfo, email: text })}
               />
             </View>
 
@@ -462,6 +504,21 @@ function Page() {
           </TouchableOpacity>
         )}
       </View>
+
+      {/* 캘린더 바텀싯 */}
+      <CalendarBottomSheet
+        visible={isCalendarVisible}
+        selectedDate={parseStringToDate(selectedDate)}
+        disabledDates={disabledDates}
+        title="예약 날짜 선택"
+        confirmButtonText="날짜 선택"
+        onConfirm={(date) => {
+          setSelectedDate(formatDateToString(date));
+          setSelectedTimeSlot(null); // 날짜 변경 시 시간 선택 초기화
+          setIsCalendarVisible(false);
+        }}
+        onClose={() => setIsCalendarVisible(false)}
+      />
     </View>
   );
 }
@@ -505,6 +562,9 @@ const styles = StyleSheet.create({
   stepContent: {
     flex: 1,
     padding: 20,
+  },
+  scrollContent: {
+    paddingBottom: 20,
   },
   stepDescription: {
     fontSize: 16,
@@ -582,20 +642,20 @@ const styles = StyleSheet.create({
     color: colors.grey900,
     marginBottom: 12,
   },
-  dateInput: {
+  dateInputButton: {
     backgroundColor: 'white',
     borderWidth: 1,
     borderColor: colors.grey300,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    fontSize: 15,
-    color: colors.grey900,
   },
-  helperText: {
-    fontSize: 12,
-    color: colors.grey500,
-    marginTop: 6,
+  dateInputText: {
+    fontSize: 15,
+    color: colors.grey400,
+  },
+  dateInputTextSelected: {
+    color: colors.grey900,
   },
   timeSlotSection: {
     marginBottom: 24,

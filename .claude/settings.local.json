@@ -67,7 +67,8 @@
       "Bash(npx tsc:*)",
       "Bash(npx granite:*)",
       "Bash(yarn add:*)",
-      "Bash(npm run typecheck:*)"
+      "Bash(npm run typecheck:*)",
+      "WebFetch(domain:api.figma.com)"
     ],
     "deny": [
       "Bash(npm run dev:*)",
