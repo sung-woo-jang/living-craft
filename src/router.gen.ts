@@ -6,8 +6,6 @@ import { Route as _FaqRoute } from '../pages/faq';
 import { Route as _IndexRoute } from '../pages/';
 import { Route as _PortfolioIndexRoute } from '../pages/portfolio';
 import { Route as _PortfolioIdRoute } from '../pages/portfolio/[id]';
-import { Route as _QuoteBuilderRoute } from '../pages/quote/builder';
-import { Route as _QuoteIdRoute } from '../pages/quote/[id]';
 import { Route as _ReservationIndexRoute } from '../pages/reservation';
 import { Route as _ReservationSearchRoute } from '../pages/reservation/search';
 import { Route as _ReviewsIndexRoute } from '../pages/reviews';
@@ -26,8 +24,6 @@ declare module '@granite-js/react-native' {
     '/': ReturnType<typeof _IndexRoute.useParams>;
     '/portfolio': ReturnType<typeof _PortfolioIndexRoute.useParams>;
     '/portfolio/:id': ReturnType<typeof _PortfolioIdRoute.useParams>;
-    '/quote/builder': ReturnType<typeof _QuoteBuilderRoute.useParams>;
-    '/quote/:id': ReturnType<typeof _QuoteIdRoute.useParams>;
     '/reservation': ReturnType<typeof _ReservationIndexRoute.useParams>;
     '/reservation/search': ReturnType<typeof _ReservationSearchRoute.useParams>;
     '/reviews': ReturnType<typeof _ReviewsIndexRoute.useParams>;

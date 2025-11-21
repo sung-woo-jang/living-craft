@@ -96,10 +96,6 @@ function Page() {
               <Text style={styles.quickIcon}>🔍</Text>
               <Text style={styles.quickText}>예약 조회</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.quickItem} onPress={() => navigation.navigate('/quote/builder')}>
-              <Text style={styles.quickIcon}>📝</Text>
-              <Text style={styles.quickText}>견적 요청</Text>
-            </TouchableOpacity>
             <TouchableOpacity style={styles.quickItem} onPress={() => navigation.navigate('/faq')}>
               <Text style={styles.quickIcon}>❓</Text>
               <Text style={styles.quickText}>FAQ</Text>

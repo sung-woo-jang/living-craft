@@ -16,7 +16,7 @@ type StepKey = 'service' | 'datetime' | 'customer' | 'confirmation';
 interface Service {
   id: string;
   name: string;
-  type: 'fixed' | 'quote';
+  type: 'fixed';
   icon: string;
   description: string;
   features: string[];
@@ -53,22 +53,6 @@ const SERVICES: Service[] = [
     description: '전문 디자이너가 제안하는 맞춤형 인테리어',
     features: ['현장 방문', '디자인 제안', '가구 배치', '3-4시간 소요'],
     price: 150000,
-  },
-  {
-    id: 'furniture-quote',
-    name: '가구 제작',
-    type: 'quote',
-    icon: '🛋️',
-    description: '공간에 딱 맞는 맞춤 가구 제작',
-    features: ['맞춤 설계', '고급 자재', '설치 포함', '상담 필요'],
-  },
-  {
-    id: 'remodeling-quote',
-    name: '리모델링',
-    type: 'quote',
-    icon: '🔨',
-    description: '오래된 공간을 새롭게 변신',
-    features: ['전체 공사', '인테리어', 'A/S 보증', '1-2주 소요'],
   },
 ];
 

@@ -1,7 +1,7 @@
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export type ServiceType = 'fixed' | 'quote';
+export type ServiceType = 'fixed';
 
 export interface Service {
   id: number;
@@ -16,7 +16,6 @@ export interface Service {
 
 const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
   fixed: '정찰제',
-  quote: '견적제',
 } as const;
 
 interface ServiceCardProps {
@@ -37,7 +36,7 @@ export const ServiceCard = ({ service, onPress, onBookPress }: ServiceCardProps)
         <View style={styles.imagePlaceholder}>
           <Text style={styles.imagePlaceholderText}>📷</Text>
         </View>
-        <View style={[styles.typeBadge, service.type === 'quote' && styles.typeBadgeQuote]}>
+        <View style={styles.typeBadge}>
           <Text style={styles.typeBadgeText}>{SERVICE_TYPE_LABELS[service.type]}</Text>
         </View>
       </View>
@@ -51,7 +50,7 @@ export const ServiceCard = ({ service, onPress, onBookPress }: ServiceCardProps)
 
         {/* 가격 & 소요시간 */}
         <View style={styles.detailsRow}>
-          <Text style={[styles.price, service.type === 'quote' && styles.priceQuote]}>
+          <Text style={styles.price}>
             {service.price}
           </Text>
           <View style={styles.durationContainer}>
@@ -123,9 +122,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 12,
   },
-  typeBadgeQuote: {
-    backgroundColor: colors.purple500,
-  },
   typeBadgeText: {
     color: 'white',
     fontSize: 12,
@@ -156,11 +152,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: colors.blue600,
-  },
-  priceQuote: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.purple600,
   },
   durationContainer: {
     flexDirection: 'row',

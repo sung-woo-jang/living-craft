@@ -6,11 +6,6 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
  * 사용자에게 행동을 유도하는 섹션
  */
 export const HomeCtaSection = () => {
-  const handleGetQuote = () => {
-    // TODO: 견적 작성 페이지로 이동
-    console.log('견적 받기 클릭');
-  };
-
   const handleContact = () => {
     // TODO: 문의하기 섹션으로 스크롤 또는 페이지 이동
     console.log('문의하기 클릭');
@@ -25,11 +20,8 @@ export const HomeCtaSection = () => {
           당신만의 특별한 공간을 만들어보세요
         </Text>
         <View style={styles.buttonGroup}>
-          <TouchableOpacity style={styles.primaryButton} onPress={handleGetQuote}>
-            <Text style={styles.primaryButtonText}>무료 견적 받기</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.secondaryButton} onPress={handleContact}>
-            <Text style={styles.secondaryButtonText}>상담 문의</Text>
+          <TouchableOpacity style={styles.primaryButton} onPress={handleContact}>
+            <Text style={styles.primaryButtonText}>상담 문의</Text>
           </TouchableOpacity>
         </View>
       </View>
