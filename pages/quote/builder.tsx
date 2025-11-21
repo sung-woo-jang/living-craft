@@ -1,7 +1,8 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
 import { colors } from '@toss/tds-colors';
+import { TextField } from '@toss/tds-react-native';
 import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/quote/builder', {
   component: Page,
@@ -99,19 +100,11 @@ function Page() {
             {SERVICE_OPTIONS.map((service) => (
               <TouchableOpacity
                 key={service.id}
-                style={[
-                  styles.serviceOption,
-                  selectedServices.includes(service.id) && styles.serviceOptionSelected,
-                ]}
+                style={[styles.serviceOption, selectedServices.includes(service.id) && styles.serviceOptionSelected]}
                 onPress={() => toggleService(service.id)}
               >
                 <View style={styles.serviceOptionHeader}>
-                  <View
-                    style={[
-                      styles.checkbox,
-                      selectedServices.includes(service.id) && styles.checkboxChecked,
-                    ]}
-                  >
+                  <View style={[styles.checkbox, selectedServices.includes(service.id) && styles.checkboxChecked]}>
                     {selectedServices.includes(service.id) && <Text style={styles.checkmark}>✓</Text>}
                   </View>
                   <Text style={styles.serviceName}>{service.name}</Text>
@@ -127,26 +120,14 @@ function Page() {
           <Text style={styles.sectionTitle}>고객 정보</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>
-              이름 <Text style={styles.required}>*</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="홍길동"
-              placeholderTextColor={colors.grey400}
-              value={name}
-              onChangeText={setName}
-            />
+            <TextField variant="box" label="이름 *" placeholder="홍길동" value={name} onChangeText={setName} />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>
-              연락처 <Text style={styles.required}>*</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
+            <TextField
+              variant="box"
+              label="연락처 *"
               placeholder="010-1234-5678"
-              placeholderTextColor={colors.grey400}
               value={phone}
               onChangeText={setPhone}
               keyboardType="phone-pad"
@@ -159,24 +140,20 @@ function Page() {
           <Text style={styles.sectionTitle}>현장 정보</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>
-              주소 <Text style={styles.required}>*</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
+            <TextField
+              variant="box"
+              label="주소 *"
               placeholder="서울시 강남구 테헤란로 123"
-              placeholderTextColor={colors.grey400}
               value={address}
               onChangeText={setAddress}
             />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>평수</Text>
-            <TextInput
-              style={styles.input}
+            <TextField
+              variant="box"
+              label="평수"
               placeholder="예: 30평"
-              placeholderTextColor={colors.grey400}
               value={area}
               onChangeText={setArea}
               keyboardType="numeric"
@@ -184,14 +161,12 @@ function Page() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>상세 설명</Text>
-            <TextInput
-              style={styles.textArea}
+            <TextField
+              variant="box"
+              label="상세 설명"
               placeholder="원하시는 작업 내용이나 특이사항을 자세히 입력해주세요"
-              placeholderTextColor={colors.grey400}
               multiline
               numberOfLines={6}
-              textAlignVertical="top"
               value={description}
               onChangeText={setDescription}
               maxLength={500}
@@ -218,9 +193,7 @@ function Page() {
               styles.submitButtonDisabled,
           ]}
           onPress={handleSubmit}
-          disabled={
-            isSubmitting || selectedServices.length === 0 || !name.trim() || !phone.trim() || !address.trim()
-          }
+          disabled={isSubmitting || selectedServices.length === 0 || !name.trim() || !phone.trim() || !address.trim()}
         >
           <Text style={styles.submitButtonText}>{isSubmitting ? '요청 중...' : '견적 요청하기'}</Text>
         </TouchableOpacity>

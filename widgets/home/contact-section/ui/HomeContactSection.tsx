@@ -1,6 +1,7 @@
 import { colors } from '@toss/tds-colors';
+import { TextField } from '@toss/tds-react-native';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 /**
  * 홈페이지 문의하기 섹션
@@ -29,40 +30,30 @@ export const HomeContactSection = () => {
 
       <View style={styles.form}>
         <View style={styles.formGroup}>
-          <Text style={styles.label}>이름</Text>
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="성함을 입력해주세요"
-            placeholderTextColor={colors.grey400}
-          />
+          <TextField variant="box" label="이름" value={name} onChangeText={setName} placeholder="성함을 입력해주세요" />
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>이메일</Text>
-          <TextInput
-            style={styles.input}
+          <TextField
+            variant="box"
+            label="이메일"
             value={email}
             onChangeText={setEmail}
             placeholder="이메일을 입력해주세요"
-            placeholderTextColor={colors.grey400}
             keyboardType="email-address"
             autoCapitalize="none"
           />
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>문의 내용</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
+          <TextField
+            variant="box"
+            label="문의 내용"
             value={message}
             onChangeText={setMessage}
             placeholder="문의하실 내용을 입력해주세요"
-            placeholderTextColor={colors.grey400}
             multiline
             numberOfLines={4}
-            textAlignVertical="top"
           />
         </View>
 

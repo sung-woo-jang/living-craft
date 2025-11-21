@@ -1,7 +1,8 @@
 import { createRoute } from '@granite-js/react-native';
 import { colors } from '@toss/tds-colors';
+import { TextField } from '@toss/tds-react-native';
 import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/reservation/search', {
   component: Page,
@@ -35,7 +36,7 @@ const STATUS_COLORS: Record<ReservationDetail['status'], string> = {
 
 // Mock 데이터
 const MOCK_RESERVATIONS: Record<string, ReservationDetail> = {
-  'R20241210001': {
+  R20241210001: {
     id: '1',
     reservationNumber: 'R20241210001',
     serviceName: '아파트 전체 리모델링',
@@ -46,7 +47,7 @@ const MOCK_RESERVATIONS: Record<string, ReservationDetail> = {
     customerPhone: '010-1234-5678',
     address: '서울시 강남구 테헤란로 123',
   },
-  'R20241205002': {
+  R20241205002: {
     id: '2',
     reservationNumber: 'R20241205002',
     serviceName: '주방 리모델링',
@@ -129,11 +130,10 @@ function Page() {
         {/* 검색 폼 */}
         <View style={styles.searchForm}>
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>예약 번호</Text>
-            <TextInput
-              style={styles.input}
+            <TextField
+              variant="box"
+              label="예약 번호"
               placeholder="예: R20241210001"
-              placeholderTextColor={colors.grey400}
               value={reservationNumber}
               onChangeText={setReservationNumber}
               autoCapitalize="characters"
@@ -141,11 +141,10 @@ function Page() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>전화번호</Text>
-            <TextInput
-              style={styles.input}
+            <TextField
+              variant="box"
+              label="전화번호"
               placeholder="010-1234-5678"
-              placeholderTextColor={colors.grey400}
               value={phoneNumber}
               onChangeText={setPhoneNumber}
               keyboardType="phone-pad"

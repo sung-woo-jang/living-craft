@@ -1,7 +1,8 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
 import { colors } from '@toss/tds-colors';
+import { TextField } from '@toss/tds-react-native';
 import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/reviews/write/:reservationId', {
   validateParams: (params) => params as { reservationId: string },
@@ -105,9 +106,7 @@ function Page() {
           <View style={styles.ratingContainer}>
             {Array.from({ length: 5 }).map((_, index) => (
               <TouchableOpacity key={index} onPress={() => setRating(index + 1)} style={styles.starButton}>
-                <Text style={[styles.star, index < rating && styles.starActive]}>
-                  {index < rating ? '⭐' : '☆'}
-                </Text>
+                <Text style={[styles.star, index < rating && styles.starActive]}>{index < rating ? '⭐' : '☆'}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -124,23 +123,17 @@ function Page() {
 
         {/* 리뷰 내용 */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            리뷰 내용 <Text style={styles.required}>*</Text>
-          </Text>
-          <TextInput
-            style={styles.textArea}
+          <TextField
+            variant="box"
+            label="리뷰 내용 *"
             placeholder="서비스 이용 경험을 자세히 작성해주세요 (최소 10자)"
-            placeholderTextColor={colors.grey400}
             multiline
             numberOfLines={6}
-            textAlignVertical="top"
             value={comment}
             onChangeText={setComment}
             maxLength={500}
           />
-          <Text style={styles.charCount}>
-            {comment.length} / 500자
-          </Text>
+          <Text style={styles.charCount}>{comment.length} / 500자</Text>
         </View>
 
         {/* 안내 사항 */}

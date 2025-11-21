@@ -1,20 +1,13 @@
 import { createRoute } from '@granite-js/react-native';
 import { EmptyState } from '@shared/ui/empty-state';
-import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { Service, ServiceCard } from '@shared/ui/service-card';
 import { colors } from '@toss/tds-colors';
 import { useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 export const Route = createRoute('/services', {
   component: Page,
 });
-
-const FILTER_OPTIONS: FilterOption[] = [
-  { key: 'all', label: '전체' },
-  { key: 'fixed', label: '정찰제' },
-  { key: 'quote', label: '견적제' },
-];
 
 const MOCK_SERVICES: Service[] = [
   {
@@ -92,19 +85,13 @@ function Page() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // TODO: API 연동 필요
-  const services = MOCK_SERVICES;
-
-  const filteredServices = services.filter((service) => {
+  const filteredServices = MOCK_SERVICES.filter((service) => {
     const matchesFilter = activeFilter === 'all' || service.type === activeFilter;
     const matchesSearch =
       service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       service.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
-
-  const handleFilterChange = (filterKey: string) => {
-    setActiveFilter(filterKey);
-  };
 
   const handleReset = () => {
     setActiveFilter('all');
@@ -126,20 +113,6 @@ function Page() {
         <Text style={styles.title}>서비스</Text>
         <Text style={styles.subtitle}>리빙크래프트의 다양한 서비스를 만나보세요</Text>
       </View>
-
-      {/* 검색바 */}
-      <View style={styles.searchSection}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="서비스를 검색해보세요"
-          placeholderTextColor={colors.grey400}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
-
-      {/* 필터 탭 */}
-      <FilterTabs options={FILTER_OPTIONS} activeKey={activeFilter} onFilterChange={handleFilterChange} />
 
       {/* 서비스 목록 */}
       {filteredServices.length === 0 ? (
@@ -188,21 +161,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.grey600,
   },
-  searchSection: {
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.grey200,
-  },
-  searchInput: {
-    backgroundColor: colors.grey100,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 15,
-    color: colors.grey900,
-  },
+
   listContent: {
     padding: 20,
   },

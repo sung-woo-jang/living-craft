@@ -3,8 +3,9 @@ import { CalendarBottomSheet } from '@shared/ui/calendar-bottom-sheet';
 import { formatDateToString, parseStringToDate } from '@shared/ui/calendar-bottom-sheet/utils';
 import { Step, StepIndicator } from '@shared/ui/step-indicator';
 import { colors } from '@toss/tds-colors';
+import { TextField } from '@toss/tds-react-native';
 import { useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/reservation', {
   component: Page,
@@ -174,9 +175,7 @@ function Page() {
         return selectedDate !== '' && selectedTimeSlot !== null;
       case 'customer':
         return (
-          customerInfo.name.trim() !== '' &&
-          customerInfo.phone.trim() !== '' &&
-          customerInfo.address.trim() !== ''
+          customerInfo.name.trim() !== '' && customerInfo.phone.trim() !== '' && customerInfo.address.trim() !== ''
         );
       case 'confirmation':
         return agreedToTerms;
@@ -294,7 +293,9 @@ function Page() {
             <View style={styles.dateSection}>
               <Text style={styles.sectionLabel}>날짜 선택</Text>
               <TouchableOpacity style={styles.dateInputButton} onPress={() => setIsCalendarVisible(true)}>
-                <Text style={selectedDate ? [styles.dateInputText, styles.dateInputTextSelected] : styles.dateInputText}>
+                <Text
+                  style={selectedDate ? [styles.dateInputText, styles.dateInputTextSelected] : styles.dateInputText}
+                >
                   {selectedDate || '날짜를 선택해주세요'}
                 </Text>
               </TouchableOpacity>
@@ -338,22 +339,20 @@ function Page() {
             <Text style={styles.stepDescription}>고객 정보를 입력해주세요</Text>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>이름 *</Text>
-              <TextInput
-                style={styles.input}
+              <TextField
+                variant="box"
+                label="이름 *"
                 placeholder="이름을 입력해주세요"
-                placeholderTextColor={colors.grey400}
                 value={customerInfo.name}
                 onChangeText={(text) => setCustomerInfo({ ...customerInfo, name: text })}
               />
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>연락처 *</Text>
-              <TextInput
-                style={styles.input}
+              <TextField
+                variant="box"
+                label="연락처 *"
                 placeholder="010-1234-5678"
-                placeholderTextColor={colors.grey400}
                 keyboardType="phone-pad"
                 value={customerInfo.phone}
                 onChangeText={(text) => setCustomerInfo({ ...customerInfo, phone: text })}
@@ -361,36 +360,32 @@ function Page() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>주소 *</Text>
-              <TextInput
-                style={styles.input}
+              <TextField
+                variant="box"
+                label="주소 *"
                 placeholder="기본 주소를 입력해주세요"
-                placeholderTextColor={colors.grey400}
                 value={customerInfo.address}
                 onChangeText={(text) => setCustomerInfo({ ...customerInfo, address: text })}
               />
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>상세 주소</Text>
-              <TextInput
-                style={styles.input}
+              <TextField
+                variant="box"
+                label="상세 주소"
                 placeholder="상세 주소를 입력해주세요"
-                placeholderTextColor={colors.grey400}
                 value={customerInfo.detailAddress}
                 onChangeText={(text) => setCustomerInfo({ ...customerInfo, detailAddress: text })}
               />
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>추가 요청사항</Text>
-              <TextInput
-                style={[styles.input, styles.textArea]}
+              <TextField
+                variant="box"
+                label="추가 요청사항"
                 placeholder="추가로 요청하실 사항이 있으시면 입력해주세요"
-                placeholderTextColor={colors.grey400}
                 multiline
                 numberOfLines={4}
-                textAlignVertical="top"
                 value={customerInfo.requirements}
                 onChangeText={(text) => setCustomerInfo({ ...customerInfo, requirements: text })}
               />
@@ -464,12 +459,6 @@ function Page() {
 
   return (
     <View style={styles.container}>
-      {/* 헤더 */}
-      <View style={styles.header}>
-        <Text style={styles.title}>서비스 예약</Text>
-        <Text style={styles.subtitle}>원하시는 서비스를 선택하고 편리한 시간에 예약하세요</Text>
-      </View>
-
       {/* 스텝 인디케이터 */}
       <StepIndicator steps={STEPS} currentStepKey={currentStep} />
 
@@ -538,24 +527,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.grey700,
   },
-  header: {
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.grey200,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.grey900,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: colors.grey600,
-  },
+
   contentContainer: {
     flex: 1,
   },
