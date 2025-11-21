@@ -116,5 +116,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 20,
+    paddingBottom: 100, // 플로팅 탭바를 위한 하단 여백
   },
 });

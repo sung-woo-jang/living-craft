@@ -152,7 +152,7 @@ function Page() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* 기본 정보 헤더 */}
         <View style={styles.header}>
           <View style={styles.categoryBadge}>
@@ -229,6 +229,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100, // 플로팅 탭바를 위한 하단 여백
   },
   header: {
     padding: 20,

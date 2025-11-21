@@ -1,27 +1,65 @@
 import { createRoute } from '@granite-js/react-native';
-import { BOTTOM_NAV_ITEMS } from '@shared/constants';
+import { useNavigationState } from '@react-navigation/native';
+import { animated, useSpring } from '@react-spring/native';
+import { BOTTOM_NAV_ITEMS, ROUTE_TAB_CONFIG } from '@shared/constants';
 import { colors } from '@toss/tds-colors';
-import { Asset } from '@toss/tds-react-native';
+import { Asset, shadow, useShadow } from '@toss/tds-react-native';
 import type React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // 임시 라우트 생성 (네비게이션 훅 사용을 위해)
 const TempRoute = createRoute('/_layout' as any, { component: () => null });
 
 export const BottomNavigation: React.FC = () => {
   const navigation = TempRoute.useNavigation();
-  // TODO: 실제 라우트 경로 추적 로직 필요
-  const currentPath = '/';
+  const insets = useSafeAreaInsets();
+
+  // TDS Shadow 적용 (플로팅 탭바용)
+  const shadowStyle = useShadow(shadow.medium('down'));
+
+  // React Navigation의 현재 라우트 추적
+  const currentRouteName = useNavigationState(state =>
+    state?.routes[state.index]?.name
+  );
+
+  // 현재 경로의 탭바 설정
+  const config = ROUTE_TAB_CONFIG[currentRouteName ?? '/'] ?? { isFloat: true, isVisible: true };
+  const { isFloat, isVisible } = config;
+
+  // 애니메이션 스타일
+  const springStyle = useSpring({
+    translateY: isVisible ? 0 : 100, // 숨김 시 아래로 100px 이동
+    opacity: isVisible ? 1 : 0,
+    marginHorizontal: isFloat ? 12 : 0,
+    borderRadius: isFloat ? 30 : 0,
+    config: { tension: 280, friction: 60 },
+  });
 
   const isActiveRoute = (path: string) => {
+    // 라우트 이름을 path와 매칭
+    // 예: currentRouteName이 '/portfolio'이고 path가 '/portfolio'이면 활성화
     if (path === '/') {
-      return currentPath === '/';
+      return currentRouteName === '/';
     }
-    return currentPath.startsWith(path);
+    return currentRouteName?.startsWith(path);
   };
 
   return (
-    <View style={styles.bottomNav}>
+    <animated.View
+      style={[
+        styles.bottomNav,
+        isFloat ? styles.bottomNavFloat : styles.bottomNavFixed,
+        isFloat && shadowStyle,
+        {
+          ...(isFloat && { bottom: Math.max(insets.bottom, 8) }),
+          transform: [{ translateY: springStyle.translateY }],
+          opacity: springStyle.opacity,
+          marginHorizontal: springStyle.marginHorizontal,
+          borderRadius: springStyle.borderRadius,
+        },
+      ]}
+    >
       {BOTTOM_NAV_ITEMS.map((item) => {
         const isActive = isActiveRoute(item.path);
         const iconColor = isActive ? colors.grey900 : colors.grey600;
@@ -39,7 +77,7 @@ export const BottomNavigation: React.FC = () => {
           </TouchableOpacity>
         );
       })}
-    </View>
+    </animated.View>
   );
 };
 
@@ -47,18 +85,21 @@ const styles = StyleSheet.create({
   bottomNav: {
     flexDirection: 'row',
     backgroundColor: colors.white,
+    paddingHorizontal: 25,
+    paddingTop: 9,
+    paddingBottom: 8,
+    // position, shadow, borderRadius는 동적으로 적용
+  },
+  bottomNavFloat: {
+    // 플로팅 모드 스타일
+    position: 'absolute',
+    left: 0,
+    right: 0,
+  },
+  bottomNavFixed: {
+    // 고정 모드 스타일 (일반 레이아웃 플로우)
     borderTopWidth: 1,
     borderTopColor: colors.grey200,
-    paddingBottom: 8,
-    paddingTop: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 3,
   },
   navItem: {
     flex: 1,
@@ -67,12 +108,13 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   navItemActive: {
-    // 활성 상태 추가 스타일 (필요시)
+    // 활성 상태는 색상으로만 구분
   },
   navLabel: {
     fontSize: 11,
     fontWeight: '500',
-    marginTop: 4,
+    lineHeight: 16.5, // 1.5em (11 * 1.5)
+    marginTop: 1, // 피그마 명세에 따른 아이콘-텍스트 간격
     textAlign: 'center',
   },
 });

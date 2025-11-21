@@ -205,6 +205,7 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
+    paddingBottom: 100, // 플로팅 탭바를 위한 하단 여백
   },
   reviewCard: {
     backgroundColor: 'white',

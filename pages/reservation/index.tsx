@@ -743,6 +743,7 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingHorizontal: 20,
     paddingVertical: 16,
+    paddingBottom: 24, // 하단 여백 추가 (Safe Area 고려)
     backgroundColor: 'white',
     borderTopWidth: 1,
     borderTopColor: colors.grey200,

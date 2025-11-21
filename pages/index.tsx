@@ -22,7 +22,7 @@ export const Route = createRoute('/', {
 function Page() {
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <HomeHero />
         <HomeServicesSection />
         <HomePortfolioSection />
@@ -40,5 +40,8 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100, // 플로팅 탭바를 위한 하단 여백
   },
 });

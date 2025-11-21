@@ -72,17 +72,19 @@ export const PortfolioCard = ({ portfolio, onPress }: PortfolioCardProps) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'white',
-    borderRadius: 12,
+    backgroundColor: colors.white,
+    borderRadius: 20,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: colors.grey200,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 4,
     overflow: 'hidden',
   },
   imageContainer: {
@@ -106,7 +108,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     right: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: colors.grey900,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   content: {
-    padding: 16,
+    padding: 24,
   },
   projectName: {
     fontSize: 18,
