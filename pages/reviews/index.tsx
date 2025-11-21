@@ -118,7 +118,7 @@ function Page() {
   });
 
   const handleServicePress = (serviceId: number) => {
-    navigation.navigate('/services/:id', { id: String(serviceId) });
+    navigation.navigate('/portfolio/:id', { id: String(serviceId) });
   };
 
   return (

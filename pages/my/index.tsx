@@ -104,9 +104,9 @@ function Page() {
               <Text style={styles.quickIcon}>❓</Text>
               <Text style={styles.quickText}>FAQ</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.quickItem} onPress={() => navigation.navigate('/services')}>
+            <TouchableOpacity style={styles.quickItem} onPress={() => navigation.navigate('/portfolio')}>
               <Text style={styles.quickIcon}>🛠️</Text>
-              <Text style={styles.quickText}>서비스</Text>
+              <Text style={styles.quickText}>포트폴리오</Text>
             </TouchableOpacity>
           </View>
         </View>

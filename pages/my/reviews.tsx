@@ -85,7 +85,7 @@ function Page() {
         renderItem={({ item }) => (
           <View style={styles.reviewCard}>
             {/* 서비스 정보 */}
-            <TouchableOpacity onPress={() => navigation.navigate('/services/:id', { id: String(item.serviceId) })}>
+            <TouchableOpacity onPress={() => navigation.navigate('/portfolio/:id', { id: String(item.serviceId) })}>
               <Text style={styles.serviceName}>{item.serviceName}</Text>
             </TouchableOpacity>
 

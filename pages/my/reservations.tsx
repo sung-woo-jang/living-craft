@@ -95,8 +95,8 @@ function Page() {
           icon="📅"
           title="예약 내역이 없습니다"
           description="아직 예약하신 서비스가 없습니다"
-          actionLabel="서비스 둘러보기"
-          onActionPress={() => navigation.navigate('/services')}
+          actionLabel="포트폴리오 둘러보기"
+          onActionPress={() => navigation.navigate('/portfolio')}
         />
       ) : (
         <FlatList

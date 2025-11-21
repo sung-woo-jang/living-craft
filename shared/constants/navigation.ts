@@ -10,7 +10,7 @@ export const HEADER_NAV_ITEMS: NavigationItem[] = [
 
 export const BOTTOM_NAV_ITEMS: NavigationItem[] = [
   { label: '홈', path: '/', iconName: 'icon-home-mono' },
-  { label: '서비스', path: '/services', iconName: 'icon-diamond-mono' },
+  { label: '포트폴리오', path: '/portfolio', iconName: 'icon-diamond-mono' },
   { label: '예약', path: '/reservation', iconName: 'icon-shopping-bag-mono' },
   { label: '마이페이지', path: '/my', iconName: 'icon-graph-up-mono' },
 ];
