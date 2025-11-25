@@ -1,7 +1,7 @@
 import { createRoute } from '@granite-js/react-native';
 import { CalendarBottomSheet } from '@shared/ui/calendar-bottom-sheet';
 import { formatDateToString, parseStringToDate } from '@shared/ui/calendar-bottom-sheet/utils';
-import { Step, StepIndicator } from '@shared/ui/step-indicator';
+import { ProgressStepper, ProgressStep } from '@shared/ui/progress-stepper';
 import { colors } from '@toss/tds-colors';
 import { TextField } from '@toss/tds-react-native';
 import { useMemo, useState } from 'react';
@@ -37,12 +37,7 @@ interface CustomerInfo {
   requirements: string;
 }
 
-const STEPS: Step[] = [
-  { key: 'service', title: '서비스 선택', number: 1 },
-  { key: 'datetime', title: '날짜/시간', number: 2 },
-  { key: 'customer', title: '고객 정보', number: 3 },
-  { key: 'confirmation', title: '예약 확인', number: 4 },
-];
+const STEP_ORDER: StepKey[] = ['service', 'datetime', 'customer', 'confirmation'];
 
 const SERVICES: Service[] = [
   {
@@ -174,11 +169,10 @@ function Page() {
       return;
     }
 
-    const stepOrder: StepKey[] = ['service', 'datetime', 'customer', 'confirmation'];
-    const currentIndex = stepOrder.indexOf(currentStep);
+    const currentIndex = STEP_ORDER.indexOf(currentStep);
 
-    if (currentIndex < stepOrder.length - 1) {
-      const nextStep = stepOrder[currentIndex + 1];
+    if (currentIndex < STEP_ORDER.length - 1) {
+      const nextStep = STEP_ORDER[currentIndex + 1];
       if (nextStep) {
         setCurrentStep(nextStep);
       }
@@ -186,11 +180,10 @@ function Page() {
   };
 
   const handlePrevious = () => {
-    const stepOrder: StepKey[] = ['service', 'datetime', 'customer', 'confirmation'];
-    const currentIndex = stepOrder.indexOf(currentStep);
+    const currentIndex = STEP_ORDER.indexOf(currentStep);
 
     if (currentIndex > 0) {
-      const prevStep = stepOrder[currentIndex - 1];
+      const prevStep = STEP_ORDER[currentIndex - 1];
       if (prevStep) {
         setCurrentStep(prevStep);
       }
@@ -444,7 +437,12 @@ function Page() {
   return (
     <View style={styles.container}>
       {/* 스텝 인디케이터 */}
-      <StepIndicator steps={STEPS} currentStepKey={currentStep} />
+      <ProgressStepper activeStepIndex={STEP_ORDER.indexOf(currentStep)} checkForFinish>
+        <ProgressStep title="서비스 선택" />
+        <ProgressStep title="날짜/시간" />
+        <ProgressStep title="고객 정보" />
+        <ProgressStep title="예약 확인" />
+      </ProgressStepper>
 
       {/* 스텝 콘텐츠 */}
       <View style={styles.contentContainer}>{renderStepContent()}</View>
