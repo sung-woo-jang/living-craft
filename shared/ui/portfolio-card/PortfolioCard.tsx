@@ -7,8 +7,9 @@ export interface Portfolio {
   client: string;
   duration: string;
   category: string;
-  thumbnail: string | null;
+  thumbnail: string; // 이미지 URL
   description: string;
+  images: string[]; // 이미지 URL 배열
 }
 
 interface PortfolioCardProps {
@@ -26,7 +27,7 @@ export const PortfolioCard = ({ portfolio, onPress }: PortfolioCardProps) => {
       {/* 이미지 섹션 */}
       <View style={styles.imageContainer}>
         {portfolio.thumbnail ? (
-          <Image source={{ uri: portfolio.thumbnail }} style={styles.image} />
+          <Image source={{ uri: portfolio.thumbnail }} style={styles.image} resizeMode="cover" />
         ) : (
           <View style={styles.imagePlaceholder}>
             <Text style={styles.imagePlaceholderText}>📷</Text>

@@ -1,37 +1,6 @@
+import { HOME_REVIEWS } from '@shared/constants';
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, View } from 'react-native';
-
-interface Review {
-  id: string;
-  author: string;
-  rating: number;
-  content: string;
-  service: string;
-}
-
-const REVIEWS: Review[] = [
-  {
-    id: '1',
-    author: '김민수',
-    rating: 5,
-    content: '완벽한 인테리어 서비스였습니다. 디자이너님이 세심하게 신경써주셔서 만족스러운 결과를 얻었어요.',
-    service: '홈 스타일링',
-  },
-  {
-    id: '2',
-    author: '이지은',
-    rating: 5,
-    content: '기대 이상이었습니다. 맞춤 가구가 공간에 딱 맞아서 너무 좋아요. 추천합니다!',
-    service: '가구 제작',
-  },
-  {
-    id: '3',
-    author: '박준영',
-    rating: 4,
-    content: '오래된 사무실이 완전히 새롭게 바뀌었어요. 직원들 모두 만족하고 있습니다.',
-    service: '리모델링',
-  },
-];
 
 /**
  * 홈페이지 리뷰 섹션
@@ -52,7 +21,7 @@ export const HomeReviewsSection = () => {
       </View>
 
       <View style={styles.grid}>
-        {REVIEWS.map((review) => (
+        {HOME_REVIEWS.map((review) => (
           <View key={review.id} style={styles.card}>
             <View style={styles.cardHeader}>
               <View style={styles.avatarPlaceholder}>

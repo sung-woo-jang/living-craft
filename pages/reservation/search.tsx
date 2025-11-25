@@ -1,4 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
+import { ReservationDetail, SEARCH_MOCK_RESERVATIONS, STATUS_COLORS, STATUS_LABELS } from '@shared/constants';
 import { colors } from '@toss/tds-colors';
 import { TextField } from '@toss/tds-react-native';
 import { useState } from 'react';
@@ -7,58 +8,6 @@ import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 export const Route = createRoute('/reservation/search', {
   component: Page,
 });
-
-interface ReservationDetail {
-  id: string;
-  reservationNumber: string;
-  serviceName: string;
-  date: string;
-  time: string;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-  customerName: string;
-  customerPhone: string;
-  address: string;
-}
-
-const STATUS_LABELS: Record<ReservationDetail['status'], string> = {
-  pending: '대기중',
-  confirmed: '확정',
-  completed: '완료',
-  cancelled: '취소',
-};
-
-const STATUS_COLORS: Record<ReservationDetail['status'], string> = {
-  pending: colors.orange500,
-  confirmed: colors.blue500,
-  completed: colors.green500,
-  cancelled: colors.grey500,
-};
-
-// Mock 데이터
-const MOCK_RESERVATIONS: Record<string, ReservationDetail> = {
-  R20241210001: {
-    id: '1',
-    reservationNumber: 'R20241210001',
-    serviceName: '아파트 전체 리모델링',
-    date: '2024-12-20',
-    time: '10:00',
-    status: 'confirmed',
-    customerName: '김철수',
-    customerPhone: '010-1234-5678',
-    address: '서울시 강남구 테헤란로 123',
-  },
-  R20241205002: {
-    id: '2',
-    reservationNumber: 'R20241205002',
-    serviceName: '주방 리모델링',
-    date: '2024-12-15',
-    time: '14:00',
-    status: 'pending',
-    customerName: '이영희',
-    customerPhone: '010-2345-6789',
-    address: '서울시 서초구 반포대로 456',
-  },
-};
 
 /**
  * 예약 조회 페이지
@@ -87,7 +36,7 @@ function Page() {
 
     // API 호출 시뮬레이션
     setTimeout(() => {
-      const result = MOCK_RESERVATIONS[reservationNumber];
+      const result = SEARCH_MOCK_RESERVATIONS[reservationNumber];
 
       if (result && result.customerPhone === phoneNumber) {
         setSearchResult(result);

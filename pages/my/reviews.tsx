@@ -1,4 +1,5 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
+import { MOCK_MY_REVIEWS } from '@shared/constants';
 import { EmptyState } from '@shared/ui/empty-state';
 import { colors } from '@toss/tds-colors';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -6,42 +7,6 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 export const Route = createRoute('/my/reviews', {
   component: Page,
 });
-
-interface MyReview {
-  id: string;
-  serviceId: number;
-  serviceName: string;
-  rating: number;
-  comment: string;
-  date: string;
-}
-
-const MOCK_REVIEWS: MyReview[] = [
-  {
-    id: '1',
-    serviceId: 1,
-    serviceName: '아파트 전체 리모델링',
-    rating: 5,
-    comment: '처음부터 끝까지 정말 만족스러웠습니다. 꼼꼼하고 친절하게 진행해주셔서 감사합니다.',
-    date: '2024-12-10',
-  },
-  {
-    id: '2',
-    serviceId: 2,
-    serviceName: '주방 리모델링',
-    rating: 5,
-    comment: '주방이 정말 깔끔하고 예뻐졌어요. 요리하는 게 즐거워졌습니다!',
-    date: '2024-12-05',
-  },
-  {
-    id: '3',
-    serviceId: 3,
-    serviceName: '욕실 리모델링',
-    rating: 4,
-    comment: '욕실이 넓어 보이고 깨끗해졌어요. 방수 처리도 완벽합니다.',
-    date: '2024-11-20',
-  },
-];
 
 /**
  * 내 리뷰 페이지
@@ -52,7 +17,7 @@ const MOCK_REVIEWS: MyReview[] = [
 function Page() {
   const navigation = useNavigation();
 
-  if (MOCK_REVIEWS.length === 0) {
+  if (MOCK_MY_REVIEWS.length === 0) {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -75,12 +40,12 @@ function Page() {
       {/* 헤더 */}
       <View style={styles.header}>
         <Text style={styles.title}>내 리뷰</Text>
-        <Text style={styles.subtitle}>총 {MOCK_REVIEWS.length}개의 리뷰를 작성했습니다</Text>
+        <Text style={styles.subtitle}>총 {MOCK_MY_REVIEWS.length}개의 리뷰를 작성했습니다</Text>
       </View>
 
       {/* 리뷰 목록 */}
       <FlatList
-        data={MOCK_REVIEWS}
+        data={MOCK_MY_REVIEWS}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.reviewCard}>

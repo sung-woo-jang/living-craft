@@ -1,39 +1,6 @@
+import { FEATURED_SERVICES } from '@shared/constants';
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-interface ServiceItem {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-}
-
-const FEATURED_SERVICES: ServiceItem[] = [
-  {
-    id: '1',
-    title: '홈 스타일링',
-    description: '전문 디자이너가 제안하는 맞춤형 인테리어',
-    icon: '🏡',
-  },
-  {
-    id: '2',
-    title: '가구 제작',
-    description: '공간에 딱 맞는 맞춤 가구 제작',
-    icon: '🛋️',
-  },
-  {
-    id: '3',
-    title: '리모델링',
-    description: '오래된 공간을 새롭게 변신',
-    icon: '🔨',
-  },
-  {
-    id: '4',
-    title: '컨설팅',
-    description: '전문가의 1:1 공간 컨설팅',
-    icon: '💡',
-  },
-];
 
 /**
  * 홈페이지 서비스 섹션

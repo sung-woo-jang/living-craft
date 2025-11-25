@@ -117,7 +117,6 @@ export const ProgressStepper = ({
         {steps.map((step, index) => {
           const status = getStepStatus(index);
           const showCheckmark = checkForFinish && status === 'completed';
-          const isActive = status === 'active';
           const isPending = status === 'pending';
 
           return (

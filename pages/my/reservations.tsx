@@ -1,4 +1,5 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
+import { MY_MOCK_RESERVATIONS, STATUS_COLORS, STATUS_LABELS } from '@shared/constants';
 import { EmptyState } from '@shared/ui/empty-state';
 import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
@@ -9,59 +10,11 @@ export const Route = createRoute('/my/reservations', {
   component: Page,
 });
 
-interface Reservation {
-  id: string;
-  reservationNumber: string;
-  serviceName: string;
-  date: string;
-  time: string;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-  canCancel: boolean;
-  canReview: boolean;
-}
-
-const STATUS_LABELS: Record<Reservation['status'], string> = {
-  pending: '대기중',
-  confirmed: '확정',
-  completed: '완료',
-  cancelled: '취소',
-};
-
-const STATUS_COLORS: Record<Reservation['status'], string> = {
-  pending: colors.orange500,
-  confirmed: colors.blue500,
-  completed: colors.green500,
-  cancelled: colors.grey500,
-};
-
 const FILTER_OPTIONS: FilterOption[] = [
   { key: 'all', label: '전체' },
   { key: 'confirmed', label: '확정' },
   { key: 'completed', label: '완료' },
   { key: 'cancelled', label: '취소' },
-];
-
-const MOCK_RESERVATIONS: Reservation[] = [
-  {
-    id: '1',
-    reservationNumber: 'R20241210001',
-    serviceName: '아파트 전체 리모델링',
-    date: '2024-12-20',
-    time: '10:00',
-    status: 'confirmed',
-    canCancel: true,
-    canReview: false,
-  },
-  {
-    id: '2',
-    reservationNumber: 'R20241205002',
-    serviceName: '주방 리모델링',
-    date: '2024-12-01',
-    time: '14:00',
-    status: 'completed',
-    canCancel: false,
-    canReview: true,
-  },
 ];
 
 /**
@@ -74,7 +27,7 @@ function Page() {
   const navigation = useNavigation();
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const filteredReservations = MOCK_RESERVATIONS.filter(
+  const filteredReservations = MY_MOCK_RESERVATIONS.filter(
     (reservation) => activeFilter === 'all' || reservation.status === activeFilter
   );
 

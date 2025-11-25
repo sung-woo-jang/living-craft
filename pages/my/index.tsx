@@ -1,41 +1,11 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
+import { MENU_ITEMS, MOCK_USER } from '@shared/constants';
 import { colors } from '@toss/tds-colors';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/my', {
   component: Page,
 });
-
-interface MenuItem {
-  icon: string;
-  title: string;
-  subtitle: string;
-  path: string;
-  badge?: number;
-}
-
-const MENU_ITEMS: MenuItem[] = [
-  {
-    icon: '📅',
-    title: '내 예약',
-    subtitle: '예약 내역을 확인하세요',
-    path: '/my/reservations',
-    badge: 2,
-  },
-  {
-    icon: '⭐',
-    title: '내 리뷰',
-    subtitle: '작성한 리뷰를 확인하세요',
-    path: '/my/reviews',
-    badge: 3,
-  },
-  {
-    icon: '⚙️',
-    title: '설정',
-    subtitle: '앱 설정 및 정보',
-    path: '/my/settings',
-  },
-];
 
 /**
  * 마이페이지
@@ -46,23 +16,16 @@ const MENU_ITEMS: MenuItem[] = [
 function Page() {
   const navigation = useNavigation();
 
-  // Mock 사용자 정보
-  const user = {
-    name: '홍길동',
-    email: 'hong@example.com',
-    phone: '010-1234-5678',
-  };
-
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* 프로필 섹션 */}
         <View style={styles.profileSection}>
           <View style={styles.profileAvatar}>
-            <Text style={styles.profileAvatarText}>{user.name[0]}</Text>
+            <Text style={styles.profileAvatarText}>{MOCK_USER.name[0]}</Text>
           </View>
-          <Text style={styles.profileName}>{user.name}</Text>
-          <Text style={styles.profileEmail}>{user.email}</Text>
+          <Text style={styles.profileName}>{MOCK_USER.name}</Text>
+          <Text style={styles.profileEmail}>{MOCK_USER.email}</Text>
         </View>
 
         {/* 메뉴 리스트 */}

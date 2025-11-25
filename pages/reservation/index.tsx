@@ -1,7 +1,8 @@
 import { createRoute } from '@granite-js/react-native';
+import { ALL_TIME_SLOTS, RESERVATION_SERVICES, TimeSlot } from '@shared/constants';
 import { CalendarBottomSheet } from '@shared/ui/calendar-bottom-sheet';
 import { formatDateToString, parseStringToDate } from '@shared/ui/calendar-bottom-sheet/utils';
-import { ProgressStepper, ProgressStep } from '@shared/ui/progress-stepper';
+import { ProgressStep, ProgressStepper } from '@shared/ui/progress-stepper';
 import { colors } from '@toss/tds-colors';
 import { TextField } from '@toss/tds-react-native';
 import { useMemo, useState } from 'react';
@@ -13,22 +14,6 @@ export const Route = createRoute('/reservation', {
 
 type StepKey = 'service' | 'datetime' | 'customer' | 'confirmation';
 
-interface Service {
-  id: string;
-  name: string;
-  type: 'fixed';
-  icon: string;
-  description: string;
-  features: string[];
-  price?: number;
-}
-
-interface TimeSlot {
-  id: string;
-  time: string;
-  available: boolean;
-}
-
 interface CustomerInfo {
   name: string;
   phone: string;
@@ -38,29 +23,6 @@ interface CustomerInfo {
 }
 
 const STEP_ORDER: StepKey[] = ['service', 'datetime', 'customer', 'confirmation'];
-
-const SERVICES: Service[] = [
-  {
-    id: 'styling-fixed',
-    name: '홈 스타일링',
-    type: 'fixed',
-    icon: '🏡',
-    description: '전문 디자이너가 제안하는 맞춤형 인테리어',
-    features: ['현장 방문', '디자인 제안', '가구 배치', '3-4시간 소요'],
-    price: 150000,
-  },
-];
-
-const ALL_TIME_SLOTS: TimeSlot[] = [
-  { id: '09:00', time: '09:00', available: true },
-  { id: '10:00', time: '10:00', available: true },
-  { id: '11:00', time: '11:00', available: true },
-  { id: '13:00', time: '13:00', available: true },
-  { id: '14:00', time: '14:00', available: true },
-  { id: '15:00', time: '15:00', available: true },
-  { id: '16:00', time: '16:00', available: true },
-  { id: '17:00', time: '17:00', available: true },
-];
 
 /**
  * 랜덤하게 예약 불가능한 날짜를 생성합니다.
@@ -95,10 +57,8 @@ function generateRandomDisabledDates(): Date[] {
  */
 function generateRandomTimeSlots(dateString: string): TimeSlot[] {
   // 날짜 문자열을 시드로 사용하여 일관된 랜덤 결과 생성
-  const seed = dateString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-
   // 시드 기반 랜덤 함수
-  let seedValue = seed;
+  let seedValue = dateString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const seededRandom = () => {
     seedValue = (seedValue * 9301 + 49297) % 233280;
     return seedValue / 233280;
@@ -123,7 +83,7 @@ function generateRandomTimeSlots(dateString: string): TimeSlot[] {
 function Page() {
   const navigation = Route.useNavigation();
   const [currentStep, setCurrentStep] = useState<StepKey>('service');
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedService, setSelectedService] = useState<(typeof RESERVATION_SERVICES)[0] | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
@@ -235,7 +195,7 @@ function Page() {
         return (
           <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
             <Text style={styles.stepDescription}>원하시는 서비스를 선택해주세요</Text>
-            {SERVICES.map((service) => (
+            {RESERVATION_SERVICES.map((service) => (
               <TouchableOpacity
                 key={service.id}
                 style={[styles.serviceCard, selectedService?.id === service.id && styles.serviceCardSelected]}
