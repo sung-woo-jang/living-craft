@@ -1,39 +1,10 @@
+import { createRoute } from '@granite-js/react-native';
+import { MOCK_PORTFOLIOS } from '@shared/constants';
 import { colors } from '@toss/tds-colors';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface PortfolioItem {
-  id: string;
-  title: string;
-  category: string;
-  imageUrl: string;
-}
-
-const PORTFOLIO_ITEMS: PortfolioItem[] = [
-  {
-    id: '1',
-    title: '모던 아파트 리모델링',
-    category: '리모델링',
-    imageUrl: 'https://via.placeholder.com/300x200/3498db/ffffff?text=Portfolio+1',
-  },
-  {
-    id: '2',
-    title: '미니멀 오피스 인테리어',
-    category: '상업 공간',
-    imageUrl: 'https://via.placeholder.com/300x200/2ecc71/ffffff?text=Portfolio+2',
-  },
-  {
-    id: '3',
-    title: '빈티지 카페 디자인',
-    category: '상업 공간',
-    imageUrl: 'https://via.placeholder.com/300x200/e74c3c/ffffff?text=Portfolio+3',
-  },
-  {
-    id: '4',
-    title: '북유럽 스타일 주택',
-    category: '홈 스타일링',
-    imageUrl: 'https://via.placeholder.com/300x200/f39c12/ffffff?text=Portfolio+4',
-  },
-];
+// 임시 라우트 생성 (네비게이션 훅 사용을 위해)
+const TempRoute = createRoute('/_layout' as any, { component: () => null });
 
 /**
  * 홈페이지 포트폴리오 섹션
@@ -42,9 +13,14 @@ const PORTFOLIO_ITEMS: PortfolioItem[] = [
  * TODO: GET /api/portfolio - 작업 사례 목록 조회
  */
 export const HomePortfolioSection = () => {
-  const handlePortfolioPress = (portfolioId: string) => {
-    // TODO: 포트폴리오 모달 열기
-    console.log('포트폴리오 클릭:', portfolioId);
+  const navigation = TempRoute.useNavigation();
+
+  const handlePortfolioPress = (portfolioId: number) => {
+    navigation.navigate('/portfolio/:id' as any, { id: String(portfolioId) });
+  };
+
+  const handleViewAllPress = () => {
+    navigation.navigate('/portfolio' as any);
   };
 
   return (
@@ -55,18 +31,18 @@ export const HomePortfolioSection = () => {
       </View>
 
       <View style={styles.grid}>
-        {PORTFOLIO_ITEMS.map((item) => (
+        {MOCK_PORTFOLIOS.slice(0, 4).map((item) => (
           <TouchableOpacity key={item.id} style={styles.card} onPress={() => handlePortfolioPress(item.id)}>
-            <Image source={{ uri: item.imageUrl }} style={styles.image} />
+            <Image source={{ uri: item.thumbnail || undefined }} style={styles.image} />
             <View style={styles.cardContent}>
               <Text style={styles.category}>{item.category}</Text>
-              <Text style={styles.cardTitle}>{item.title}</Text>
+              <Text style={styles.cardTitle}>{item.projectName}</Text>
             </View>
           </TouchableOpacity>
         ))}
       </View>
 
-      <TouchableOpacity style={styles.viewAllButton}>
+      <TouchableOpacity style={styles.viewAllButton} onPress={handleViewAllPress}>
         <Text style={styles.viewAllText}>모든 포트폴리오 보기</Text>
       </TouchableOpacity>
     </View>
