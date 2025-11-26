@@ -18,6 +18,7 @@ export const Carousel = <T extends CarouselItem>({
   renderItem,
   itemWidth = SCREEN_WIDTH,
   itemHeight = 200,
+  gap = 0,
   containerStyle,
   showIndicator = true,
   dotColor = colors.blue500,
@@ -29,6 +30,9 @@ export const Carousel = <T extends CarouselItem>({
 }: CarouselProps<T>) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const flatListRef = useRef<FlatList>(null);
+
+  // gap이 있을 경우 실제 아이템 너비 계산
+  const actualItemWidth = itemWidth - gap;
 
   // 스크롤 핸들러
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -58,8 +62,17 @@ export const Carousel = <T extends CarouselItem>({
   // 아이템 렌더러
   const renderCarouselItem = ({ item, index }: { item: T; index: number }) => {
     return (
-      <View style={[styles.itemContainer, { width: itemWidth, height: itemHeight }]}>
-        {renderItem(item, index)}
+      <View
+        style={[
+          styles.itemContainer,
+          {
+            width: itemWidth,
+            height: itemHeight,
+            paddingHorizontal: gap / 2,
+          },
+        ]}
+      >
+        <View style={{ width: actualItemWidth, height: itemHeight }}>{renderItem(item, index)}</View>
       </View>
     );
   };

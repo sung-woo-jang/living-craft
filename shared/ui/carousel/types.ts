@@ -14,6 +14,7 @@ export interface CarouselProps<T extends CarouselItem> {
   // 레이아웃
   itemWidth?: number;
   itemHeight?: number;
+  gap?: number;
   containerStyle?: StyleProp<ViewStyle>;
 
   // 인디케이터

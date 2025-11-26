@@ -1,5 +1,6 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
 import { PORTFOLIO_DETAILS } from '@shared/constants';
+import { Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -58,17 +59,22 @@ function Page() {
             <Text style={styles.sectionTitle}>프로젝트 소개</Text>
             <Text style={styles.description}>{portfolio.detailedDescription}</Text>
           </View>
+        </View>
 
-          {/* 작업 이미지 갤러리 */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>작업 이미지</Text>
-            <View style={styles.imageGallery}>
-              {portfolio.images.map((image: string, index: number) => (
-                <Image key={index} source={{ uri: image }} style={styles.galleryImage} resizeMode="cover" />
-              ))}
-            </View>
-          </View>
+        {/* 작업 이미지 갤러리 */}
+        <View style={styles.carouselSection}>
+          <Text style={styles.carouselTitle}>작업 이미지</Text>
+          <Carousel
+            data={portfolio.images.map((image, index) => ({ id: index, url: image }))}
+            renderItem={(item) => <Image source={{ uri: item.url }} style={styles.galleryImage} resizeMode="cover" />}
+            itemHeight={240}
+            gap={32}
+            autoPlay
+            autoPlayInterval={5000}
+          />
+        </View>
 
+        <View style={styles.content}>
           {/* 태그 */}
           <View style={styles.section}>
             <View style={styles.tagsContainer}>
@@ -148,6 +154,16 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
   },
+  carouselSection: {
+    marginBottom: 32,
+  },
+  carouselTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.grey900,
+    marginBottom: 16,
+    paddingHorizontal: 20,
+  },
   section: {
     marginBottom: 32,
   },
@@ -179,9 +195,6 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 12,
     backgroundColor: colors.grey200,
-  },
-  imageGallery: {
-    gap: 16,
   },
   galleryImage: {
     width: '100%',
