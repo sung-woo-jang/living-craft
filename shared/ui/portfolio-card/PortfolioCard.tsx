@@ -1,5 +1,6 @@
 import { colors } from '@toss/tds-colors';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image } from '@granite-js/react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export interface Portfolio {
   id: number;
@@ -27,7 +28,14 @@ export const PortfolioCard = ({ portfolio, onPress }: PortfolioCardProps) => {
       {/* 이미지 섹션 */}
       <View style={styles.imageContainer}>
         {portfolio.thumbnail ? (
-          <Image source={{ uri: portfolio.thumbnail }} style={styles.image} resizeMode="cover" />
+          <Image
+            source={{ uri: portfolio.thumbnail }}
+            style={styles.image}
+            resizeMode="cover"
+            onError={() => {
+              console.warn(`Failed to load portfolio thumbnail: ${portfolio.id}`);
+            }}
+          />
         ) : (
           <View style={styles.imagePlaceholder}>
             <Text style={styles.imagePlaceholderText}>📷</Text>

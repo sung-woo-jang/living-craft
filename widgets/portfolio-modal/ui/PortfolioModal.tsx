@@ -1,5 +1,6 @@
 import { colors } from '@toss/tds-colors';
-import { Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image } from '@granite-js/react-native';
+import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface PortfolioModalProps {
   visible: boolean;
@@ -35,7 +36,13 @@ export const PortfolioModal = ({ visible, onClose, portfolio }: PortfolioModalPr
         </View>
 
         <ScrollView style={styles.content}>
-          <Image source={{ uri: portfolio.imageUrl }} style={styles.mainImage} />
+          <Image
+            source={{ uri: portfolio.imageUrl }}
+            style={styles.mainImage}
+            onError={() => {
+              console.warn(`Failed to load modal main image: ${portfolio.id}`);
+            }}
+          />
 
           <View style={styles.info}>
             <Text style={styles.category}>{portfolio.category}</Text>

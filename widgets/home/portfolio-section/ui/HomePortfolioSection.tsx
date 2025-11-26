@@ -1,7 +1,7 @@
-import { createRoute } from '@granite-js/react-native';
+import { createRoute, Image } from '@granite-js/react-native';
 import { MOCK_PORTFOLIOS } from '@shared/constants';
 import { colors } from '@toss/tds-colors';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // 임시 라우트 생성 (네비게이션 훅 사용을 위해)
 const TempRoute = createRoute('/_layout' as any, { component: () => null });
@@ -33,7 +33,13 @@ export const HomePortfolioSection = () => {
       <View style={styles.grid}>
         {MOCK_PORTFOLIOS.slice(0, 4).map((item) => (
           <TouchableOpacity key={item.id} style={styles.card} onPress={() => handlePortfolioPress(item.id)}>
-            <Image source={{ uri: item.thumbnail || undefined }} style={styles.image} />
+            <Image
+              source={{ uri: item.thumbnail || undefined }}
+              style={styles.image}
+              onError={() => {
+                console.warn(`Failed to load home portfolio image: ${item.id}`);
+              }}
+            />
             <View style={styles.cardContent}>
               <Text style={styles.category}>{item.category}</Text>
               <Text style={styles.cardTitle}>{item.projectName}</Text>

@@ -1,8 +1,8 @@
-import { createRoute, useNavigation } from '@granite-js/react-native';
+import { createRoute, Image, useNavigation } from '@granite-js/react-native';
 import { PORTFOLIO_DETAILS } from '@shared/constants';
 import { Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/portfolio/:id', {
   validateParams: (params) => params as { id: string },
@@ -66,7 +66,16 @@ function Page() {
           <Text style={styles.carouselTitle}>작업 이미지</Text>
           <Carousel
             data={portfolio.images.map((image, index) => ({ id: index, url: image }))}
-            renderItem={(item) => <Image source={{ uri: item.url }} style={styles.galleryImage} resizeMode="cover" />}
+            renderItem={(item) => (
+              <Image
+                source={{ uri: item.url }}
+                style={styles.galleryImage}
+                resizeMode="cover"
+                onError={() => {
+                  console.warn(`Failed to load gallery image: ${item.url}`);
+                }}
+              />
+            )}
             itemHeight={240}
             gap={32}
             autoPlay
