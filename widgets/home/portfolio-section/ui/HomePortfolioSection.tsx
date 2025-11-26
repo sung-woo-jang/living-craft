@@ -31,8 +31,12 @@ export const HomePortfolioSection = () => {
       </View>
 
       <View style={styles.grid}>
-        {MOCK_PORTFOLIOS.slice(0, 4).map((item) => (
-          <TouchableOpacity key={item.id} style={styles.card} onPress={() => handlePortfolioPress(item.id)}>
+        {MOCK_PORTFOLIOS.slice(0, 4).map((item, index) => (
+          <TouchableOpacity
+            key={item.id}
+            style={[styles.card, (index + 1) % 2 === 0 && { marginRight: 0 }]}
+            onPress={() => handlePortfolioPress(item.id)}
+          >
             <Image
               source={{ uri: item.thumbnail || undefined }}
               style={styles.image}
@@ -80,24 +84,27 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 16,
+    justifyContent: 'flex-start',
     marginBottom: 32,
   },
   card: {
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 18,
     width: '48%',
     minWidth: 150,
     overflow: 'hidden',
+    marginRight: '4%',
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: colors.grey200,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 3,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
   },
   image: {
     width: '100%',
@@ -105,13 +112,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey200,
   },
   cardContent: {
-    padding: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
   },
   category: {
     fontSize: 12,
     color: colors.blue500,
     fontWeight: '600',
-    marginBottom: 4,
+    marginBottom: 6,
     textTransform: 'uppercase',
   },
   cardTitle: {

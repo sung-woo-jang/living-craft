@@ -22,10 +22,10 @@ export const HomeServicesSection = () => {
       </View>
 
       <View style={styles.grid}>
-        {FEATURED_SERVICES.map((service) => (
+        {FEATURED_SERVICES.map((service, index) => (
           <TouchableOpacity
             key={service.id}
-            style={styles.card}
+            style={[styles.card, (index + 1) % 2 === 0 && { marginRight: 0 }]}
             onPress={() => handleServicePress(service.id)}
           >
             <Text style={styles.icon}>{service.icon}</Text>
@@ -63,25 +63,26 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 16,
+    justifyContent: 'flex-start',
   },
   card: {
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 18,
     padding: 24,
     width: '48%',
     minWidth: 150,
+    marginRight: '4%',
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: colors.grey200,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 3,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
   },
   icon: {
     fontSize: 48,

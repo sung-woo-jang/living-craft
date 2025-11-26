@@ -35,6 +35,33 @@ export const RESERVATION_SERVICES: Service[] = [
     features: ['현장 방문', '디자인 제안', '가구 배치', '3-4시간 소요'],
     price: 150000,
   },
+  {
+    id: 'film-fixed',
+    name: '인테리어 필름 시공',
+    type: 'fixed',
+    icon: '🎨',
+    description: '벽지·가구·문틀 필름 시공으로 새 집처럼',
+    features: ['현장 측정', '필름 시공', '마감 처리', '2-3시간 소요'],
+    price: 120000,
+  },
+  {
+    id: 'repair-fixed',
+    name: '집수리 종합 서비스',
+    type: 'fixed',
+    icon: '🔧',
+    description: '누수, 균열, 문짝 등 집안 전반 수리',
+    features: ['문제 진단', '수리 작업', '마감 점검', '1-2시간 소요'],
+    price: 80000,
+  },
+  {
+    id: 'wallpaper-fixed',
+    name: '도배·장판 시공',
+    type: 'fixed',
+    icon: '🖼️',
+    description: '새 도배와 장판으로 깔끔한 공간 연출',
+    features: ['자재 상담', '도배·장판 시공', '청소', '4-5시간 소요'],
+    price: 200000,
+  },
 ];
 
 // widgets/home/services-section 용 (홈 페이지 주요 서비스)
@@ -47,21 +74,21 @@ export const FEATURED_SERVICES: ServiceItem[] = [
   },
   {
     id: '2',
-    title: '가구 제작',
-    description: '공간에 딱 맞는 맞춤 가구 제작',
-    icon: '🛋️',
+    title: '인테리어 필름 시공',
+    description: '벽지·가구·문틀 필름 시공으로 새 집처럼',
+    icon: '🎨',
   },
   {
     id: '3',
-    title: '리모델링',
-    description: '오래된 공간을 새롭게 변신',
-    icon: '🔨',
+    title: '집수리 종합 서비스',
+    description: '누수, 균열, 문짝 등 집안 전반 수리',
+    icon: '🔧',
   },
   {
     id: '4',
-    title: '컨설팅',
-    description: '전문가의 1:1 공간 컨설팅',
-    icon: '💡',
+    title: '도배·장판 시공',
+    description: '새 도배와 장판으로 깔끔한 공간 연출',
+    icon: '🖼️',
   },
 ];
 

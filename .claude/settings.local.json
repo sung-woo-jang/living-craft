@@ -70,7 +70,9 @@
       "Bash(npm run typecheck:*)",
       "WebFetch(domain:api.figma.com)",
       "mcp__Framelink_Figma_MCP__download_figma_images",
-      "WebFetch(domain:maruzzing.github.io)"
+      "WebFetch(domain:maruzzing.github.io)",
+      "Bash(git -C /Users/jangseong-u/Desktop/Project/living-craft log --oneline --all)",
+      "Bash(git -C /Users/jangseong-u/Desktop/Project/living-craft show ff629cd --stat)"
     ],
     "deny": [
       "Bash(npm run dev:*)",
