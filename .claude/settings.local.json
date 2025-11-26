@@ -69,7 +69,8 @@
       "Bash(yarn add:*)",
       "Bash(npm run typecheck:*)",
       "WebFetch(domain:api.figma.com)",
-      "mcp__Framelink_Figma_MCP__download_figma_images"
+      "mcp__Framelink_Figma_MCP__download_figma_images",
+      "WebFetch(domain:maruzzing.github.io)"
     ],
     "deny": [
       "Bash(npm run dev:*)",
