@@ -30,12 +30,15 @@ export const HomeContactSection = () => {
 
       <View style={styles.form}>
         <View style={styles.formGroup}>
-          <TextField variant="box" label="이름" value={name} onChangeText={setName} placeholder="성함을 입력해주세요" />
-        </View>
-
-        <View style={styles.formGroup}>
-          <TextField
-            variant="box"
+          <TextField.Clearable
+            variant="line"
+            label="이름"
+            value={name}
+            onChangeText={setName}
+            placeholder="성함을 입력해주세요"
+          />
+          <TextField.Clearable
+            variant="line"
             label="이메일"
             value={email}
             onChangeText={setEmail}
@@ -43,11 +46,8 @@ export const HomeContactSection = () => {
             keyboardType="email-address"
             autoCapitalize="none"
           />
-        </View>
-
-        <View style={styles.formGroup}>
-          <TextField
-            variant="box"
+          <TextField.Clearable
+            variant="line"
             label="문의 내용"
             value={message}
             onChangeText={setMessage}
@@ -63,18 +63,15 @@ export const HomeContactSection = () => {
       </View>
 
       <View style={styles.infoSection}>
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>전화</Text>
-          <Text style={styles.infoValue}>02-1234-5678</Text>
-        </View>
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>이메일</Text>
-          <Text style={styles.infoValue}>contact@livingcraft.com</Text>
-        </View>
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>운영시간</Text>
-          <Text style={styles.infoValue}>평일 09:00 - 18:00</Text>
-        </View>
+        {[
+          { label: '전화', value: '010-7637-0624' },
+          { label: '이메일', value: 'seastory624@gmail.com' },
+        ].map((info, index) => (
+          <View key={index} style={[styles.infoItem, (index + 1) % 2 === 0 && { marginRight: 0 }]}>
+            <Text style={styles.infoLabel}>{info.label}</Text>
+            <Text style={styles.infoValue}>{info.value}</Text>
+          </View>
+        ))}
       </View>
     </View>
   );
@@ -104,20 +101,22 @@ const styles = StyleSheet.create({
   },
   form: {
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 18,
     padding: 24,
     marginBottom: 32,
+    borderWidth: 1,
+    borderColor: colors.grey200,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 3,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
   },
   formGroup: {
-    marginBottom: 20,
+    marginBottom: 5,
   },
   label: {
     fontSize: 14,
@@ -154,17 +153,26 @@ const styles = StyleSheet.create({
   infoSection: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 16,
+    justifyContent: 'flex-start',
   },
   infoItem: {
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 18,
     padding: 20,
     width: '48%',
     minWidth: 140,
+    marginRight: '4%',
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: colors.grey200,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
   },
   infoLabel: {
     fontSize: 13,

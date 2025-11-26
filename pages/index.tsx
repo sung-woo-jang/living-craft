@@ -1,6 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
 import { HomeContactSection } from '@widgets/home/contact-section';
-import { HomeCtaSection } from '@widgets/home/cta-section';
 import { HomeHero } from '@widgets/home/hero';
 import { HomePortfolioSection } from '@widgets/home/portfolio-section';
 import { HomeReviewsSection } from '@widgets/home/reviews-section';
@@ -27,7 +26,6 @@ function Page() {
         <HomeServicesSection />
         <HomePortfolioSection />
         <HomeReviewsSection />
-        <HomeCtaSection />
         <HomeContactSection />
       </ScrollView>
     </View>
