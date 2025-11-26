@@ -1,7 +1,7 @@
 import { colors } from '@toss/tds-colors';
-import { TextField } from '@toss/tds-react-native';
+import { TextField, Toast } from '@toss/tds-react-native';
 import { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Clipboard, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 /**
  * 홈페이지 문의하기 섹션
@@ -12,6 +12,9 @@ export const HomeContactSection = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
   const handleSubmit = () => {
     // TODO: API 연동 - 문의 내용 전송
     console.log('문의 제출:', { name, email, message });
@@ -19,6 +22,12 @@ export const HomeContactSection = () => {
     setName('');
     setEmail('');
     setMessage('');
+  };
+
+  const handleCopyToClipboard = (text: string, label: string) => {
+    Clipboard.setString(text);
+    setToastMessage(`${label}이(가) 복사되었습니다`);
+    setToastOpen(true);
   };
 
   return (
@@ -67,12 +76,20 @@ export const HomeContactSection = () => {
           { label: '전화', value: '010-7637-0624' },
           { label: '이메일', value: 'seastory624@gmail.com' },
         ].map((info, index) => (
-          <View key={index} style={[styles.infoItem, (index + 1) % 2 === 0 && { marginRight: 0 }]}>
+          <TouchableOpacity
+            key={index}
+            style={[styles.infoItem, (index + 1) % 2 === 0 && { marginRight: 0 }]}
+            onPress={() => handleCopyToClipboard(info.value, info.label)}
+            activeOpacity={0.7}
+          >
             <Text style={styles.infoLabel}>{info.label}</Text>
             <Text style={styles.infoValue}>{info.value}</Text>
-          </View>
+            <Text style={styles.copyHint}>탭하여 복사</Text>
+          </TouchableOpacity>
         ))}
       </View>
+
+      <Toast open={toastOpen} text={toastMessage} position="bottom" duration={2} onClose={() => setToastOpen(false)} />
     </View>
   );
 };
@@ -183,5 +200,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: colors.grey900,
+  },
+  copyHint: {
+    fontSize: 11,
+    color: colors.grey500,
+    marginTop: 6,
   },
 });
