@@ -1,6 +1,7 @@
 import { colors } from '@toss/tds-colors';
 import { Image } from '@granite-js/react-native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Card } from '@shared/ui';
 
 export interface Portfolio {
   id: number;
@@ -24,9 +25,10 @@ interface PortfolioCardProps {
  */
 export const PortfolioCard = ({ portfolio, onPress }: PortfolioCardProps) => {
   return (
-    <TouchableOpacity style={styles.card} onPress={() => onPress(portfolio.id)}>
-      {/* 이미지 섹션 */}
-      <View style={styles.imageContainer}>
+    <TouchableOpacity onPress={() => onPress(portfolio.id)}>
+      <Card style={styles.card}>
+        {/* 이미지 섹션 */}
+        <View style={styles.imageContainer}>
         {portfolio.thumbnail ? (
           <Image
             source={{ uri: portfolio.thumbnail }}
@@ -71,29 +73,18 @@ export const PortfolioCard = ({ portfolio, onPress }: PortfolioCardProps) => {
         </View>
       </View>
 
-      {/* 하단 버튼 */}
-      <View style={styles.footer}>
-        <Text style={styles.viewDetailText}>자세히 보기</Text>
-      </View>
+        {/* 하단 버튼 */}
+        <View style={styles.footer}>
+          <Text style={styles.viewDetailText}>자세히 보기</Text>
+        </View>
+      </Card>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: colors.grey200,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 4,
+    padding: 0,
     overflow: 'hidden',
   },
   imageContainer: {

@@ -1,3 +1,4 @@
+import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { TextField, Toast } from '@toss/tds-react-native';
 import { useState } from 'react';
@@ -37,7 +38,7 @@ export const HomeContactSection = () => {
         <Text style={styles.subtitle}>궁금한 사항을 남겨주시면 빠르게 답변드리겠습니다</Text>
       </View>
 
-      <View style={styles.form}>
+      <Card style={{ paddingVertical: 20, paddingHorizontal: 20 }}>
         <View style={styles.formGroup}>
           <TextField.Clearable
             variant="line"
@@ -69,7 +70,7 @@ export const HomeContactSection = () => {
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>문의하기</Text>
         </TouchableOpacity>
-      </View>
+      </Card>
 
       <View style={styles.infoSection}>
         {[
@@ -78,13 +79,15 @@ export const HomeContactSection = () => {
         ].map((info, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.infoItem, (index + 1) % 2 === 0 && { marginRight: 0 }]}
+            style={(index + 1) % 2 === 0 ? { width: '48%' } : { width: '48%', marginRight: '4%' }}
             onPress={() => handleCopyToClipboard(info.value, info.label)}
             activeOpacity={0.7}
           >
-            <Text style={styles.infoLabel}>{info.label}</Text>
-            <Text style={styles.infoValue}>{info.value}</Text>
-            <Text style={styles.copyHint}>탭하여 복사</Text>
+            <Card style={{ marginBottom: 16, paddingVertical: 12 }}>
+              <Text style={styles.infoLabel}>{info.label}</Text>
+              <Text style={styles.infoValue}>{info.value}</Text>
+              <Text style={styles.copyHint}>탭하여 복사</Text>
+            </Card>
           </TouchableOpacity>
         ))}
       </View>
@@ -96,7 +99,6 @@ export const HomeContactSection = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.background,
     paddingVertical: 60,
     paddingHorizontal: 20,
   },
@@ -115,22 +117,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.grey600,
     textAlign: 'center',
-  },
-  form: {
-    backgroundColor: 'white',
-    borderRadius: 18,
-    padding: 24,
-    marginBottom: 32,
-    borderWidth: 1,
-    borderColor: colors.grey200,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 3,
   },
   formGroup: {
     marginBottom: 5,
@@ -171,25 +157,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
-  },
-  infoItem: {
-    backgroundColor: 'white',
-    borderRadius: 18,
-    padding: 20,
-    width: '48%',
-    minWidth: 140,
-    marginRight: '4%',
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: colors.grey200,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 3,
   },
   infoLabel: {
     fontSize: 13,

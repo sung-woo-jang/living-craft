@@ -1,5 +1,6 @@
 import { createRoute, Image } from '@granite-js/react-native';
 import { MOCK_PORTFOLIOS } from '@shared/constants';
+import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -34,26 +35,30 @@ export const HomePortfolioSection = () => {
         {MOCK_PORTFOLIOS.slice(0, 4).map((item, index) => (
           <TouchableOpacity
             key={item.id}
-            style={[styles.card, (index + 1) % 2 === 0 && { marginRight: 0 }]}
+            style={(index + 1) % 2 === 0 ? { width: '48%' } : { width: '48%', marginRight: '4%' }}
             onPress={() => handlePortfolioPress(item.id)}
           >
-            <Image
-              source={{ uri: item.thumbnail || undefined }}
-              style={styles.image}
-              onError={() => {
-                console.warn(`Failed to load home portfolio image: ${item.id}`);
-              }}
-            />
-            <View style={styles.cardContent}>
-              <Text style={styles.category}>{item.category}</Text>
-              <Text style={styles.cardTitle}>{item.projectName}</Text>
-            </View>
+            <Card style={{ marginBottom: 16, padding: 0, overflow: 'hidden' }}>
+              <Image
+                source={{ uri: item.thumbnail || undefined }}
+                style={styles.image}
+                onError={() => {
+                  console.warn(`Failed to load home portfolio image: ${item.id}`);
+                }}
+              />
+              <View style={styles.cardContent}>
+                <Text style={styles.category}>{item.category}</Text>
+                <Text style={styles.cardTitle}>{item.projectName}</Text>
+              </View>
+            </Card>
           </TouchableOpacity>
         ))}
       </View>
 
-      <TouchableOpacity style={styles.viewAllButton} onPress={handleViewAllPress}>
-        <Text style={styles.viewAllText}>모든 포트폴리오 보기</Text>
+      <TouchableOpacity onPress={handleViewAllPress}>
+        <Card style={{ alignSelf: 'center', paddingVertical: 14, paddingHorizontal: 28 }}>
+          <Text style={styles.viewAllText}>모든 포트폴리오 보기</Text>
+        </Card>
       </TouchableOpacity>
     </View>
   );
@@ -61,7 +66,6 @@ export const HomePortfolioSection = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.background,
     paddingVertical: 60,
     paddingHorizontal: 20,
   },
@@ -87,25 +91,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     marginBottom: 32,
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 18,
-    width: '48%',
-    minWidth: 150,
-    overflow: 'hidden',
-    marginRight: '4%',
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: colors.grey200,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 3,
-  },
   image: {
     width: '100%',
     height: 150,
@@ -127,18 +112,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.grey900,
   },
-  viewAllButton: {
-    backgroundColor: 'white',
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.blue500,
-    alignSelf: 'center',
-  },
   viewAllText: {
     color: colors.blue500,
     fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
   },
 });

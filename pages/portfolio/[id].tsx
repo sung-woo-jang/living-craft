@@ -8,6 +8,7 @@ export const Route = createRoute('/portfolio/:id', {
   validateParams: (params) => params as { id: string },
   component: Page,
 });
+
 /**
  * 포트폴리오 상세 페이지
  *
@@ -33,7 +34,11 @@ function Page() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {/* 기본 정보 헤더 */}
         <View style={styles.header}>
           <View style={styles.categoryBadge}>

@@ -1,4 +1,5 @@
 import { HOME_REVIEWS } from '@shared/constants';
+import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -22,7 +23,7 @@ export const HomeReviewsSection = () => {
 
       <View style={styles.grid}>
         {HOME_REVIEWS.map((review) => (
-          <View key={review.id} style={styles.card}>
+          <Card key={review.id} style={{ paddingVertical: 16 }}>
             <View style={styles.cardHeader}>
               <View style={styles.avatarPlaceholder}>
                 <Text style={styles.avatarText}>{review.author[0]}</Text>
@@ -34,7 +35,7 @@ export const HomeReviewsSection = () => {
             </View>
             <Text style={styles.stars}>{renderStars(review.rating)}</Text>
             <Text style={styles.content}>{review.content}</Text>
-          </View>
+          </Card>
         ))}
       </View>
     </View>
@@ -43,7 +44,6 @@ export const HomeReviewsSection = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
     paddingVertical: 60,
     paddingHorizontal: 20,
   },
@@ -64,23 +64,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   grid: {
-    gap: 16,
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: colors.grey200,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    marginBottom: 16,
+    gap: 0,
   },
   cardHeader: {
     flexDirection: 'row',

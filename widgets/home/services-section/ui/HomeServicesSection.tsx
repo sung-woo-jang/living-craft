@@ -1,4 +1,5 @@
 import { FEATURED_SERVICES } from '@shared/constants';
+import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -25,12 +26,14 @@ export const HomeServicesSection = () => {
         {FEATURED_SERVICES.map((service, index) => (
           <TouchableOpacity
             key={service.id}
-            style={[styles.card, (index + 1) % 2 === 0 && { marginRight: 0 }]}
+            style={(index + 1) % 2 === 0 ? { width: '48%' } : { width: '48%', marginRight: '4%' }}
             onPress={() => handleServicePress(service.id)}
           >
-            <Text style={styles.icon}>{service.icon}</Text>
-            <Text style={styles.cardTitle}>{service.title}</Text>
-            <Text style={styles.cardDescription}>{service.description}</Text>
+            <Card style={{ marginBottom: 16 }}>
+              <Text style={styles.icon}>{service.icon}</Text>
+              <Text style={styles.cardTitle}>{service.title}</Text>
+              <Text style={styles.cardDescription}>{service.description}</Text>
+            </Card>
           </TouchableOpacity>
         ))}
       </View>
@@ -40,7 +43,6 @@ export const HomeServicesSection = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
     paddingVertical: 60,
     paddingHorizontal: 20,
   },
@@ -65,27 +67,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 18,
-    padding: 24,
-    width: '48%',
-    minWidth: 150,
-    marginRight: '4%',
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: colors.grey200,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 3,
-  },
   icon: {
     fontSize: 48,
+    marginTop: 8,
     marginBottom: 16,
     textAlign: 'center',
   },

@@ -30,7 +30,6 @@ export const HomeHero = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.blue50,
     paddingVertical: 60,
     paddingHorizontal: 20,
     alignItems: 'center',
