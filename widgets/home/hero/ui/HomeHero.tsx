@@ -1,3 +1,4 @@
+import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -12,19 +13,21 @@ export const HomeHero = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>리빙크래프트</Text>
-        <Text style={styles.subtitle}>당신의 공간을 특별하게</Text>
-        <Text style={styles.description}>
-          전문적인 인테리어 서비스로{'\n'}
-          완벽한 공간을 만들어드립니다
-        </Text>
-        <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
-          <Text style={styles.buttonText}>무료 상담 시작하기</Text>
-        </TouchableOpacity>
+    <Card>
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <Text style={styles.title}>리빙크래프트</Text>
+          <Text style={styles.subtitle}>당신의 공간을 특별하게</Text>
+          <Text style={styles.description}>
+            전문적인 인테리어 서비스로{'\n'}
+            완벽한 공간을 만들어드립니다
+          </Text>
+          <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
+            <Text style={styles.buttonText}>무료 상담 시작하기</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </Card>
   );
 };
 

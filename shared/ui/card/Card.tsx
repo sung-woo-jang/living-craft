@@ -4,6 +4,16 @@ import { StyleSheet, View, ViewStyle } from 'react-native';
 interface CardProps {
   children: React.ReactNode;
   style?: ViewStyle;
+  /**
+   * 카드의 border radius
+   *
+   * 가이드라인:
+   * - 카드 높이 > 60px: 한 줄에 1개(20), 2개(18), 3개 이상(16)
+   * - 카드 높이 <= 60px: 한 줄에 1개(18), 2개(16), 3개 이상(14)
+   *
+   * @default 20
+   */
+  borderRadius?: number;
 }
 
 /**
@@ -12,11 +22,18 @@ interface CardProps {
  * 페이지 내 섹션을 나누는 컨테이너 역할을 하는 카드 컴포넌트입니다.
  * 디자인 가이드의 기본값을 고정하여 일관된 UI를 제공합니다.
  *
- * @example
+ * @example 기본 사용
  * ```tsx
  * <Card>
  *   <Text style={styles.title}>제목</Text>
  *   <Text style={styles.content}>내용</Text>
+ * </Card>
+ * ```
+ *
+ * @example borderRadius 커스터마이징 (한 줄에 2개 카드, 높이 > 60px)
+ * ```tsx
+ * <Card borderRadius={18}>
+ *   <Text>Radius 18 적용</Text>
  * </Card>
  * ```
  *
@@ -27,39 +44,23 @@ interface CardProps {
  * </Card>
  * ```
  */
-export const Card = ({ children, style }: CardProps) => {
-  return <View style={[styles.card, style]}>{children}</View>;
+export const Card = ({ children, style, borderRadius = 20 }: CardProps) => {
+  return <View style={[styles.card, { borderRadius }, style]}>{children}</View>;
 };
 
 const styles = StyleSheet.create({
   card: {
-    // 배경색: CardBg-White (#FFFFFF) 고정
-    backgroundColor: colors.white,
+    // 배경색: CardBg-White (가이드)
+    backgroundColor: colors.background,
 
-    // Border Radius: 8px (피그마 가이드)
-    borderRadius: 8,
+    // Spacing: 상하 간격 10px, 좌우 간격 8px (가이드)
+    paddingVertical: 10,
+    paddingHorizontal: 8,
 
-    // 패딩: 상하 8px, 좌우 16px (피그마 가이드)
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    // Margin: 좌우 마진 10px (가이드 - 화면 너비에 꽉 차게 배치할 때)
+    marginHorizontal: 10,
 
-    // 마진: 하단 마진으로 카드 간 간격 확보
-    marginBottom: 16,
-
-    // 보더: 디자인 가이드 패턴
-    borderWidth: 1,
-    borderColor: colors.grey200,
-
-    // 그림자: Common_Shadow (iOS)
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-
-    // 그림자: Common_Shadow (Android)
-    elevation: 4,
+    // Margin: 상하 간격 10px (가이드)
+    marginBottom: 10,
   },
 });

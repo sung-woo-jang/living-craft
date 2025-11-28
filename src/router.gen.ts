@@ -18,9 +18,6 @@ import { Route as _MySettingsRoute } from '../pages/my/settings';
 
 declare module '@granite-js/react-native' {
   interface RegisterScreen {
-    '/_404': ReturnType<typeof _404Route.useParams>;
-    '/about': ReturnType<typeof _AboutRoute.useParams>;
-    '/faq': ReturnType<typeof _FaqRoute.useParams>;
     '/': ReturnType<typeof _IndexRoute.useParams>;
     '/portfolio': ReturnType<typeof _PortfolioIndexRoute.useParams>;
     '/portfolio/:id': ReturnType<typeof _PortfolioIdRoute.useParams>;
@@ -33,5 +30,8 @@ declare module '@granite-js/react-native' {
     '/my/reservations': ReturnType<typeof _MyReservationsRoute.useParams>;
     '/my/reviews': ReturnType<typeof _MyReviewsRoute.useParams>;
     '/my/settings': ReturnType<typeof _MySettingsRoute.useParams>;
+    '/_404': ReturnType<typeof _404Route.useParams>;
+    '/about': ReturnType<typeof _AboutRoute.useParams>;
+    '/faq': ReturnType<typeof _FaqRoute.useParams>;
   }
 }
