@@ -1,10 +1,10 @@
 import { createRoute } from '@granite-js/react-native';
 import { colors } from '@toss/tds-colors';
 import { HomeContactSection } from '@widgets/home/contact-section';
+import { HomeFilmShowcaseSection } from '@widgets/home/film-showcase-section';
 import { HomeHero } from '@widgets/home/hero';
 import { HomePortfolioSection } from '@widgets/home/portfolio-section';
 import { HomeReviewsSection } from '@widgets/home/reviews-section';
-import { HomeServicesSection } from '@widgets/home/services-section';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 export const Route = createRoute('/', {
@@ -12,19 +12,19 @@ export const Route = createRoute('/', {
 });
 
 /**
- * 홈페이지 - 메인 랜딩 페이지
+ * 홈페이지 - 인테리어 필름 전문 랜딩 페이지
  *
  * 필요한 API 연결:
- * 1. GET /api/services - 주요 서비스 목록 조회
- * 2. GET /api/portfolio - 작업 사례 목록 조회
- * 3. GET /api/reviews - 고객 후기 목록 조회
+ * 1. GET /api/film-showcase - 필름 시공 이미지 목록 조회
+ * 2. GET /api/portfolio - 작업 사례 목록 조회 (필름 시공)
+ * 3. GET /api/reviews - 고객 후기 목록 조회 (필름 시공)
  */
 function Page() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <HomeHero />
-        <HomeServicesSection />
+        <HomeFilmShowcaseSection />
         <HomePortfolioSection />
         <HomeReviewsSection />
         <HomeContactSection />

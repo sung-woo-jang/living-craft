@@ -157,3 +157,28 @@ export const HOME_REVIEWS: HomeReview[] = [
     service: '리모델링',
   },
 ];
+
+// 인테리어 필름 시공 후기 (홈페이지용)
+export const FILM_REVIEWS: HomeReview[] = [
+  {
+    id: '1',
+    author: '김민지',
+    rating: 5,
+    content: '주방이 완전히 새것처럼 바뀌었어요! 비용도 저렴하고 시공 기간도 짧아서 정말 만족스럽습니다.',
+    service: '인테리어 필름 시공',
+  },
+  {
+    id: '2',
+    author: '박준호',
+    rating: 5,
+    content: '문틀과 가구에 필름 시공했는데 고급스러워 보여서 너무 좋아요. 디자이너님도 친절하셨습니다.',
+    service: '인테리어 필름 시공',
+  },
+  {
+    id: '3',
+    author: '이서연',
+    rating: 5,
+    content: '전체 리모델링 대신 필름 시공 선택했는데 정말 잘한 것 같아요. 비용 절감에 결과도 완벽합니다!',
+    service: '인테리어 필름 시공',
+  },
+];

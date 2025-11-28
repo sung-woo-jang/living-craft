@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { Clipboard, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 /**
- * 홈페이지 문의하기 섹션
- * 간단한 문의 폼을 제공
+ * 홈페이지 문의하기 섹션 - 인테리어 필름 시공 문의
+ * 인테리어 필름 시공 관련 문의 폼을 제공
  */
 export const HomeContactSection = () => {
   const [name, setName] = useState('');
@@ -35,7 +35,7 @@ export const HomeContactSection = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>문의하기</Text>
-        <Text style={styles.subtitle}>궁금한 사항을 남겨주시면 빠르게 답변드리겠습니다</Text>
+        <Text style={styles.subtitle}>인테리어 필름 시공 문의를 남겨주시면 빠르게 답변드리겠습니다</Text>
       </View>
 
       <Card style={{ paddingVertical: 20, paddingHorizontal: 20 }}>
@@ -61,7 +61,7 @@ export const HomeContactSection = () => {
             label="문의 내용"
             value={message}
             onChangeText={setMessage}
-            placeholder="문의하실 내용을 입력해주세요"
+            placeholder="시공 위치, 면적, 희망 일정 등을 알려주세요"
             multiline
             numberOfLines={4}
           />
@@ -107,39 +107,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 32,
+    fontSize: 26,
     fontWeight: 'bold',
     color: colors.grey900,
     marginBottom: 12,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 17,
     color: colors.grey600,
     textAlign: 'center',
   },
   formGroup: {
     marginBottom: 5,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.grey900,
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: colors.grey300,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: colors.grey900,
-  },
-  textArea: {
-    minHeight: 100,
-    paddingTop: 12,
   },
   submitButton: {
     backgroundColor: colors.blue500,
@@ -149,9 +129,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   submitButtonText: {
-    color: 'white',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
+    color: 'white',
   },
   infoSection: {
     flexDirection: 'row',
@@ -164,12 +144,12 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   infoValue: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
     color: colors.grey900,
   },
   copyHint: {
-    fontSize: 11,
+    fontSize: 13,
     color: colors.grey500,
     marginTop: 6,
   },

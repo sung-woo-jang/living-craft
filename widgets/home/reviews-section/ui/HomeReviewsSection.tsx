@@ -1,11 +1,11 @@
-import { HOME_REVIEWS } from '@shared/constants';
+import { FILM_REVIEWS } from '@shared/constants';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, View } from 'react-native';
 
 /**
- * 홈페이지 리뷰 섹션
- * 고객 후기를 카드 형태로 표시
+ * 홈페이지 리뷰 섹션 - 인테리어 필름 시공 후기
+ * 필름 시공 고객 후기를 카드 형태로 표시
  *
  * TODO: GET /api/reviews - 고객 후기 목록 조회
  */
@@ -18,11 +18,11 @@ export const HomeReviewsSection = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>고객 후기</Text>
-        <Text style={styles.subtitle}>고객들의 생생한 경험을 들어보세요</Text>
+        <Text style={styles.subtitle}>필름 시공 고객들의 생생한 경험</Text>
       </View>
 
       <View style={styles.grid}>
-        {HOME_REVIEWS.map((review) => (
+        {FILM_REVIEWS.map((review) => (
           <Card key={review.id} style={{ paddingVertical: 16 }}>
             <View style={styles.cardHeader}>
               <View style={styles.avatarPlaceholder}>
@@ -52,14 +52,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 32,
+    fontSize: 26,
     fontWeight: 'bold',
     color: colors.grey900,
     marginBottom: 12,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 17,
     color: colors.grey600,
     textAlign: 'center',
   },
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   avatarText: {
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: '600',
     color: colors.blue500,
   },
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   authorName: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
     color: colors.grey900,
     marginBottom: 2,
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     color: colors.grey600,
   },
   stars: {
-    fontSize: 18,
+    fontSize: 17,
     marginBottom: 12,
   },
   content: {

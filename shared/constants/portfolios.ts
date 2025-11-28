@@ -94,6 +94,50 @@ export const MOCK_PORTFOLIOS: Portfolio[] = [
   },
 ];
 
+// 인테리어 필름 시공 포트폴리오
+export const FILM_PORTFOLIOS: Portfolio[] = [
+  {
+    id: 101,
+    projectName: '아파트 주방 리뉴얼',
+    client: '김○○',
+    duration: '2024.11',
+    category: '인테리어필름',
+    thumbnail: getUnsplashUrl(9001),
+    description: '싱크대와 주방 가구 필름 시공',
+    images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(9001 + i + 1)),
+  },
+  {
+    id: 102,
+    projectName: '거실 가구 필름 시공',
+    client: '이○○',
+    duration: '2024.11',
+    category: '인테리어필름',
+    thumbnail: getUnsplashUrl(9101),
+    description: '원목 패턴 필름으로 따뜻한 분위기 연출',
+    images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(9101 + i + 1)),
+  },
+  {
+    id: 103,
+    projectName: '문틀 대리석 필름',
+    client: '박○○',
+    duration: '2024.10',
+    category: '인테리어필름',
+    thumbnail: getUnsplashUrl(9201),
+    description: '대리석 패턴으로 고급스러운 분위기',
+    images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(9201 + i + 1)),
+  },
+  {
+    id: 104,
+    projectName: '욕실 타일 필름',
+    client: '최○○',
+    duration: '2024.10',
+    category: '인테리어필름',
+    thumbnail: getUnsplashUrl(9301),
+    description: '방수 필름으로 깨끗한 욕실 완성',
+    images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(9301 + i + 1)),
+  },
+];
+
 // 포트폴리오 상세 정보 (ID 기반 Record)
 export const PORTFOLIO_DETAILS: Record<string, PortfolioDetail> = {
   '1': {

@@ -1,7 +1,7 @@
-import { colors } from '@toss/tds-colors';
 import { Image } from '@granite-js/react-native';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Card } from '@shared/ui';
+import { colors } from '@toss/tds-colors';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export interface Portfolio {
   id: number;

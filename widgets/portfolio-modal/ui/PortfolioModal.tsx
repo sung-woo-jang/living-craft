@@ -1,5 +1,5 @@
-import { colors } from '@toss/tds-colors';
 import { Image } from '@granite-js/react-native';
+import { colors } from '@toss/tds-colors';
 import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface PortfolioModalProps {
