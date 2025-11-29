@@ -73,7 +73,8 @@
       "WebFetch(domain:maruzzing.github.io)",
       "Bash(git -C /Users/jangseong-u/Desktop/Project/living-craft log --oneline --all)",
       "Bash(git -C /Users/jangseong-u/Desktop/Project/living-craft show ff629cd --stat)",
-      "Bash(yarn remove @react-native-clipboard/clipboard)"
+      "Bash(yarn remove @react-native-clipboard/clipboard)",
+      "Bash(rm:*)"
     ],
     "deny": [
       "Bash(npm run dev:*)",

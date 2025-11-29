@@ -1,8 +1,10 @@
 import { createRoute, Image } from '@granite-js/react-native';
 import { FILM_PORTFOLIOS } from '@shared/constants';
-import { Card } from '@shared/ui';
+import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // 임시 라우트 생성 (네비게이션 훅 사용을 위해)
 const TempRoute = createRoute('/_layout' as any, { component: () => null });
@@ -31,14 +33,11 @@ export const HomePortfolioSection = () => {
         <Text style={styles.subtitle}>실제 필름 시공으로 변화된 공간들</Text>
       </View>
 
-      <View style={styles.grid}>
-        {FILM_PORTFOLIOS.slice(0, 4).map((item, index) => (
-          <TouchableOpacity
-            key={item.id}
-            style={(index + 1) % 2 === 0 ? { width: '48%' } : { width: '48%', marginRight: '4%' }}
-            onPress={() => handlePortfolioPress(item.id)}
-          >
-            <Card style={{ marginBottom: 16, padding: 0, overflow: 'hidden' }}>
+      <Carousel
+        data={FILM_PORTFOLIOS}
+        renderItem={(item) => (
+          <TouchableOpacity onPress={() => handlePortfolioPress(item.id)}>
+            <Card style={{ padding: 0, overflow: 'hidden' }}>
               <Image
                 source={{ uri: item.thumbnail || undefined }}
                 style={styles.image}
@@ -49,13 +48,22 @@ export const HomePortfolioSection = () => {
               <View style={styles.cardContent}>
                 <Text style={styles.category}>{item.category}</Text>
                 <Text style={styles.cardTitle}>{item.projectName}</Text>
+                <Text style={styles.description}>{item.description}</Text>
               </View>
             </Card>
           </TouchableOpacity>
-        ))}
-      </View>
+        )}
+        itemWidth={SCREEN_WIDTH - 40}
+        itemHeight={320}
+        gap={16}
+        showIndicator={true}
+        dotColor={colors.blue500}
+        inactiveDotColor={colors.grey300}
+        autoPlay={true}
+        autoPlayInterval={4000}
+      />
 
-      <TouchableOpacity onPress={handleViewAllPress}>
+      <TouchableOpacity onPress={handleViewAllPress} style={styles.viewAllButton}>
         <Card style={{ alignSelf: 'center', paddingVertical: 14, paddingHorizontal: 28 }}>
           <Text style={styles.viewAllText}>모든 시공 사례 보기</Text>
         </Card>
@@ -67,10 +75,11 @@ export const HomePortfolioSection = () => {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 60,
-    paddingHorizontal: 20,
+    backgroundColor: colors.background,
   },
   header: {
-    marginBottom: 40,
+    paddingHorizontal: 20,
+    marginBottom: 32,
     alignItems: 'center',
   },
   title: {
@@ -85,20 +94,14 @@ const styles = StyleSheet.create({
     color: colors.grey600,
     textAlign: 'center',
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    marginBottom: 32,
-  },
   image: {
     width: '100%',
-    height: 150,
+    height: 200,
     backgroundColor: colors.grey200,
   },
   cardContent: {
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
   },
   category: {
     fontSize: 13,
@@ -108,9 +111,18 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   cardTitle: {
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: '600',
     color: colors.grey900,
+    marginBottom: 4,
+  },
+  description: {
+    fontSize: 14,
+    color: colors.grey600,
+    lineHeight: 20,
+  },
+  viewAllButton: {
+    marginTop: 32,
   },
   viewAllText: {
     fontSize: 17,

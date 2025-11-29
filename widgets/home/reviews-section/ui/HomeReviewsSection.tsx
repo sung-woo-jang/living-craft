@@ -1,7 +1,9 @@
 import { FILM_REVIEWS } from '@shared/constants';
-import { Card } from '@shared/ui';
+import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 /**
  * 홈페이지 리뷰 섹션 - 인테리어 필름 시공 후기
@@ -21,9 +23,10 @@ export const HomeReviewsSection = () => {
         <Text style={styles.subtitle}>필름 시공 고객들의 생생한 경험</Text>
       </View>
 
-      <View style={styles.grid}>
-        {FILM_REVIEWS.map((review) => (
-          <Card key={review.id} style={{ paddingVertical: 16 }}>
+      <Carousel
+        data={FILM_REVIEWS}
+        renderItem={(review) => (
+          <Card style={{ paddingVertical: 16 }}>
             <View style={styles.cardHeader}>
               <View style={styles.avatarPlaceholder}>
                 <Text style={styles.avatarText}>{review.author[0]}</Text>
@@ -36,8 +39,16 @@ export const HomeReviewsSection = () => {
             <Text style={styles.stars}>{renderStars(review.rating)}</Text>
             <Text style={styles.content}>{review.content}</Text>
           </Card>
-        ))}
-      </View>
+        )}
+        itemWidth={SCREEN_WIDTH - 40}
+        itemHeight={220}
+        gap={16}
+        showIndicator={true}
+        dotColor={colors.blue500}
+        inactiveDotColor={colors.grey300}
+        autoPlay={true}
+        autoPlayInterval={5000}
+      />
     </View>
   );
 };
@@ -45,10 +56,11 @@ export const HomeReviewsSection = () => {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 60,
-    paddingHorizontal: 20,
+    backgroundColor: colors.background,
   },
   header: {
-    marginBottom: 40,
+    paddingHorizontal: 20,
+    marginBottom: 32,
     alignItems: 'center',
   },
   title: {
@@ -62,9 +74,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: colors.grey600,
     textAlign: 'center',
-  },
-  grid: {
-    gap: 0,
   },
   cardHeader: {
     flexDirection: 'row',

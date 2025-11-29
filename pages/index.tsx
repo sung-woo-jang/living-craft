@@ -1,6 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
 import { colors } from '@toss/tds-colors';
-import { HomeContactSection } from '@widgets/home/contact-section';
 import { HomeFilmShowcaseSection } from '@widgets/home/film-showcase-section';
 import { HomeHero } from '@widgets/home/hero';
 import { HomePortfolioSection } from '@widgets/home/portfolio-section';
@@ -27,7 +26,6 @@ function Page() {
         <HomeFilmShowcaseSection />
         <HomePortfolioSection />
         <HomeReviewsSection />
-        <HomeContactSection />
       </ScrollView>
     </View>
   );
