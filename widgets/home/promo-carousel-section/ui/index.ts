@@ -1,0 +1,1 @@
+export { HomePromoCarouselSection } from './HomePromoCarouselSection';

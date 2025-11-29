@@ -1,9 +1,9 @@
 import { createRoute } from '@granite-js/react-native';
 import { colors } from '@toss/tds-colors';
-import { HomeFilmShowcaseSection } from '@widgets/home/film-showcase-section';
-import { HomeHero } from '@widgets/home/hero';
 import { HomePortfolioSection } from '@widgets/home/portfolio-section';
+import { HomePromoCarouselSection } from '@widgets/home/promo-carousel-section';
 import { HomeReviewsSection } from '@widgets/home/reviews-section';
+import { HomeServicesSection } from '@widgets/home/services-section';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 export const Route = createRoute('/', {
@@ -11,19 +11,20 @@ export const Route = createRoute('/', {
 });
 
 /**
- * 홈페이지 - 인테리어 필름 전문 랜딩 페이지
+ * 홈페이지 - 짐싸 스타일 서비스 랜딩 페이지
  *
- * 필요한 API 연결:
- * 1. GET /api/film-showcase - 필름 시공 이미지 목록 조회
- * 2. GET /api/portfolio - 작업 사례 목록 조회 (필름 시공)
- * 3. GET /api/reviews - 고객 후기 목록 조회 (필름 시공)
+ * 구조:
+ * 1. 프로모션 캐러셀 - 이벤트/혜택 안내
+ * 2. 서비스 목록 - 인테리어 필름, 유리청소 등
+ * 3. 시공 사례 - 포트폴리오 이미지
+ * 4. 고객 후기 - 리뷰 캐러셀
  */
 function Page() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        <HomeHero />
-        <HomeFilmShowcaseSection />
+        <HomePromoCarouselSection />
+        <HomeServicesSection />
         <HomePortfolioSection />
         <HomeReviewsSection />
       </ScrollView>
@@ -41,7 +42,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.greyBackground,
   },
   scrollContent: {
-    // paddingBottom: 100, // 플로팅 탭바를 위한 하단 여백
     backgroundColor: colors.greyBackground,
   },
 });

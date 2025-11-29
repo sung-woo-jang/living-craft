@@ -30,7 +30,6 @@ export const HomePortfolioSection = () => {
     <Card>
       <View style={styles.header}>
         <Text style={styles.title}>시공 사례</Text>
-        <Text style={styles.subtitle}>실제 필름 시공으로 변화된 공간들</Text>
       </View>
 
       <Carousel
@@ -74,20 +73,14 @@ export const HomePortfolioSection = () => {
 
 const styles = StyleSheet.create({
   header: {
-    marginBottom: 32,
-    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    paddingBottom: 16,
   },
   title: {
-    fontSize: 26,
+    fontSize: 18,
     fontWeight: 'bold',
     color: colors.grey900,
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 17,
-    color: colors.grey600,
-    textAlign: 'center',
   },
   carouselItem: {
     backgroundColor: colors.white,

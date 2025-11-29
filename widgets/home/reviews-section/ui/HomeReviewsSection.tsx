@@ -19,8 +19,7 @@ export const HomeReviewsSection = () => {
   return (
     <Card>
       <View style={styles.header}>
-        <Text style={styles.title}>고객 후기</Text>
-        <Text style={styles.subtitle}>필름 시공 고객들의 생생한 경험</Text>
+        <Text style={styles.title}>입주민이 알려주는 이야기</Text>
       </View>
 
       <Carousel
@@ -55,20 +54,14 @@ export const HomeReviewsSection = () => {
 
 const styles = StyleSheet.create({
   header: {
-    marginBottom: 32,
-    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    paddingBottom: 16,
   },
   title: {
-    fontSize: 26,
+    fontSize: 18,
     fontWeight: 'bold',
     color: colors.grey900,
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 17,
-    color: colors.grey600,
-    textAlign: 'center',
   },
   reviewCard: {
     backgroundColor: colors.white,

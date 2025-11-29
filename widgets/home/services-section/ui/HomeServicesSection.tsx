@@ -1,89 +1,111 @@
-import { FEATURED_SERVICES } from '@shared/constants';
+import { HOME_SERVICES, HomeService } from '@shared/constants/home-services';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 /**
  * 홈페이지 서비스 섹션
- * 주요 서비스 목록을 카드 형태로 표시
- *
- * TODO: GET /api/services - 주요 서비스 목록 조회
+ * 짐싸 스타일의 서비스 리스트
  */
 export const HomeServicesSection = () => {
-  const handleServicePress = (serviceId: string) => {
-    // TODO: 서비스 상세 페이지로 이동
-    console.log('서비스 클릭:', serviceId);
+  const handleQuotePress = (service: HomeService) => {
+    // TODO: 예약 페이지로 이동
+    console.log('견적받기:', service.id, service.routePath);
   };
 
   return (
-    <View style={styles.container}>
+    <Card>
       <View style={styles.header}>
-        <Text style={styles.title}>우리의 서비스</Text>
-        <Text style={styles.subtitle}>다양한 인테리어 솔루션을 제공합니다</Text>
+        <Text style={styles.title}>한 번에 인테리어 준비 끝내기</Text>
       </View>
 
-      <View style={styles.grid}>
-        {FEATURED_SERVICES.map((service, index) => (
-          <TouchableOpacity
+      <View style={styles.serviceList}>
+        {HOME_SERVICES.map((service, index) => (
+          <View
             key={service.id}
-            style={(index + 1) % 2 === 0 ? { width: '48%' } : { width: '48%', marginRight: '4%' }}
-            onPress={() => handleServicePress(service.id)}
+            style={[
+              styles.serviceRow,
+              index < HOME_SERVICES.length - 1 && styles.serviceRowBorder,
+            ]}
           >
-            <Card style={{ marginBottom: 16 }}>
+            <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor }]}>
               <Text style={styles.icon}>{service.icon}</Text>
-              <Text style={styles.cardTitle}>{service.title}</Text>
-              <Text style={styles.cardDescription}>{service.description}</Text>
-            </Card>
-          </TouchableOpacity>
+            </View>
+
+            <View style={styles.serviceInfo}>
+              <Text style={styles.serviceTitle}>{service.title}</Text>
+              <Text style={styles.serviceDescription}>{service.description}</Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.quoteButton}
+              onPress={() => handleQuotePress(service)}
+            >
+              <Text style={styles.quoteButtonText}>{service.buttonText}</Text>
+            </TouchableOpacity>
+          </View>
         ))}
       </View>
-    </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 60,
-    paddingHorizontal: 20,
-  },
   header: {
-    marginBottom: 40,
-    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    paddingBottom: 16,
   },
   title: {
-    fontSize: 32,
+    fontSize: 18,
     fontWeight: 'bold',
     color: colors.grey900,
-    marginBottom: 12,
-    textAlign: 'center',
   },
-  subtitle: {
-    fontSize: 16,
-    color: colors.grey600,
-    textAlign: 'center',
+  serviceList: {
+    paddingHorizontal: 4,
   },
-  grid: {
+  serviceRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  serviceRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.grey100,
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
   },
   icon: {
-    fontSize: 48,
-    marginTop: 8,
-    marginBottom: 16,
-    textAlign: 'center',
+    fontSize: 22,
   },
-  cardTitle: {
-    fontSize: 18,
+  serviceInfo: {
+    flex: 1,
+  },
+  serviceTitle: {
+    fontSize: 17,
     fontWeight: '600',
     color: colors.grey900,
-    marginBottom: 8,
-    textAlign: 'center',
+    marginBottom: 4,
   },
-  cardDescription: {
+  serviceDescription: {
     fontSize: 14,
     color: colors.grey600,
-    textAlign: 'center',
-    lineHeight: 20,
+  },
+  quoteButton: {
+    backgroundColor: colors.grey100,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  quoteButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.grey900,
   },
 });
