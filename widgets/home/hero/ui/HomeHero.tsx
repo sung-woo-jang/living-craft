@@ -1,3 +1,4 @@
+import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -12,7 +13,7 @@ export const HomeHero = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <Card style={styles.card}>
       <View style={styles.content}>
         <Text style={styles.title}>인테리어 필름{'\n'}전문 시공</Text>
         <Text style={styles.subtitle}>
@@ -23,15 +24,14 @@ export const HomeHero = () => {
           <Text style={styles.buttonText}>무료 상담 시작하기</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 100,
+  card: {
+    // paddingVertical: 40,
     paddingHorizontal: 24,
-    backgroundColor: colors.background,
     alignItems: 'center',
   },
   content: {

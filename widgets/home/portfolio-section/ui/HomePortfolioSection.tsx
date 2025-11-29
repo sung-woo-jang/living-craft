@@ -27,7 +27,7 @@ export const HomePortfolioSection = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <Card>
       <View style={styles.header}>
         <Text style={styles.title}>시공 사례</Text>
         <Text style={styles.subtitle}>실제 필름 시공으로 변화된 공간들</Text>
@@ -37,7 +37,7 @@ export const HomePortfolioSection = () => {
         data={FILM_PORTFOLIOS}
         renderItem={(item) => (
           <TouchableOpacity onPress={() => handlePortfolioPress(item.id)}>
-            <Card style={{ padding: 0, overflow: 'hidden' }}>
+            <View style={styles.carouselItem}>
               <Image
                 source={{ uri: item.thumbnail || undefined }}
                 style={styles.image}
@@ -50,7 +50,7 @@ export const HomePortfolioSection = () => {
                 <Text style={styles.cardTitle}>{item.projectName}</Text>
                 <Text style={styles.description}>{item.description}</Text>
               </View>
-            </Card>
+            </View>
           </TouchableOpacity>
         )}
         itemWidth={SCREEN_WIDTH - 40}
@@ -64,21 +64,16 @@ export const HomePortfolioSection = () => {
       />
 
       <TouchableOpacity onPress={handleViewAllPress} style={styles.viewAllButton}>
-        <Card style={{ alignSelf: 'center', paddingVertical: 14, paddingHorizontal: 28 }}>
+        <View style={styles.viewAllButtonInner}>
           <Text style={styles.viewAllText}>모든 시공 사례 보기</Text>
-        </Card>
+        </View>
       </TouchableOpacity>
-    </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 60,
-    backgroundColor: colors.background,
-  },
   header: {
-    paddingHorizontal: 20,
     marginBottom: 32,
     alignItems: 'center',
   },
@@ -93,6 +88,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: colors.grey600,
     textAlign: 'center',
+  },
+  carouselItem: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
@@ -123,6 +123,13 @@ const styles = StyleSheet.create({
   },
   viewAllButton: {
     marginTop: 32,
+    alignItems: 'center',
+  },
+  viewAllButtonInner: {
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    backgroundColor: colors.grey50,
+    borderRadius: 12,
   },
   viewAllText: {
     fontSize: 17,

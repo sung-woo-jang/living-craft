@@ -17,7 +17,7 @@ export const HomeReviewsSection = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <Card>
       <View style={styles.header}>
         <Text style={styles.title}>고객 후기</Text>
         <Text style={styles.subtitle}>필름 시공 고객들의 생생한 경험</Text>
@@ -26,7 +26,7 @@ export const HomeReviewsSection = () => {
       <Carousel
         data={FILM_REVIEWS}
         renderItem={(review) => (
-          <Card style={{ paddingVertical: 16 }}>
+          <View style={styles.reviewCard}>
             <View style={styles.cardHeader}>
               <View style={styles.avatarPlaceholder}>
                 <Text style={styles.avatarText}>{review.author[0]}</Text>
@@ -38,7 +38,7 @@ export const HomeReviewsSection = () => {
             </View>
             <Text style={styles.stars}>{renderStars(review.rating)}</Text>
             <Text style={styles.content}>{review.content}</Text>
-          </Card>
+          </View>
         )}
         itemWidth={SCREEN_WIDTH - 40}
         itemHeight={220}
@@ -49,17 +49,12 @@ export const HomeReviewsSection = () => {
         autoPlay={true}
         autoPlayInterval={5000}
       />
-    </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 60,
-    backgroundColor: colors.background,
-  },
   header: {
-    paddingHorizontal: 20,
     marginBottom: 32,
     alignItems: 'center',
   },
@@ -74,6 +69,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: colors.grey600,
     textAlign: 'center',
+  },
+  reviewCard: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 16,
   },
   cardHeader: {
     flexDirection: 'row',

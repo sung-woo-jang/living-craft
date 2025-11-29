@@ -34,12 +34,14 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.blue50,
+    backgroundColor: colors.greyBackground,
   },
   scrollView: {
     flex: 1,
+    backgroundColor: colors.greyBackground,
   },
   scrollContent: {
-    paddingBottom: 100, // 플로팅 탭바를 위한 하단 여백
+    // paddingBottom: 100, // 플로팅 탭바를 위한 하단 여백
+    backgroundColor: colors.greyBackground,
   },
 });

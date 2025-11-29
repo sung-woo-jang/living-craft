@@ -59,6 +59,8 @@ const styles = StyleSheet.create({
 
     // Margin: 좌우 마진 10px (가이드 - 화면 너비에 꽉 차게 배치할 때)
     marginHorizontal: 10,
+    marginRight: 10,
+    marginLeft: 10,
 
     // Margin: 상하 간격 10px (가이드)
     marginBottom: 10,

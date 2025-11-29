@@ -1,6 +1,6 @@
 import { Image } from '@granite-js/react-native';
 import { FILM_SHOWCASE_IMAGES } from '@shared/constants';
-import { Carousel } from '@shared/ui';
+import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
@@ -12,7 +12,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
  */
 export const HomeFilmShowcaseSection = () => {
   return (
-    <View style={styles.container}>
+    <Card>
       {/* 헤더 */}
       <View style={styles.header}>
         <Text style={styles.title}>인테리어 필름 시공</Text>
@@ -65,17 +65,12 @@ export const HomeFilmShowcaseSection = () => {
           </View>
         ))}
       </View>
-    </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 60,
-    backgroundColor: colors.background,
-  },
   header: {
-    paddingHorizontal: 20,
     marginBottom: 32,
     alignItems: 'center',
   },
@@ -116,7 +111,6 @@ const styles = StyleSheet.create({
     color: colors.grey600,
   },
   features: {
-    paddingHorizontal: 20,
     marginTop: 48,
   },
   featuresTitle: {
