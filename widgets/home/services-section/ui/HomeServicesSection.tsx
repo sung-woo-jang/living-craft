@@ -1,16 +1,21 @@
+import { createRoute } from '@granite-js/react-native';
 import { HOME_SERVICES, HomeService } from '@shared/constants/home-services';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+// 네비게이션 훅 사용을 위한 임시 라우트
+const TempRoute = createRoute('/_layout' as any, { component: () => null });
 
 /**
  * 홈페이지 서비스 섹션
  * 짐싸 스타일의 서비스 리스트
  */
 export const HomeServicesSection = () => {
+  const navigation = TempRoute.useNavigation();
+
   const handleQuotePress = (service: HomeService) => {
-    // TODO: 예약 페이지로 이동
-    console.log('견적받기:', service.id, service.routePath);
+    navigation.navigate(service.routePath as any);
   };
 
   return (
