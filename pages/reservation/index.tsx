@@ -202,9 +202,7 @@ function Page() {
                   <View style={styles.serviceInfo}>
                     <Text style={styles.serviceTitle}>{service.title}</Text>
                     <Text style={styles.serviceDescription}>{service.description}</Text>
-                    {service.price && (
-                      <Text style={styles.servicePrice}>₩{service.price.toLocaleString()}</Text>
-                    )}
+                    {service.price && <Text style={styles.servicePrice}>₩{service.price.toLocaleString()}</Text>}
                   </View>
 
                   <View style={[styles.checkIcon, selectedService?.id === service.id && styles.checkIconSelected]}>

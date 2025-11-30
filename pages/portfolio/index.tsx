@@ -1,19 +1,15 @@
-import { createRoute } from '@granite-js/react-native';
-import { MOCK_PORTFOLIOS } from '@shared/constants';
-import { PortfolioCard } from '@shared/ui/portfolio-card';
+import { createRoute, Image } from '@granite-js/react-native';
+import { FILM_PORTFOLIOS } from '@shared/constants';
+import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/portfolio', {
   component: Page,
 });
 
 /**
- * 포트폴리오 목록 페이지
- *
- * 필요한 API 연결:
- * 1. GET /api/portfolios - 포트폴리오 목록 조회
- * 2. GET /api/portfolios/category/{category} - 카테고리별 필터링
+ * 포트폴리오 목록 페이지 - 짐싸 스타일
  */
 function Page() {
   const navigation = Route.useNavigation();
@@ -24,13 +20,52 @@ function Page() {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={MOCK_PORTFOLIOS}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => <PortfolioCard portfolio={item} onPress={handlePortfolioPress} />}
-        contentContainerStyle={styles.listContent}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
-      />
+      >
+        <Card>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>시공 사례</Text>
+            <Text style={styles.sectionSubtitle}>인테리어 필름 시공 사례를 확인해보세요</Text>
+          </View>
+
+          {FILM_PORTFOLIOS.map((portfolio, index) => (
+            <TouchableOpacity
+              key={portfolio.id}
+              style={[
+                styles.portfolioRow,
+                index < FILM_PORTFOLIOS.length - 1 && styles.portfolioRowBorder,
+              ]}
+              onPress={() => handlePortfolioPress(portfolio.id)}
+            >
+              <Image
+                source={{ uri: portfolio.thumbnail || undefined }}
+                style={styles.thumbnail}
+                onError={() => {
+                  console.warn(`Failed to load portfolio thumbnail: ${portfolio.id}`);
+                }}
+              />
+
+              <View style={styles.portfolioInfo}>
+                <View style={styles.categoryBadge}>
+                  <Text style={styles.categoryText}>{portfolio.category}</Text>
+                </View>
+                <Text style={styles.portfolioTitle}>{portfolio.projectName}</Text>
+                <Text style={styles.portfolioDescription} numberOfLines={2}>
+                  {portfolio.description}
+                </Text>
+                <Text style={styles.portfolioDuration}>{portfolio.duration}</Text>
+              </View>
+
+              <View style={styles.arrowIcon}>
+                <Text style={styles.arrowText}>›</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </Card>
+      </ScrollView>
     </View>
   );
 }
@@ -38,10 +73,91 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.greyBackground,
   },
-  listContent: {
-    padding: 20,
-    paddingBottom: 100, // 플로팅 탭바를 위한 하단 여백
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingVertical: 10,
+    paddingBottom: 100,
+  },
+
+  // Section Header
+  sectionHeader: {
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.grey900,
+    marginBottom: 4,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    color: colors.grey600,
+  },
+
+  // Portfolio Row
+  portfolioRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+  },
+  portfolioRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.grey100,
+  },
+  thumbnail: {
+    width: 80,
+    height: 80,
+    borderRadius: 12,
+    backgroundColor: colors.grey200,
+    marginRight: 16,
+  },
+  portfolioInfo: {
+    flex: 1,
+  },
+  categoryBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.blue50,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    marginBottom: 6,
+  },
+  categoryText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.blue600,
+  },
+  portfolioTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.grey900,
+    marginBottom: 4,
+  },
+  portfolioDescription: {
+    fontSize: 13,
+    color: colors.grey600,
+    lineHeight: 18,
+    marginBottom: 4,
+  },
+  portfolioDuration: {
+    fontSize: 12,
+    color: colors.grey400,
+  },
+  arrowIcon: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  arrowText: {
+    fontSize: 20,
+    color: colors.grey400,
   },
 });

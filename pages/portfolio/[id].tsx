@@ -1,6 +1,6 @@
 import { createRoute, Image, useNavigation } from '@granite-js/react-native';
 import { PORTFOLIO_DETAILS } from '@shared/constants';
-import { Carousel } from '@shared/ui';
+import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -10,10 +10,7 @@ export const Route = createRoute('/portfolio/:id', {
 });
 
 /**
- * 포트폴리오 상세 페이지
- *
- * 필요한 API 연결:
- * 1. GET /api/portfolios/{id} - 포트폴리오 상세 정보 조회
+ * 포트폴리오 상세 페이지 - 짐싸 스타일
  */
 function Page() {
   const params = Route.useParams();
@@ -24,7 +21,8 @@ function Page() {
   if (!portfolio) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>포트폴리오를 찾을 수 없습니다.</Text>
+        <Text style={styles.errorIcon}>📋</Text>
+        <Text style={styles.errorText}>포트폴리오를 찾을 수 없습니다</Text>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backButtonText}>돌아가기</Text>
         </TouchableOpacity>
@@ -39,67 +37,84 @@ function Page() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* 기본 정보 헤더 */}
-        <View style={styles.header}>
-          <View style={styles.categoryBadge}>
-            <Text style={styles.categoryBadgeText}>{portfolio.category}</Text>
+        {/* 기본 정보 카드 */}
+        <Card>
+          <View style={styles.sectionHeader}>
+            <View style={styles.categoryBadge}>
+              <Text style={styles.categoryText}>{portfolio.category}</Text>
+            </View>
+            <Text style={styles.projectName}>{portfolio.projectName}</Text>
           </View>
-          <Text style={styles.projectName}>{portfolio.projectName}</Text>
-          <View style={styles.metaInfo}>
-            <View style={styles.metaItem}>
+
+          <View style={styles.metaList}>
+            <View style={styles.metaRow}>
               <Text style={styles.metaLabel}>클라이언트</Text>
               <Text style={styles.metaValue}>{portfolio.client}</Text>
             </View>
-            <View style={styles.divider} />
-            <View style={styles.metaItem}>
+            <View style={styles.metaRow}>
               <Text style={styles.metaLabel}>작업기간</Text>
               <Text style={styles.metaValue}>{portfolio.duration}</Text>
             </View>
           </View>
-        </View>
+        </Card>
 
-        <View style={styles.content}>
-          {/* 프로젝트 설명 */}
-          <View style={styles.section}>
+        {/* 프로젝트 소개 카드 */}
+        <Card>
+          <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>프로젝트 소개</Text>
-            <Text style={styles.description}>{portfolio.detailedDescription}</Text>
           </View>
-        </View>
+          <Text style={styles.description}>{portfolio.detailedDescription}</Text>
+        </Card>
 
-        {/* 작업 이미지 갤러리 */}
-        <View style={styles.carouselSection}>
-          <Text style={styles.carouselTitle}>작업 이미지</Text>
-          <Carousel
-            data={portfolio.images.map((image, index) => ({ id: index, url: image }))}
-            renderItem={(item) => (
-              <Image
-                source={{ uri: item.url }}
-                style={styles.galleryImage}
-                resizeMode="cover"
-                onError={() => {
-                  console.warn(`Failed to load gallery image: ${item.url}`);
-                }}
-              />
-            )}
-            itemHeight={240}
-            gap={32}
-            autoPlay
-            autoPlayInterval={5000}
-          />
-        </View>
-
-        <View style={styles.content}>
-          {/* 태그 */}
-          <View style={styles.section}>
-            <View style={styles.tagsContainer}>
-              {portfolio.tags.map((tag: string, index: number) => (
-                <View key={index} style={styles.tag}>
-                  <Text style={styles.tagText}>#{tag}</Text>
-                </View>
-              ))}
-            </View>
+        {/* 작업 이미지 카드 */}
+        <Card>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>작업 이미지</Text>
           </View>
-        </View>
+          <View style={styles.carouselWrapper}>
+            <Carousel
+              data={portfolio.images.slice(0, 10).map((image, index) => ({ id: index, url: image }))}
+              renderItem={(item) => (
+                <Image
+                  source={{ uri: item.url }}
+                  style={styles.galleryImage}
+                  resizeMode="cover"
+                  onError={() => {
+                    console.warn(`Failed to load gallery image: ${item.url}`);
+                  }}
+                />
+              )}
+              itemHeight={200}
+              gap={16}
+              autoPlay
+              autoPlayInterval={4000}
+            />
+          </View>
+        </Card>
+
+        {/* 태그 카드 */}
+        <Card>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>관련 태그</Text>
+          </View>
+          <View style={styles.tagsContainer}>
+            {portfolio.tags.map((tag: string, index: number) => (
+              <View key={index} style={styles.tag}>
+                <Text style={styles.tagText}>#{tag}</Text>
+              </View>
+            ))}
+          </View>
+        </Card>
+
+        {/* 문의 버튼 카드 */}
+        <Card>
+          <TouchableOpacity
+            style={styles.inquiryButton}
+            onPress={() => navigation.navigate('/reservation' as any)}
+          >
+            <Text style={styles.inquiryButtonText}>이 시공 문의하기</Text>
+          </TouchableOpacity>
+        </Card>
       </ScrollView>
     </View>
   );
@@ -108,121 +123,100 @@ function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: colors.greyBackground,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100, // 플로팅 탭바를 위한 하단 여백
+    paddingVertical: 10,
+    paddingBottom: 100,
   },
-  header: {
-    padding: 20,
-    paddingBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.grey200,
+
+  // Section Header
+  sectionHeader: {
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    paddingBottom: 12,
   },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.grey900,
+  },
+
+  // Project Info
   categoryBadge: {
     alignSelf: 'flex-start',
     backgroundColor: colors.blue500,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 6,
     marginBottom: 12,
   },
-  categoryBadgeText: {
-    color: 'white',
+  categoryText: {
     fontSize: 12,
     fontWeight: '600',
+    color: colors.white,
   },
   projectName: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     color: colors.grey900,
-    marginBottom: 16,
   },
-  metaInfo: {
+
+  // Meta Info
+  metaList: {
+    paddingHorizontal: 8,
+    paddingBottom: 8,
+  },
+  metaRow: {
     flexDirection: 'row',
-    backgroundColor: colors.background,
-    borderRadius: 12,
-    padding: 16,
-  },
-  metaItem: {
-    flex: 1,
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.grey100,
   },
   metaLabel: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.grey600,
-    marginBottom: 6,
   },
   metaValue: {
     fontSize: 14,
     fontWeight: '600',
     color: colors.grey900,
   },
-  divider: {
-    width: 1,
-    backgroundColor: colors.grey200,
-    marginHorizontal: 16,
-  },
-  content: {
-    padding: 20,
-  },
-  carouselSection: {
-    marginBottom: 32,
-  },
-  carouselTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.grey900,
-    marginBottom: 16,
-    paddingHorizontal: 20,
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.grey900,
-    marginBottom: 16,
-  },
+
+  // Description
   description: {
     fontSize: 15,
     color: colors.grey700,
     lineHeight: 24,
+    paddingHorizontal: 8,
+    paddingBottom: 8,
   },
-  beforeAfterContainer: {
-    gap: 16,
+
+  // Carousel
+  carouselWrapper: {
+    marginHorizontal: -8,
   },
-  beforeAfterItem: {
-    marginBottom: 8,
-  },
-  beforeAfterLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.grey800,
-    marginBottom: 8,
-  },
-  beforeAfterImage: {
+  galleryImage: {
     width: '100%',
     height: 200,
     borderRadius: 12,
     backgroundColor: colors.grey200,
   },
-  galleryImage: {
-    width: '100%',
-    height: 240,
-    borderRadius: 12,
-    backgroundColor: colors.grey200,
-  },
+
+  // Tags
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
+    paddingHorizontal: 8,
+    paddingBottom: 8,
   },
   tag: {
-    backgroundColor: colors.blue100,
+    backgroundColor: colors.blue50,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -232,16 +226,38 @@ const styles = StyleSheet.create({
     color: colors.blue600,
     fontWeight: '500',
   },
+
+  // Inquiry Button
+  inquiryButton: {
+    backgroundColor: colors.blue500,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginHorizontal: 8,
+    marginVertical: 8,
+  },
+  inquiryButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.white,
+  },
+
+  // Error State
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: colors.greyBackground,
+  },
+  errorIcon: {
+    fontSize: 48,
+    marginBottom: 16,
   },
   errorText: {
     fontSize: 16,
     color: colors.grey700,
-    marginBottom: 16,
+    marginBottom: 24,
   },
   backButton: {
     backgroundColor: colors.blue500,
@@ -250,7 +266,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   backButtonText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 14,
     fontWeight: '600',
   },
