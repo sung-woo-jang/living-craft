@@ -109,23 +109,21 @@ const iconStyles = StyleSheet.create({
   },
   checkIconLine1: {
     position: 'absolute',
-    width: 3,
+    width: 3.5,
     height: 1.5,
     backgroundColor: COLORS.white,
     transform: [{ rotate: '45deg' }],
-    left: 1,
-    top: 5,
-    borderRadius: 1,
+    left: 0.5,
+    top: 5.5,
   },
   checkIconLine2: {
     position: 'absolute',
-    width: 6,
+    width: 6.5,
     height: 1.5,
     backgroundColor: COLORS.white,
     transform: [{ rotate: '-45deg' }],
-    right: 0,
+    right: -0.5,
     top: 4,
-    borderRadius: 1,
   },
 });
 
