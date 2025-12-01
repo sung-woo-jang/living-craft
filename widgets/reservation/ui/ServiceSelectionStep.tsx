@@ -35,7 +35,6 @@ export function ServiceSelectionStep() {
             <View style={styles.serviceInfo}>
               <Text style={styles.serviceTitle}>{service.title}</Text>
               <Text style={styles.serviceDescription}>{service.description}</Text>
-              {service.price && <Text style={styles.servicePrice}>₩{service.price.toLocaleString()}</Text>}
             </View>
 
             <View style={[styles.checkIcon, selectedService?.id === service.id && styles.checkIconSelected]}>
@@ -107,12 +106,6 @@ const styles = StyleSheet.create({
   serviceDescription: {
     fontSize: 14,
     color: colors.grey600,
-    marginBottom: 4,
-  },
-  servicePrice: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.blue600,
   },
   checkIcon: {
     width: 24,

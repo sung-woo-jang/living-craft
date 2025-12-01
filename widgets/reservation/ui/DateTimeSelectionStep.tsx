@@ -20,8 +20,12 @@ export function DateTimeSelectionStep() {
       'updateTimeSlotsForDate',
     ]);
 
+  const selectedService = watch('service');
   const selectedDate = watch('date');
   const selectedTimeSlot = watch('timeSlot');
+
+  // 시간 선택이 필요한지 확인 (기본값: true)
+  const requiresTimeSelection = selectedService?.requiresTimeSelection !== false;
 
   const handleDateConfirm = (date: Date) => {
     const dateString = formatDateToString(date);
@@ -45,7 +49,7 @@ export function DateTimeSelectionStep() {
           </TouchableOpacity>
         </Card>
 
-        {selectedDate && (
+        {selectedDate && requiresTimeSelection && (
           <Card>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>시간 선택</Text>
@@ -73,6 +77,20 @@ export function DateTimeSelectionStep() {
                   </Text>
                 </TouchableOpacity>
               ))}
+            </View>
+          </Card>
+        )}
+
+        {selectedDate && !requiresTimeSelection && (
+          <Card>
+            <View style={styles.allDayNotice}>
+              <Text style={styles.allDayIcon}>📅</Text>
+              <View style={styles.allDayTextContainer}>
+                <Text style={styles.allDayTitle}>하루 종일 작업</Text>
+                <Text style={styles.allDayDescription}>
+                  이 서비스는 하루 종일 진행되므로 별도의 시간 선택이 필요하지 않습니다.
+                </Text>
+              </View>
             </View>
           </Card>
         )}
@@ -156,5 +174,29 @@ const styles = StyleSheet.create({
   },
   timeSlotTextDisabled: {
     color: colors.grey400,
+  },
+  allDayNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 16,
+    gap: 12,
+  },
+  allDayIcon: {
+    fontSize: 32,
+  },
+  allDayTextContainer: {
+    flex: 1,
+  },
+  allDayTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.grey900,
+    marginBottom: 4,
+  },
+  allDayDescription: {
+    fontSize: 14,
+    color: colors.grey600,
+    lineHeight: 20,
   },
 });

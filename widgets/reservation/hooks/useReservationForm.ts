@@ -27,7 +27,10 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
     mode: 'onChange',
   });
 
-  const { getValues, setValue } = methods;
+  const { getValues, setValue, watch } = methods;
+
+  // 폼 값 변경을 구독하여 버튼 상태 업데이트
+  const watchedValues = watch();
 
   // zustand store
   const { currentStep, goToNextStep, goToPreviousStep, setIsLoading, updateTimeSlotsForDate } = useReservationStore([
@@ -39,12 +42,19 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
   ]);
 
   const canProceedToNext = (): boolean => {
-    const values = getValues();
+    // watch()로 구독한 값 사용 (리렌더링 트리거)
+    const values = watchedValues;
+    // 시간 선택이 필요 없는 서비스인지 확인 (기본값: true)
+    const requiresTimeSelection = values.service?.requiresTimeSelection !== false;
 
     switch (currentStep) {
       case 'service':
         return values.service !== null;
       case 'datetime':
+        // 시간 선택이 필요 없는 서비스는 날짜만 선택하면 진행 가능
+        if (!requiresTimeSelection) {
+          return values.date !== '';
+        }
         return values.date !== '' && values.timeSlot !== null;
       case 'customer':
         return (

@@ -14,6 +14,9 @@ export function ConfirmationStep() {
   const customerInfo = watch('customerInfo');
   const agreedToTerms = watch('agreedToTerms');
 
+  // 시간 선택이 필요한 서비스인지 확인 (기본값: true)
+  const requiresTimeSelection = selectedService?.requiresTimeSelection !== false;
+
   return (
     <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
       <Card>
@@ -33,7 +36,9 @@ export function ConfirmationStep() {
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>시간</Text>
-            <Text style={styles.summaryValue}>{selectedTimeSlot?.time}</Text>
+            <Text style={styles.summaryValue}>
+              {requiresTimeSelection ? selectedTimeSlot?.time : '하루 종일'}
+            </Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>고객명</Text>
@@ -43,18 +48,12 @@ export function ConfirmationStep() {
             <Text style={styles.summaryLabel}>연락처</Text>
             <Text style={styles.summaryValue}>{customerInfo.phone}</Text>
           </View>
-          <View style={styles.summaryRow}>
+          <View style={[styles.summaryRow, styles.summaryRowLast]}>
             <Text style={styles.summaryLabel}>주소</Text>
             <Text style={styles.summaryValue}>
               {customerInfo.address} {customerInfo.detailAddress}
             </Text>
           </View>
-          {selectedService?.price && (
-            <View style={[styles.summaryRow, styles.summaryRowHighlight]}>
-              <Text style={styles.summaryLabel}>예상 비용</Text>
-              <Text style={styles.summaryValuePrice}>₩{selectedService.price.toLocaleString()}</Text>
-            </View>
-          )}
         </View>
       </Card>
 
@@ -102,13 +101,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.grey100,
   },
-  summaryRowHighlight: {
-    backgroundColor: colors.blue50,
-    marginHorizontal: -8,
-    paddingHorizontal: 16,
+  summaryRowLast: {
     borderBottomWidth: 0,
-    marginTop: 8,
-    borderRadius: 8,
   },
   summaryLabel: {
     fontSize: 14,
@@ -120,11 +114,6 @@ const styles = StyleSheet.create({
     color: colors.grey900,
     flex: 1,
     textAlign: 'right',
-  },
-  summaryValuePrice: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.blue600,
   },
   termsCheckbox: {
     flexDirection: 'row',

@@ -7,9 +7,14 @@ export interface HomeService {
   buttonText: string;
   routePath: string;
   // 예약용 추가 필드
-  price?: number;
   duration?: string;
   features?: string[];
+  /**
+   * 시간 선택이 필요한 서비스인지 여부
+   * - true: 특정 시간대 선택 필요 (기본값)
+   * - false: 하루 종일 작업으로 시간 선택 불필요 (예: 인테리어 필름)
+   */
+  requiresTimeSelection?: boolean;
 }
 
 export const HOME_SERVICES: HomeService[] = [
@@ -21,9 +26,9 @@ export const HOME_SERVICES: HomeService[] = [
     iconBgColor: '#E3F2FD',
     buttonText: '견적받기',
     routePath: '/reservation',
-    price: 120000,
-    duration: '2-3시간',
+    duration: '하루 종일',
     features: ['현장 측정', '필름 시공', '마감 처리'],
+    requiresTimeSelection: false, // 하루 종일 작업
   },
   {
     id: 'glass-cleaning',
@@ -33,8 +38,8 @@ export const HOME_SERVICES: HomeService[] = [
     iconBgColor: '#E8F5E9',
     buttonText: '견적받기',
     routePath: '/reservation',
-    price: 80000,
     duration: '1-2시간',
     features: ['외부 유리', '내부 유리', '창틀 청소'],
+    requiresTimeSelection: true, // 시간대 선택 필요
   },
 ];
