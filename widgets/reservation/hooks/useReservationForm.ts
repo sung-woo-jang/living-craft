@@ -1,61 +1,59 @@
-import { TimeSlot } from '@shared/constants';
-import { HomeService } from '@shared/constants/home-services';
-import { useMemo, useState } from 'react';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { Alert } from 'react-native';
 
-import { generateRandomDisabledDates, generateRandomTimeSlots } from '../utils';
-
-export type StepKey = 'service' | 'datetime' | 'customer' | 'confirmation';
-
-export interface CustomerInfo {
-  name: string;
-  phone: string;
-  address: string;
-  detailAddress: string;
-  requirements: string;
-}
-
-export const STEP_ORDER: StepKey[] = ['service', 'datetime', 'customer', 'confirmation'];
+import { useReservationStore } from '../store/reservationStore';
+import { DEFAULT_FORM_VALUES, ReservationFormData } from '../types';
 
 interface UseReservationFormOptions {
   onSubmitSuccess?: () => void;
 }
 
-export function useReservationForm(options?: UseReservationFormOptions) {
-  const [currentStep, setCurrentStep] = useState<StepKey>('service');
-  const [selectedService, setSelectedService] = useState<HomeService | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>('');
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
-  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
-    name: '',
-    phone: '',
-    address: '',
-    detailAddress: '',
-    requirements: '',
+interface UseReservationFormReturn {
+  // react-hook-form methods (FormProvider에 전달)
+  methods: UseFormReturn<ReservationFormData>;
+
+  // Actions
+  handleNext: () => void;
+  handlePrevious: () => void;
+  handleSubmit: () => Promise<void>;
+  handleDateSelect: (date: string) => void;
+  canProceedToNext: () => boolean;
+}
+
+export function useReservationForm(options?: UseReservationFormOptions): UseReservationFormReturn {
+  // react-hook-form
+  const methods = useForm<ReservationFormData>({
+    defaultValues: DEFAULT_FORM_VALUES,
+    mode: 'onChange',
   });
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
-  const disabledDates = useMemo(() => generateRandomDisabledDates(), []);
+  const { getValues, setValue } = methods;
 
-  const timeSlots = useMemo(() => {
-    if (!selectedDate) return [];
-    return generateRandomTimeSlots(selectedDate);
-  }, [selectedDate]);
+  // zustand store
+  const { currentStep, goToNextStep, goToPreviousStep, setIsLoading, updateTimeSlotsForDate } = useReservationStore([
+    'currentStep',
+    'goToNextStep',
+    'goToPreviousStep',
+    'setIsLoading',
+    'updateTimeSlotsForDate',
+  ]);
 
   const canProceedToNext = (): boolean => {
+    const values = getValues();
+
     switch (currentStep) {
       case 'service':
-        return selectedService !== null;
+        return values.service !== null;
       case 'datetime':
-        return selectedDate !== '' && selectedTimeSlot !== null;
+        return values.date !== '' && values.timeSlot !== null;
       case 'customer':
         return (
-          customerInfo.name.trim() !== '' && customerInfo.phone.trim() !== '' && customerInfo.address.trim() !== ''
+          values.customerInfo.name.trim() !== '' &&
+          values.customerInfo.phone.trim() !== '' &&
+          values.customerInfo.address.trim() !== ''
         );
       case 'confirmation':
-        return agreedToTerms;
+        return values.agreedToTerms;
       default:
         return false;
     }
@@ -66,26 +64,11 @@ export function useReservationForm(options?: UseReservationFormOptions) {
       Alert.alert('알림', '필수 항목을 모두 입력해주세요.');
       return;
     }
-
-    const currentIndex = STEP_ORDER.indexOf(currentStep);
-
-    if (currentIndex < STEP_ORDER.length - 1) {
-      const nextStep = STEP_ORDER[currentIndex + 1];
-      if (nextStep) {
-        setCurrentStep(nextStep);
-      }
-    }
+    goToNextStep();
   };
 
   const handlePrevious = () => {
-    const currentIndex = STEP_ORDER.indexOf(currentStep);
-
-    if (currentIndex > 0) {
-      const prevStep = STEP_ORDER[currentIndex - 1];
-      if (prevStep) {
-        setCurrentStep(prevStep);
-      }
-    }
+    goToPreviousStep();
   };
 
   const handleSubmit = async () => {
@@ -97,11 +80,12 @@ export function useReservationForm(options?: UseReservationFormOptions) {
     setIsLoading(true);
 
     try {
+      const values = getValues();
       const reservationData = {
-        serviceId: selectedService?.id,
-        date: selectedDate,
-        timeSlot: selectedTimeSlot?.time,
-        customerInfo,
+        serviceId: values.service?.id,
+        date: values.date,
+        timeSlot: values.timeSlot?.time,
+        customerInfo: values.customerInfo,
       };
 
       console.log('예약 데이터:', reservationData);
@@ -125,35 +109,17 @@ export function useReservationForm(options?: UseReservationFormOptions) {
   };
 
   const handleDateSelect = (date: string) => {
-    setSelectedDate(date);
-    setSelectedTimeSlot(null);
+    setValue('date', date);
+    setValue('timeSlot', null);
+    updateTimeSlotsForDate(date);
   };
 
   return {
-    // State
-    currentStep,
-    selectedService,
-    selectedDate,
-    selectedTimeSlot,
-    customerInfo,
-    agreedToTerms,
-    isLoading,
-    isCalendarVisible,
-    disabledDates,
-    timeSlots,
-
-    // Setters
-    setSelectedService,
-    setSelectedTimeSlot,
-    setCustomerInfo,
-    setAgreedToTerms,
-    setIsCalendarVisible,
-    handleDateSelect,
-
-    // Actions
+    methods,
     handleNext,
     handlePrevious,
     handleSubmit,
+    handleDateSelect,
     canProceedToNext,
   };
 }

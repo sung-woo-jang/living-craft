@@ -1,33 +1,36 @@
-import { TimeSlot } from '@shared/constants';
 import { Card } from '@shared/ui';
 import { CalendarBottomSheet } from '@shared/ui/calendar-bottom-sheet';
 import { formatDateToString, parseStringToDate } from '@shared/ui/calendar-bottom-sheet/utils';
 import { colors } from '@toss/tds-colors';
+import { useReservationStore } from '@widgets/reservation';
+import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface DateTimeSelectionStepProps {
-  selectedDate: string;
-  selectedTimeSlot: TimeSlot | null;
-  timeSlots: TimeSlot[];
-  disabledDates: Date[];
-  isCalendarVisible: boolean;
-  onDateSelect: (date: string) => void;
-  onTimeSlotSelect: (slot: TimeSlot) => void;
-  onCalendarOpen: () => void;
-  onCalendarClose: () => void;
-}
+import { ReservationFormData } from '../types';
 
-export function DateTimeSelectionStep({
-  selectedDate,
-  selectedTimeSlot,
-  timeSlots,
-  disabledDates,
-  isCalendarVisible,
-  onDateSelect,
-  onTimeSlotSelect,
-  onCalendarOpen,
-  onCalendarClose,
-}: DateTimeSelectionStepProps) {
+export function DateTimeSelectionStep() {
+  const { watch, setValue } = useFormContext<ReservationFormData>();
+  const { timeSlots, disabledDates, isCalendarVisible, openCalendar, closeCalendar, updateTimeSlotsForDate } =
+    useReservationStore([
+      'timeSlots',
+      'disabledDates',
+      'isCalendarVisible',
+      'openCalendar',
+      'closeCalendar',
+      'updateTimeSlotsForDate',
+    ]);
+
+  const selectedDate = watch('date');
+  const selectedTimeSlot = watch('timeSlot');
+
+  const handleDateConfirm = (date: Date) => {
+    const dateString = formatDateToString(date);
+    setValue('date', dateString);
+    setValue('timeSlot', null);
+    updateTimeSlotsForDate(dateString);
+    closeCalendar();
+  };
+
   return (
     <>
       <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
@@ -35,7 +38,7 @@ export function DateTimeSelectionStep({
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>날짜 선택</Text>
           </View>
-          <TouchableOpacity style={styles.dateInputButton} onPress={onCalendarOpen}>
+          <TouchableOpacity style={styles.dateInputButton} onPress={openCalendar}>
             <Text style={selectedDate ? styles.dateInputTextSelected : styles.dateInputText}>
               {selectedDate || '날짜를 선택해주세요'}
             </Text>
@@ -56,7 +59,7 @@ export function DateTimeSelectionStep({
                     selectedTimeSlot?.id === slot.id && styles.timeSlotSelected,
                     !slot.available && styles.timeSlotDisabled,
                   ]}
-                  onPress={() => slot.available && onTimeSlotSelect(slot)}
+                  onPress={() => slot.available && setValue('timeSlot', slot)}
                   disabled={!slot.available}
                 >
                   <Text
@@ -81,11 +84,8 @@ export function DateTimeSelectionStep({
         disabledDates={disabledDates}
         title="예약 날짜 선택"
         confirmButtonText="날짜 선택"
-        onConfirm={(date) => {
-          onDateSelect(formatDateToString(date));
-          onCalendarClose();
-        }}
-        onClose={onCalendarClose}
+        onConfirm={handleDateConfirm}
+        onClose={closeCalendar}
       />
     </>
   );

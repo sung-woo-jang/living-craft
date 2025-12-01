@@ -1,7 +1,7 @@
 import { colors } from '@toss/tds-colors';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { StepKey } from '../hooks/useReservationForm';
+import { StepKey } from '../types';
 
 interface ReservationActionsProps {
   currentStep: StepKey;

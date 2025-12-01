@@ -21,7 +21,9 @@
     "@typescript-eslint/eslint-plugin": "^8.46.4",
     "@typescript-eslint/parser": "^8.46.4",
     "react": "18.2.0",
-    "react-native": "0.72.6"
+    "react-hook-form": "^7.67.0",
+    "react-native": "0.72.6",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@babel/core": "7.23.9",

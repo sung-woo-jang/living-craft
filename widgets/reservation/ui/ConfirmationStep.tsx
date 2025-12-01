@@ -1,28 +1,19 @@
-import { TimeSlot } from '@shared/constants';
-import { HomeService } from '@shared/constants/home-services';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
+import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { CustomerInfo } from '../hooks/useReservationForm';
+import { ReservationFormData } from '../types';
 
-interface ConfirmationStepProps {
-  selectedService: HomeService | null;
-  selectedDate: string;
-  selectedTimeSlot: TimeSlot | null;
-  customerInfo: CustomerInfo;
-  agreedToTerms: boolean;
-  onAgreeChange: (agreed: boolean) => void;
-}
+export function ConfirmationStep() {
+  const { watch, setValue } = useFormContext<ReservationFormData>();
 
-export function ConfirmationStep({
-  selectedService,
-  selectedDate,
-  selectedTimeSlot,
-  customerInfo,
-  agreedToTerms,
-  onAgreeChange,
-}: ConfirmationStepProps) {
+  const selectedService = watch('service');
+  const selectedDate = watch('date');
+  const selectedTimeSlot = watch('timeSlot');
+  const customerInfo = watch('customerInfo');
+  const agreedToTerms = watch('agreedToTerms');
+
   return (
     <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
       <Card>
@@ -68,7 +59,7 @@ export function ConfirmationStep({
       </Card>
 
       <Card>
-        <TouchableOpacity style={styles.termsCheckbox} onPress={() => onAgreeChange(!agreedToTerms)}>
+        <TouchableOpacity style={styles.termsCheckbox} onPress={() => setValue('agreedToTerms', !agreedToTerms)}>
           <View style={[styles.checkbox, agreedToTerms && styles.checkboxChecked]}>
             {agreedToTerms && <Text style={styles.checkboxMark}>✓</Text>}
           </View>

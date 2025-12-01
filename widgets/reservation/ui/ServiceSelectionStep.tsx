@@ -1,14 +1,15 @@
-import { HOME_SERVICES, HomeService } from '@shared/constants/home-services';
+import { HOME_SERVICES } from '@shared/constants/home-services';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
+import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface ServiceSelectionStepProps {
-  selectedService: HomeService | null;
-  onSelect: (service: HomeService) => void;
-}
+import { ReservationFormData } from '../types';
 
-export function ServiceSelectionStep({ selectedService, onSelect }: ServiceSelectionStepProps) {
+export function ServiceSelectionStep() {
+  const { watch, setValue } = useFormContext<ReservationFormData>();
+  const selectedService = watch('service');
+
   return (
     <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
       <Card>
@@ -25,7 +26,7 @@ export function ServiceSelectionStep({ selectedService, onSelect }: ServiceSelec
               selectedService?.id === service.id && styles.serviceRowSelected,
               index < HOME_SERVICES.length - 1 && styles.serviceRowBorder,
             ]}
-            onPress={() => onSelect(service)}
+            onPress={() => setValue('service', service)}
           >
             <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor }]}>
               <Text style={styles.icon}>{service.icon}</Text>
