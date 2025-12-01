@@ -2,10 +2,10 @@ import { Card } from '@shared/ui';
 import { CalendarBottomSheet } from '@shared/ui/calendar-bottom-sheet';
 import { formatDateToString, parseStringToDate } from '@shared/ui/calendar-bottom-sheet/utils';
 import { colors } from '@toss/tds-colors';
-import { useReservationStore } from '@widgets/reservation';
 import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { useReservationStore } from '../store/reservationStore';
 import { ReservationFormData } from '../types';
 
 export function DateTimeSelectionStep() {

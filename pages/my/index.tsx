@@ -51,25 +51,6 @@ function Page() {
           ))}
         </View>
 
-        {/* 빠른 액세스 */}
-        <View style={styles.quickSection}>
-          <Text style={styles.quickTitle}>빠른 이동</Text>
-          <View style={styles.quickGrid}>
-            <TouchableOpacity style={styles.quickItem} onPress={() => navigation.navigate('/reservation/search')}>
-              <Text style={styles.quickIcon}>🔍</Text>
-              <Text style={styles.quickText}>예약 조회</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.quickItem} onPress={() => navigation.navigate('/faq')}>
-              <Text style={styles.quickIcon}>❓</Text>
-              <Text style={styles.quickText}>FAQ</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.quickItem} onPress={() => navigation.navigate('/portfolio')}>
-              <Text style={styles.quickIcon}>🛠️</Text>
-              <Text style={styles.quickText}>포트폴리오</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
         {/* 앱 정보 */}
         <View style={styles.appInfo}>
           <Text style={styles.appVersion}>버전 1.0.0</Text>
@@ -180,41 +161,6 @@ const styles = StyleSheet.create({
   menuArrow: {
     fontSize: 24,
     color: colors.grey400,
-  },
-  quickSection: {
-    backgroundColor: 'white',
-    padding: 20,
-    marginTop: 12,
-  },
-  quickTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.grey900,
-    marginBottom: 16,
-  },
-  quickGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  quickItem: {
-    width: '23%',
-    aspectRatio: 1,
-    backgroundColor: colors.background,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.grey200,
-  },
-  quickIcon: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  quickText: {
-    fontSize: 11,
-    color: colors.grey700,
-    textAlign: 'center',
   },
   appInfo: {
     padding: 20,

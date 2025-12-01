@@ -12,7 +12,7 @@ export interface HomeService {
   /**
    * 시간 선택이 필요한 서비스인지 여부
    * - true: 특정 시간대 선택 필요 (기본값)
-   * - false: 하루 종일 작업으로 시간 선택 불필요 (예: 인테리어 필름)
+   * - false: 하루 종일 작업으로 시간 선택 불필요
    */
   requiresTimeSelection?: boolean;
 }
@@ -27,7 +27,7 @@ export const HOME_SERVICES: HomeService[] = [
     buttonText: '견적받기',
     routePath: '/reservation',
     duration: '하루 종일',
-    features: ['현장 측정', '필름 시공', '마감 처리'],
+    features: ['현장 측정', '필름 작업', '마감 처리'],
     requiresTimeSelection: false, // 하루 종일 작업
   },
   {

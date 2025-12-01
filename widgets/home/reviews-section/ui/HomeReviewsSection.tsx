@@ -6,8 +6,8 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 /**
- * 홈페이지 리뷰 섹션 - 인테리어 필름 시공 후기
- * 필름 시공 고객 후기를 카드 형태로 표시
+ * 홈페이지 리뷰 섹션 - 서비스 후기
+ * 고객 서비스 후기를 카드 형태로 표시
  *
  * TODO: GET /api/reviews - 고객 후기 목록 조회
  */

@@ -2,6 +2,7 @@ import { createRoute, Image } from '@granite-js/react-native';
 import { FILM_PORTFOLIOS } from '@shared/constants';
 import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
+import { Badge } from '@toss/tds-react-native';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -10,8 +11,8 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const TempRoute = createRoute('/_layout' as any, { component: () => null });
 
 /**
- * 홈페이지 포트폴리오 섹션 - 인테리어 필름 시공 사례
- * 필름 시공 작업 사례를 이미지 카드로 표시
+ * 홈페이지 포트폴리오 섹션 - 작업 사례
+ * 다양한 서비스 작업 사례를 이미지 카드로 표시
  *
  * TODO: GET /api/portfolio - 작업 사례 목록 조회
  */
@@ -29,7 +30,7 @@ export const HomePortfolioSection = () => {
   return (
     <Card>
       <View style={styles.header}>
-        <Text style={styles.title}>시공 사례</Text>
+        <Text style={styles.title}>작업 사례</Text>
       </View>
 
       <Carousel
@@ -45,7 +46,9 @@ export const HomePortfolioSection = () => {
                 }}
               />
               <View style={styles.cardContent}>
-                <Text style={styles.category}>{item.category}</Text>
+                <Badge type="blue" size="small" badgeStyle="weak">
+                  {item.category}
+                </Badge>
                 <Text style={styles.cardTitle}>{item.projectName}</Text>
                 <Text style={styles.description}>{item.description}</Text>
               </View>
@@ -64,7 +67,7 @@ export const HomePortfolioSection = () => {
 
       <TouchableOpacity onPress={handleViewAllPress} style={styles.viewAllButton}>
         <View style={styles.viewAllButtonInner}>
-          <Text style={styles.viewAllText}>모든 시공 사례 보기</Text>
+          <Text style={styles.viewAllText}>모든 작업 사례 보기</Text>
         </View>
       </TouchableOpacity>
     </Card>
@@ -86,32 +89,33 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 16,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.grey100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
   },
   image: {
     width: '100%',
-    height: 200,
-    backgroundColor: colors.grey200,
+    height: 180,
+    backgroundColor: colors.grey100,
   },
   cardContent: {
     paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  category: {
-    fontSize: 13,
-    color: colors.blue500,
-    fontWeight: '600',
-    marginBottom: 6,
-    textTransform: 'uppercase',
+    paddingHorizontal: 20,
   },
   cardTitle: {
     fontSize: 17,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.grey900,
-    marginBottom: 4,
+    marginTop: 8,
+    marginBottom: 6,
   },
   description: {
     fontSize: 14,
-    color: colors.grey600,
+    color: colors.grey500,
     lineHeight: 20,
   },
   viewAllButton: {
@@ -120,8 +124,8 @@ const styles = StyleSheet.create({
   },
   viewAllButtonInner: {
     paddingVertical: 14,
-    paddingHorizontal: 28,
-    backgroundColor: colors.grey50,
+    paddingHorizontal: 32,
+    backgroundColor: colors.blue50,
     borderRadius: 12,
   },
   viewAllText: {

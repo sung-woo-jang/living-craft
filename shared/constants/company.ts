@@ -6,7 +6,7 @@
 export const COMPANY_INFO = {
   // 회사 기본 정보
   name: 'Living Craft',
-  description: '인테리어 필름 시공 전문 업체',
+  description: '생활 서비스 전문',
   businessNumber: '123-45-67890',
   representative: '홍길동',
   address: '서울특별시 강남구 테헤란로 123',

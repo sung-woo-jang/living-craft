@@ -94,7 +94,7 @@ export const MOCK_PORTFOLIOS: Portfolio[] = [
   },
 ];
 
-// 인테리어 필름 시공 포트폴리오
+// 작업 포트폴리오
 export const FILM_PORTFOLIOS: Portfolio[] = [
   {
     id: 101,
@@ -103,12 +103,12 @@ export const FILM_PORTFOLIOS: Portfolio[] = [
     duration: '2024.11',
     category: '인테리어필름',
     thumbnail: getUnsplashUrl(9001),
-    description: '싱크대와 주방 가구 필름 시공',
+    description: '싱크대와 주방 가구 필름 작업',
     images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(9001 + i + 1)),
   },
   {
     id: 102,
-    projectName: '거실 가구 필름 시공',
+    projectName: '거실 가구 필름 작업',
     client: '이○○',
     duration: '2024.11',
     category: '인테리어필름',
@@ -157,9 +157,9 @@ export const PORTFOLIO_DETAILS: Record<string, PortfolioDetail> = {
     ...FILM_PORTFOLIOS[0]!,
     detailedDescription: `낡은 주방 싱크대와 가구를 인테리어 필름으로 새롭게 리뉴얼했습니다.
 
-• 시공 대상: 싱크대 상판, 하부장, 상부장 전체
+• 작업 대상: 싱크대 상판, 하부장, 상부장 전체
 • 필름 종류: 고급 원목 패턴 및 대리석 패턴
-• 시공 기간: 1일 완성
+• 작업 기간: 1일 완성
 • 비용 절감: 전면 교체 대비 약 70% 절감
 • 특징: 방수, 내열, 내구성이 뛰어난 프리미엄 필름 사용
 
@@ -168,11 +168,11 @@ export const PORTFOLIO_DETAILS: Record<string, PortfolioDetail> = {
   },
   '102': {
     ...FILM_PORTFOLIOS[1]!,
-    detailedDescription: `거실 가구에 원목 패턴 필름을 시공하여 따뜻한 분위기를 연출했습니다.
+    detailedDescription: `거실 가구에 원목 패턴 필름을 적용하여 따뜻한 분위기를 연출했습니다.
 
-• 시공 대상: TV장, 책장, 수납장
+• 작업 대상: TV장, 책장, 수납장
 • 필름 종류: 고급 원목 패턴 (월넛, 오크)
-• 시공 기간: 1일 완성
+• 작업 기간: 1일 완성
 • 효과: 공간에 자연스러운 따뜻함과 고급스러움 부여
 • 장점: 실제 원목 가구 대비 관리가 쉽고 비용 효율적
 
@@ -181,28 +181,28 @@ export const PORTFOLIO_DETAILS: Record<string, PortfolioDetail> = {
   },
   '103': {
     ...FILM_PORTFOLIOS[2]!,
-    detailedDescription: `문틀과 현관에 대리석 패턴 필름을 시공하여 고급스러운 분위기를 완성했습니다.
+    detailedDescription: `문틀과 현관에 대리석 패턴 필름을 적용하여 고급스러운 분위기를 완성했습니다.
 
-• 시공 대상: 현관 문틀, 거실 문틀, 베란다 문틀
+• 작업 대상: 현관 문틀, 거실 문틀, 베란다 문틀
 • 필름 종류: 고급 대리석 패턴 (화이트 마블, 그레이 마블)
-• 시공 기간: 반나절 완성
+• 작업 기간: 반나절 완성
 • 효과: 고급 대리석의 질감과 광택 재현
 • 특징: 흠집에 강하고 세척이 용이한 필름
 
-실제 대리석 시공 대비 훨씬 저렴한 비용으로 럭셔리한 느낌을 살렸습니다.`,
+실제 대리석 작업 대비 훨씬 저렴한 비용으로 럭셔리한 느낌을 살렸습니다.`,
     tags: ['인테리어필름', '문틀', '대리석패턴', '현관'],
   },
   '104': {
     ...FILM_PORTFOLIOS[3]!,
-    detailedDescription: `욕실 타일을 방수 필름으로 시공하여 깨끗하고 모던한 공간으로 변신시켰습니다.
+    detailedDescription: `욕실 타일에 방수 필름을 적용하여 깨끗하고 모던한 공간으로 변신시켰습니다.
 
-• 시공 대상: 욕실 벽면 타일, 세면대 주변
+• 작업 대상: 욕실 벽면 타일, 세면대 주변
 • 필름 종류: 방수 타일 패턴 필름 (화이트, 그레이)
-• 시공 기간: 1일 완성
+• 작업 기간: 1일 완성
 • 특징: 완벽한 방수 처리, 곰팡이 방지 효과
 • 장점: 타일 교체 대비 공사 기간 단축 및 비용 절감
 
-타일 재시공 없이 깨끗하고 세련된 욕실을 완성했습니다.`,
+타일 재작업 없이 깨끗하고 세련된 욕실을 완성했습니다.`,
     tags: ['인테리어필름', '욕실', '방수필름', '타일'],
   },
   '2': {

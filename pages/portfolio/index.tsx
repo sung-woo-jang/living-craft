@@ -27,8 +27,8 @@ function Page() {
       >
         <Card>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>시공 사례</Text>
-            <Text style={styles.sectionSubtitle}>인테리어 필름 시공 사례를 확인해보세요</Text>
+            <Text style={styles.sectionTitle}>작업 사례</Text>
+            <Text style={styles.sectionSubtitle}>다양한 작업 사례를 확인해보세요</Text>
           </View>
 
           {FILM_PORTFOLIOS.map((portfolio, index) => (

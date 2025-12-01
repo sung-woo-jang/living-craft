@@ -46,7 +46,7 @@ export const MOCK_REVIEWS: Review[] = [
     serviceName: '아파트 전체 리모델링',
     userName: '이**',
     rating: 5,
-    comment: '기대 이상이었어요. 디자인 제안도 좋았고 시공 품질도 훌륭했습니다.',
+    comment: '기대 이상이었어요. 디자인 제안도 좋았고 작업 품질도 훌륭했습니다.',
     date: '2024-11-28',
   },
   {
@@ -158,27 +158,27 @@ export const HOME_REVIEWS: HomeReview[] = [
   },
 ];
 
-// 인테리어 필름 시공 후기 (홈페이지용)
+// 서비스 후기 (홈페이지용)
 export const FILM_REVIEWS: HomeReview[] = [
   {
     id: '1',
     author: '김민지',
     rating: 5,
-    content: '주방이 완전히 새것처럼 바뀌었어요! 비용도 저렴하고 시공 기간도 짧아서 정말 만족스럽습니다.',
-    service: '인테리어 필름 시공',
+    content: '주방이 완전히 새것처럼 바뀌었어요! 비용도 저렴하고 작업 기간도 짧아서 정말 만족스럽습니다.',
+    service: '인테리어 필름',
   },
   {
     id: '2',
     author: '박준호',
     rating: 5,
-    content: '문틀과 가구에 필름 시공했는데 고급스러워 보여서 너무 좋아요. 디자이너님도 친절하셨습니다.',
-    service: '인테리어 필름 시공',
+    content: '문틀과 가구에 필름 작업했는데 고급스러워 보여서 너무 좋아요. 담당자님도 친절하셨습니다.',
+    service: '인테리어 필름',
   },
   {
     id: '3',
     author: '이서연',
     rating: 5,
-    content: '전체 리모델링 대신 필름 시공 선택했는데 정말 잘한 것 같아요. 비용 절감에 결과도 완벽합니다!',
-    service: '인테리어 필름 시공',
+    content: '전체 리모델링 대신 필름 작업을 선택했는데 정말 잘한 것 같아요. 비용 절감에 결과도 완벽합니다!',
+    service: '인테리어 필름',
   },
 ];

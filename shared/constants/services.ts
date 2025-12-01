@@ -37,11 +37,11 @@ export const RESERVATION_SERVICES: Service[] = [
   },
   {
     id: 'film-fixed',
-    name: '인테리어 필름 시공',
+    name: '인테리어 필름',
     type: 'fixed',
     icon: '🎨',
-    description: '벽지·가구·문틀 필름 시공으로 새 집처럼',
-    features: ['현장 측정', '필름 시공', '마감 처리', '2-3시간 소요'],
+    description: '벽지·가구·문틀 필름으로 새 집처럼',
+    features: ['현장 측정', '필름 작업', '마감 처리', '2-3시간 소요'],
     price: 120000,
   },
   {
@@ -55,11 +55,11 @@ export const RESERVATION_SERVICES: Service[] = [
   },
   {
     id: 'wallpaper-fixed',
-    name: '도배·장판 시공',
+    name: '도배·장판',
     type: 'fixed',
     icon: '🖼️',
     description: '새 도배와 장판으로 깔끔한 공간 연출',
-    features: ['자재 상담', '도배·장판 시공', '청소', '4-5시간 소요'],
+    features: ['자재 상담', '도배·장판 작업', '청소', '4-5시간 소요'],
     price: 200000,
   },
 ];
@@ -74,8 +74,8 @@ export const FEATURED_SERVICES: ServiceItem[] = [
   },
   {
     id: '2',
-    title: '인테리어 필름 시공',
-    description: '벽지·가구·문틀 필름 시공으로 새 집처럼',
+    title: '인테리어 필름',
+    description: '벽지·가구·문틀 필름으로 새 집처럼',
     icon: '🎨',
   },
   {
@@ -86,7 +86,7 @@ export const FEATURED_SERVICES: ServiceItem[] = [
   },
   {
     id: '4',
-    title: '도배·장판 시공',
+    title: '도배·장판',
     description: '새 도배와 장판으로 깔끔한 공간 연출',
     icon: '🖼️',
   },

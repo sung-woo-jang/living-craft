@@ -112,7 +112,7 @@ function Page() {
             style={styles.inquiryButton}
             onPress={() => navigation.navigate('/reservation' as any)}
           >
-            <Text style={styles.inquiryButtonText}>이 시공 문의하기</Text>
+            <Text style={styles.inquiryButtonText}>서비스 문의하기</Text>
           </TouchableOpacity>
         </Card>
       </ScrollView>
