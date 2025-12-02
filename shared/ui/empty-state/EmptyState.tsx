@@ -1,8 +1,10 @@
 import { colors } from '@toss/tds-colors';
+import { Asset } from '@toss/tds-react-native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface EmptyStateProps {
-  icon?: string;
+  iconName?: string;
+  iconColor?: string;
   title: string;
   description: string;
   actionLabel?: string;
@@ -13,10 +15,17 @@ interface EmptyStateProps {
  * 빈 상태 컴포넌트
  * 데이터가 없을 때 표시하는 UI (검색 결과 없음, 목록 비어있음 등)
  */
-export const EmptyState = ({ icon = '🔍', title, description, actionLabel, onActionPress }: EmptyStateProps) => {
+export const EmptyState = ({
+  iconName = 'icon-profile-magnifier-blue',
+  iconColor = colors.grey400,
+  title,
+  description,
+  actionLabel,
+  onActionPress
+}: EmptyStateProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.icon}>{icon}</Text>
+      <Asset.Icon name={iconName} color={iconColor} frameShape={Asset.frameShape.CleanW60} />
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
       {actionLabel && onActionPress && (
@@ -35,10 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 40,
     paddingVertical: 60,
-  },
-  icon: {
-    fontSize: 64,
-    marginBottom: 20,
+    gap: 20,
   },
   title: {
     fontSize: 18,

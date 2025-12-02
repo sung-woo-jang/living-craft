@@ -3,6 +3,7 @@ import { MOCK_REVIEWS } from '@shared/constants';
 import { EmptyState } from '@shared/ui/empty-state';
 import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
+import { Asset } from '@toss/tds-react-native';
 import { useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -12,9 +13,9 @@ export const Route = createRoute('/reviews', {
 
 const FILTER_OPTIONS: FilterOption[] = [
   { key: 'all', label: '전체' },
-  { key: '5', label: '⭐⭐⭐⭐⭐' },
-  { key: '4', label: '⭐⭐⭐⭐' },
-  { key: '3', label: '⭐⭐⭐' },
+  { key: '5', label: '5점' },
+  { key: '4', label: '4점' },
+  { key: '3', label: '3점' },
 ];
 
 /**
@@ -50,7 +51,7 @@ function Page() {
       {/* 리뷰 목록 */}
       {filteredReviews.length === 0 ? (
         <EmptyState
-          icon="💬"
+          iconName="icon-chat-bubble-mono"
           title="리뷰가 없습니다"
           description="선택하신 평점에 해당하는 리뷰가 없습니다"
           actionLabel="전체 보기"
@@ -70,9 +71,12 @@ function Page() {
               {/* 평점 */}
               <View style={styles.ratingContainer}>
                 {Array.from({ length: 5 }).map((_, index) => (
-                  <Text key={index} style={styles.star}>
-                    {index < item.rating ? '⭐' : '☆'}
-                  </Text>
+                  <Asset.Icon
+                    key={index}
+                    name="icon-star-mono"
+                    color={index < item.rating ? colors.yellow500 : colors.grey300}
+                    frameShape={Asset.frameShape.CleanW24}
+                  />
                 ))}
                 <Text style={styles.ratingText}>{item.rating}.0</Text>
               </View>
@@ -147,9 +151,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
     gap: 2,
-  },
-  star: {
-    fontSize: 16,
   },
   ratingText: {
     fontSize: 14,

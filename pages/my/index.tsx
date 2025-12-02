@@ -1,6 +1,7 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
 import { MENU_ITEMS, MOCK_USER } from '@shared/constants';
 import { colors } from '@toss/tds-colors';
+import { Asset } from '@toss/tds-react-native';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/my', {
@@ -33,7 +34,7 @@ function Page() {
           {MENU_ITEMS.map((item, index) => (
             <TouchableOpacity key={index} style={styles.menuItem} onPress={() => navigation.navigate(item.path as any)}>
               <View style={styles.menuItemLeft}>
-                <Text style={styles.menuIcon}>{item.icon}</Text>
+                <Asset.Icon name={item.iconName} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
                 <View style={styles.menuText}>
                   <Text style={styles.menuTitle}>{item.title}</Text>
                   <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
@@ -121,10 +122,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  menuIcon: {
-    fontSize: 28,
-    marginRight: 16,
+    gap: 16,
   },
   menuText: {
     flex: 1,

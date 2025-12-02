@@ -2,6 +2,7 @@ import { createRoute, useNavigation } from '@granite-js/react-native';
 import { MOCK_MY_REVIEWS } from '@shared/constants';
 import { EmptyState } from '@shared/ui/empty-state';
 import { colors } from '@toss/tds-colors';
+import { Asset } from '@toss/tds-react-native';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/my/reviews', {
@@ -25,7 +26,8 @@ function Page() {
           <Text style={styles.subtitle}>작성한 리뷰를 확인하세요</Text>
         </View>
         <EmptyState
-          icon="⭐"
+          iconName="icon-star-mono"
+          iconColor={colors.yellow500}
           title="작성한 리뷰가 없습니다"
           description="서비스 이용 후 리뷰를 작성해주세요"
           actionLabel="내 예약 보기"
@@ -57,9 +59,12 @@ function Page() {
             {/* 평점 */}
             <View style={styles.ratingContainer}>
               {Array.from({ length: 5 }).map((_, index) => (
-                <Text key={index} style={styles.star}>
-                  {index < item.rating ? '⭐' : '☆'}
-                </Text>
+                <Asset.Icon
+                  key={index}
+                  name="icon-star-mono"
+                  color={index < item.rating ? colors.yellow500 : colors.grey300}
+                  frameShape={Asset.frameShape.CleanW24}
+                />
               ))}
               <Text style={styles.ratingText}>{item.rating}.0</Text>
             </View>
@@ -129,9 +134,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
     gap: 2,
-  },
-  star: {
-    fontSize: 16,
   },
   ratingText: {
     fontSize: 14,

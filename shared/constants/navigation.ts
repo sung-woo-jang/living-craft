@@ -1,10 +1,10 @@
 import { NavigationItem } from '@shared/types';
 
 export const BOTTOM_NAV_ITEMS: NavigationItem[] = [
-  { label: '홈', path: '/', iconName: 'icon-home-mono' },
+  { label: '홈', path: '/', iconName: 'icon-home-red-white' },
   { label: '포트폴리오', path: '/portfolio', iconName: 'icon-briefcase-mono' },
-  { label: '예약', path: '/reservation', iconName: 'icon-calendar-check-mono' },
-  { label: '마이페이지', path: '/my', iconName: 'icon-account-mono' },
+  { label: '예약', path: '/reservation', iconName: 'icon-calendar-3-blue' },
+  { label: '마이페이지', path: '/my', iconName: 'icon-account-info-blue' },
 ];
 
 /**

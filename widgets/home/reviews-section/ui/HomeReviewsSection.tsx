@@ -1,6 +1,7 @@
 import { FILM_REVIEWS } from '@shared/constants';
 import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
+import { Asset } from '@toss/tds-react-native';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -13,7 +14,18 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
  */
 export const HomeReviewsSection = () => {
   const renderStars = (rating: number) => {
-    return '⭐'.repeat(rating);
+    return (
+      <View style={{ flexDirection: 'row', gap: 2, marginBottom: 12 }}>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <Asset.Icon
+            key={index}
+            name="icon-star-mono"
+            color={index < rating ? colors.yellow500 : colors.grey300}
+            frameShape={Asset.frameShape.CleanW24}
+          />
+        ))}
+      </View>
+    );
   };
 
   return (
@@ -35,7 +47,7 @@ export const HomeReviewsSection = () => {
                 <Text style={styles.service}>{review.service}</Text>
               </View>
             </View>
-            <Text style={styles.stars}>{renderStars(review.rating)}</Text>
+            {renderStars(review.rating)}
             <Text style={styles.content}>{review.content}</Text>
           </View>
         )}
@@ -99,10 +111,6 @@ const styles = StyleSheet.create({
   service: {
     fontSize: 13,
     color: colors.grey600,
-  },
-  stars: {
-    fontSize: 17,
-    marginBottom: 12,
   },
   content: {
     fontSize: 15,

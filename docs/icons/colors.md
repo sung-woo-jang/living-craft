@@ -67,7 +67,6 @@ icon-sprout
 icon-basketball
 icon-chess
 icon-music-note
-사용불가
 icon-line-maintain-search
 icon-arrow-increase-search
 icon-arrow-decrease-search
@@ -205,7 +204,6 @@ icon-logo-storybook-white
 icon-logo-yarn-white
 icon-logo-jestdom-white
 deus-favicon-round
-u1F33E-square
 icon-money-orange-square
 icon-benefittab-clover
 icon-benefittab-pin-location
@@ -218,7 +216,6 @@ icon-bank-plcc-day-black
 icon-calendar-clock-grey
 icon-squircle-plus-grey
 icon-card-plus-grey
-사용불가
 icon-spoon-chopsticks-orange
 icon-bag-X-grey-alpha
 icon-account-X-grey-alpha

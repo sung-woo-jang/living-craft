@@ -2,7 +2,7 @@
 // pages/my/index.tsx에서 사용
 
 export interface MenuItem {
-  icon: string;
+  iconName: string;
   title: string;
   subtitle: string;
   path: string;
@@ -17,21 +17,21 @@ export interface User {
 
 export const MENU_ITEMS: MenuItem[] = [
   {
-    icon: '📅',
+    iconName: 'icon-calendar-3-blue',
     title: '내 예약',
     subtitle: '예약 내역을 확인하세요',
     path: '/my/reservations',
     badge: 2,
   },
   {
-    icon: '⭐',
+    iconName: 'icon-star-mono',
     title: '내 리뷰',
     subtitle: '작성한 리뷰를 확인하세요',
     path: '/my/reviews',
     badge: 3,
   },
   {
-    icon: '⚙️',
+    iconName: 'icon-setting-reddot',
     title: '설정',
     subtitle: '앱 설정 및 정보',
     path: '/my/settings',

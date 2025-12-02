@@ -1,6 +1,6 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
 import { colors } from '@toss/tds-colors';
-import { TextField } from '@toss/tds-react-native';
+import { Asset, TextField } from '@toss/tds-react-native';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -106,7 +106,11 @@ function Page() {
           <View style={styles.ratingContainer}>
             {Array.from({ length: 5 }).map((_, index) => (
               <TouchableOpacity key={index} onPress={() => setRating(index + 1)} style={styles.starButton}>
-                <Text style={[styles.star, index < rating && styles.starActive]}>{index < rating ? '⭐' : '☆'}</Text>
+                <Asset.Icon
+                  name="icon-star-mono"
+                  color={index < rating ? colors.yellow500 : colors.grey300}
+                  frameShape={Asset.frameShape.CleanW40}
+                />
               </TouchableOpacity>
             ))}
           </View>
@@ -230,13 +234,6 @@ const styles = StyleSheet.create({
   },
   starButton: {
     padding: 4,
-  },
-  star: {
-    fontSize: 40,
-    opacity: 0.3,
-  },
-  starActive: {
-    opacity: 1,
   },
   ratingText: {
     fontSize: 16,

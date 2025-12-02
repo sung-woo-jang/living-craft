@@ -45,7 +45,7 @@ function Page() {
       {/* 예약 목록 */}
       {filteredReservations.length === 0 ? (
         <EmptyState
-          icon="📅"
+          iconName="icon-calendar-3-blue"
           title="예약 내역이 없습니다"
           description="아직 예약하신 서비스가 없습니다"
           actionLabel="포트폴리오 둘러보기"

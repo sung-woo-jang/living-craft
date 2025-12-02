@@ -2,6 +2,7 @@ import { createRoute } from '@granite-js/react-native';
 import { HOME_SERVICES, HomeService } from '@shared/constants/home-services';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
+import { Asset } from '@toss/tds-react-native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // 네비게이션 훅 사용을 위한 임시 라우트
@@ -34,7 +35,7 @@ export const HomeServicesSection = () => {
             ]}
           >
             <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor }]}>
-              <Text style={styles.icon}>{service.icon}</Text>
+              <Asset.Icon name={service.iconName} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
             </View>
 
             <View style={styles.serviceInfo}>
