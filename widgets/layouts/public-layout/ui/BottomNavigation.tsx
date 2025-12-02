@@ -62,8 +62,8 @@ export const BottomNavigation: React.FC = () => {
     >
       {BOTTOM_NAV_ITEMS.map((item) => {
         const isActive = isActiveRoute(item.path);
-        const iconColor = isActive ? colors.grey900 : colors.grey600;
-        const textColor = isActive ? colors.grey900 : colors.grey600;
+        const iconColor = isActive ? colors.blue500 : colors.grey600;
+        const textColor = isActive ? colors.blue500 : colors.grey600;
 
         return (
           <TouchableOpacity
