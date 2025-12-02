@@ -147,7 +147,13 @@ const CompactVariant = ({ steps, activeStepIndex, checkForFinish }: CompactVaria
       <View style={compactStyles.progressBarContainer}>
         <View style={compactStyles.progressBarBackground}>
           <View style={[compactStyles.progressBarFill, { width: `${progressPercentage}%` }]}>
-            <LinearGradient colors={GRADIENT_COLORS} degree="90deg" easing="linear" style={compactStyles.gradient} />
+            <LinearGradient
+              key={`gradient-${activeStepIndex}`}
+              colors={GRADIENT_COLORS}
+              degree="90deg"
+              easing="linear"
+              style={compactStyles.gradient}
+            />
           </View>
         </View>
       </View>
