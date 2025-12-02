@@ -2,7 +2,7 @@ import { createRoute, Image, useNavigation } from '@granite-js/react-native';
 import { PORTFOLIO_DETAILS } from '@shared/constants';
 import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/portfolio/:id', {
   validateParams: (params) => params as { id: string },
@@ -12,6 +12,10 @@ export const Route = createRoute('/portfolio/:id', {
 /**
  * 포트폴리오 상세 페이지 - 짐싸 스타일
  */
+const SCREEN_WIDTH = Dimensions.get('window').width;
+// HomePortfolioSection과 동일하게 설정
+const CAROUSEL_ITEM_WIDTH = SCREEN_WIDTH - 40;
+
 function Page() {
   const params = Route.useParams();
   const navigation = useNavigation();
@@ -84,6 +88,7 @@ function Page() {
                   }}
                 />
               )}
+              itemWidth={CAROUSEL_ITEM_WIDTH}
               itemHeight={200}
               gap={16}
               autoPlay
@@ -108,10 +113,7 @@ function Page() {
 
         {/* 문의 버튼 카드 */}
         <Card>
-          <TouchableOpacity
-            style={styles.inquiryButton}
-            onPress={() => navigation.navigate('/reservation' as any)}
-          >
+          <TouchableOpacity style={styles.inquiryButton} onPress={() => navigation.navigate('/reservation' as any)}>
             <Text style={styles.inquiryButtonText}>서비스 문의하기</Text>
           </TouchableOpacity>
         </Card>
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
 
   // Carousel
   carouselWrapper: {
-    marginHorizontal: -8,
+    marginHorizontal: 0, // Card padding(8px) 안쪽에 위치하여 양쪽 여백 생성
   },
   galleryImage: {
     width: '100%',
