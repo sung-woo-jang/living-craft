@@ -24,17 +24,11 @@ export const MENU_ITEMS: MenuItem[] = [
     badge: 2,
   },
   {
-    iconName: 'icon-star-mono',
+    iconName: 'icon-chat-bubble-dots-skyblue',
     title: '내 리뷰',
     subtitle: '작성한 리뷰를 확인하세요',
     path: '/my/reviews',
     badge: 3,
-  },
-  {
-    iconName: 'icon-setting-reddot',
-    title: '설정',
-    subtitle: '앱 설정 및 정보',
-    path: '/my/settings',
   },
 ];
 

@@ -19,7 +19,11 @@ function Page() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {/* 프로필 섹션 */}
         <View style={styles.profileSection}>
           <View style={styles.profileAvatar}>
@@ -34,7 +38,7 @@ function Page() {
           {MENU_ITEMS.map((item, index) => (
             <TouchableOpacity key={index} style={styles.menuItem} onPress={() => navigation.navigate(item.path as any)}>
               <View style={styles.menuItemLeft}>
-                <Asset.Icon name={item.iconName} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
+                <Asset.Icon name={item.iconName} frameShape={Asset.frameShape.CleanW24} />
                 <View style={styles.menuText}>
                   <Text style={styles.menuTitle}>{item.title}</Text>
                   <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
@@ -50,11 +54,6 @@ function Page() {
               </View>
             </TouchableOpacity>
           ))}
-        </View>
-
-        {/* 앱 정보 */}
-        <View style={styles.appInfo}>
-          <Text style={styles.appVersion}>버전 1.0.0</Text>
         </View>
       </ScrollView>
     </View>
@@ -106,7 +105,6 @@ const styles = StyleSheet.create({
   },
   menuSection: {
     backgroundColor: 'white',
-    marginTop: 12,
     paddingVertical: 8,
   },
   menuItem: {

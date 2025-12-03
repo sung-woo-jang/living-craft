@@ -1,6 +1,6 @@
 /**
  * 회사 정보 및 Footer 관련 상수
- * widgets/layouts/public-layout/ui/Footer.tsx, pages/my/settings.tsx 등에서 사용
+ * widgets/layouts/public-layout/ui/Footer.tsx 등에서 사용
  */
 
 export const COMPANY_INFO = {
