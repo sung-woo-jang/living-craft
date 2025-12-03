@@ -1,0 +1,139 @@
+import { Image } from '@granite-js/react-native';
+import { usePhotoManager } from '@shared/hooks';
+import { colors } from '@toss/tds-colors';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { ImageState } from '../types';
+
+interface PhotoSectionProps {
+  photos: ImageState[];
+  onChange: (photos: ImageState[]) => void;
+  maxCount?: number;
+}
+
+export function PhotoSection({ photos, onChange, maxCount = 5 }: PhotoSectionProps) {
+  const { capturePhoto, selectFromAlbum, deletePhoto, canAddMore, remainingCount } = usePhotoManager({
+    photos,
+    onChange,
+    maxCount,
+  });
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>시공 전 사진 (선택)</Text>
+        <Text style={styles.subtitle}>시공이 필요한 곳의 사진을 첨부해주세요 ({photos.length}/{maxCount})</Text>
+      </View>
+
+      {photos.length > 0 && (
+        <View style={styles.photoGrid}>
+          {photos.map((photo) => (
+            <View key={photo.id} style={styles.photoItem}>
+              <Image source={{ uri: photo.previewUri }} style={styles.photo} />
+              <Pressable style={styles.deleteButton} onPress={() => deletePhoto(photo.id)}>
+                <Text style={styles.deleteButtonText}>X</Text>
+              </Pressable>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {canAddMore && (
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.actionButton} onPress={capturePhoto}>
+            <Text style={styles.actionButtonText}>촬영하기</Text>
+          </Pressable>
+          <Pressable style={styles.actionButton} onPress={selectFromAlbum}>
+            <Text style={styles.actionButtonText}>앨범에서 선택 ({remainingCount}장 추가 가능)</Text>
+          </Pressable>
+        </View>
+      )}
+
+      {!canAddMore && (
+        <View style={styles.maxCountNotice}>
+          <Text style={styles.maxCountText}>최대 {maxCount}장까지 추가할 수 있어요</Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 16,
+  },
+  header: {
+    paddingHorizontal: 8,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.grey900,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: colors.grey600,
+  },
+  photoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
+  photoItem: {
+    width: '31%',
+    aspectRatio: 1,
+    borderRadius: 8,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  photo: {
+    width: '100%',
+    height: '100%',
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deleteButtonText: {
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 8,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: colors.grey100,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  actionButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.grey800,
+  },
+  maxCountNotice: {
+    paddingHorizontal: 8,
+  },
+  maxCountText: {
+    fontSize: 13,
+    color: colors.grey500,
+    textAlign: 'center',
+  },
+});

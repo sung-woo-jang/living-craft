@@ -16,7 +16,6 @@ import { Route as _UnauthorizedRoute } from '../pages/unauthorized';
 import { Route as _MyIndexRoute } from '../pages/my';
 import { Route as _MyReservationsRoute } from '../pages/my/reservations';
 import { Route as _MyReviewsRoute } from '../pages/my/reviews';
-import { Route as _MySettingsRoute } from '../pages/my/settings';
 
 declare module '@granite-js/react-native' {
   interface RegisterScreen {
@@ -33,7 +32,6 @@ declare module '@granite-js/react-native' {
     '/my': ReturnType<typeof _MyIndexRoute.useParams>;
     '/my/reservations': ReturnType<typeof _MyReservationsRoute.useParams>;
     '/my/reviews': ReturnType<typeof _MyReviewsRoute.useParams>;
-    '/my/settings': ReturnType<typeof _MySettingsRoute.useParams>;
     '/_404': ReturnType<typeof _404Route.useParams>;
     '/about': ReturnType<typeof _AboutRoute.useParams>;
     '/faq': ReturnType<typeof _FaqRoute.useParams>;

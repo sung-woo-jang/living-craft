@@ -1,5 +1,10 @@
+import { ImageResponse } from '@apps-in-toss/framework';
 import { TimeSlot } from '@shared/constants';
 import { HomeService } from '@shared/constants/home-services';
+
+export interface ImageState extends ImageResponse {
+  previewUri: string;
+}
 
 export interface CustomerInfo {
   name: string;
@@ -7,6 +12,7 @@ export interface CustomerInfo {
   address: string;
   detailAddress: string;
   requirements: string;
+  photos: ImageState[];
 }
 
 export interface ReservationFormData {
@@ -31,6 +37,7 @@ export const DEFAULT_FORM_VALUES: ReservationFormData = {
     address: '',
     detailAddress: '',
     requirements: '',
+    photos: [],
   },
   agreedToTerms: false,
 };

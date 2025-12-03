@@ -5,6 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ReservationFormData } from '../types';
+import { PhotoSection } from './PhotoSection';
 
 export function CustomerInfoStep() {
   const { control } = useFormContext<ReservationFormData>();
@@ -87,6 +88,14 @@ export function CustomerInfoStep() {
               value={value}
               onChangeText={onChange}
             />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="customerInfo.photos"
+          render={({ field: { onChange, value } }) => (
+            <PhotoSection photos={value ?? []} onChange={onChange} maxCount={5} />
           )}
         />
       </Card>
