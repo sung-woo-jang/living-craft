@@ -3,6 +3,7 @@ import { HOME_SERVICES, HomeService } from '@shared/constants/home-services';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset } from '@toss/tds-react-native';
+import { useReservationStore } from '@widgets/reservation';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // 네비게이션 훅 사용을 위한 임시 라우트
@@ -14,8 +15,13 @@ const TempRoute = createRoute('/_layout' as any, { component: () => null });
  */
 export const HomeServicesSection = () => {
   const navigation = TempRoute.useNavigation();
+  const updateFormData = useReservationStore(['updateFormData']).updateFormData;
 
   const handleQuotePress = (service: HomeService) => {
+    // 클릭한 서비스를 미리 선택
+    updateFormData({ service });
+
+    // 예약 페이지로 이동
     navigation.navigate(service.routePath as any);
   };
 

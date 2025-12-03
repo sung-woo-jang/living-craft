@@ -94,8 +94,9 @@ export const MOCK_PORTFOLIOS: Portfolio[] = [
   },
 ];
 
-// 작업 포트폴리오
-export const FILM_PORTFOLIOS: Portfolio[] = [
+// 서비스 관련 포트폴리오 (백엔드 API 형태와 동일)
+export const SERVICE_PORTFOLIOS: Portfolio[] = [
+  // 인테리어 필름 (4개)
   {
     id: 101,
     projectName: '아파트 주방 리뉴얼',
@@ -136,7 +137,57 @@ export const FILM_PORTFOLIOS: Portfolio[] = [
     description: '방수 필름으로 깨끗한 욕실 완성',
     images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(9301 + i + 1)),
   },
+  // 유리청소 (4개)
+  {
+    id: 201,
+    projectName: '고층 아파트 유리창 청소',
+    client: '김○○',
+    duration: '2024.11',
+    category: '유리청소',
+    thumbnail: getUnsplashUrl(10001),
+    description: '30층 아파트 전면 유리창 청소 작업',
+    images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(10001 + i + 1)),
+  },
+  {
+    id: 202,
+    projectName: '상가 유리 외벽 청소',
+    client: '○○상가',
+    duration: '2024.11',
+    category: '유리청소',
+    thumbnail: getUnsplashUrl(10101),
+    description: '3층 규모 상가 건물 외벽 유리 청소',
+    images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(10101 + i + 1)),
+  },
+  {
+    id: 203,
+    projectName: '사무실 유리 파티션 청소',
+    client: '○○기업',
+    duration: '2024.10',
+    category: '유리청소',
+    thumbnail: getUnsplashUrl(10201),
+    description: '사무실 전체 유리 파티션 및 창문 청소',
+    images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(10201 + i + 1)),
+  },
+  {
+    id: 204,
+    projectName: '빌라 베란다 유리 청소',
+    client: '이○○',
+    duration: '2024.10',
+    category: '유리청소',
+    thumbnail: getUnsplashUrl(10301),
+    description: '빌라 전체 세대 베란다 유리 청소',
+    images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(10301 + i + 1)),
+  },
 ];
+
+// category 기반 헬퍼 함수 (확장성 향상)
+export const isFilmPortfolio = (portfolio: Portfolio): boolean => {
+  return portfolio.category === '인테리어필름';
+};
+
+export const isGlassCleaningPortfolio = (portfolio: Portfolio): boolean => {
+  return portfolio.category === '유리청소';
+};
 
 // 포트폴리오 상세 정보 (ID 기반 Record)
 export const PORTFOLIO_DETAILS: Record<string, PortfolioDetail> = {
@@ -154,7 +205,7 @@ export const PORTFOLIO_DETAILS: Record<string, PortfolioDetail> = {
     tags: ['리모델링', '아파트', '모던', '전체공사'],
   },
   '101': {
-    ...FILM_PORTFOLIOS[0]!,
+    ...SERVICE_PORTFOLIOS[0]!,
     detailedDescription: `낡은 주방 싱크대와 가구를 인테리어 필름으로 새롭게 리뉴얼했습니다.
 
 • 작업 대상: 싱크대 상판, 하부장, 상부장 전체
@@ -167,7 +218,7 @@ export const PORTFOLIO_DETAILS: Record<string, PortfolioDetail> = {
     tags: ['인테리어필름', '주방', '싱크대', '리뉴얼'],
   },
   '102': {
-    ...FILM_PORTFOLIOS[1]!,
+    ...SERVICE_PORTFOLIOS[1]!,
     detailedDescription: `거실 가구에 원목 패턴 필름을 적용하여 따뜻한 분위기를 연출했습니다.
 
 • 작업 대상: TV장, 책장, 수납장
@@ -180,7 +231,7 @@ export const PORTFOLIO_DETAILS: Record<string, PortfolioDetail> = {
     tags: ['인테리어필름', '거실', '원목패턴', '가구'],
   },
   '103': {
-    ...FILM_PORTFOLIOS[2]!,
+    ...SERVICE_PORTFOLIOS[2]!,
     detailedDescription: `문틀과 현관에 대리석 패턴 필름을 적용하여 고급스러운 분위기를 완성했습니다.
 
 • 작업 대상: 현관 문틀, 거실 문틀, 베란다 문틀
@@ -193,7 +244,7 @@ export const PORTFOLIO_DETAILS: Record<string, PortfolioDetail> = {
     tags: ['인테리어필름', '문틀', '대리석패턴', '현관'],
   },
   '104': {
-    ...FILM_PORTFOLIOS[3]!,
+    ...SERVICE_PORTFOLIOS[3]!,
     detailedDescription: `욕실 타일에 방수 필름을 적용하여 깨끗하고 모던한 공간으로 변신시켰습니다.
 
 • 작업 대상: 욕실 벽면 타일, 세면대 주변
@@ -295,5 +346,57 @@ export const PORTFOLIO_DETAILS: Record<string, PortfolioDetail> = {
 
 손님들에게 특별한 다이닝 경험을 선사하는 공간을 만들었습니다.`,
     tags: ['레스토랑', '상업공간', '파인다이닝', '인테리어'],
+  },
+  '201': {
+    ...SERVICE_PORTFOLIOS[4]!,
+    detailedDescription: `고층 아파트 전면 유리창 청소 프로젝트입니다.
+
+• 작업 높이: 30층 고층 건물 외벽 작업
+• 안전 장비: 고프(gondola) 및 안전 로프 사용
+• 작업 범위: 거실, 방, 베란다 전면 유리
+• 특수 세제: 친환경 유리 세정제 사용
+• 작업 시간: 4시간 소요
+
+전문 장비와 숙련된 기술로 안전하고 깨끗하게 작업했습니다.`,
+    tags: ['유리청소', '고층', '아파트', '외벽청소'],
+  },
+  '202': {
+    ...SERVICE_PORTFOLIOS[5]!,
+    detailedDescription: `3층 규모 상가 건물의 유리 외벽 청소 작업입니다.
+
+• 건물 규모: 3층 상가 건물 전면 유리
+• 작업 방식: 사다리차 및 고소작업대 활용
+• 청소 범위: 외벽 유리, 간판 유리, 출입문 유리
+• 특수 처리: 발수 코팅으로 오염 방지
+• 작업 시간: 6시간 소요
+
+상가 이미지 개선을 위한 꼼꼼한 유리 청소 작업을 완료했습니다.`,
+    tags: ['유리청소', '상가', '외벽청소', '발수코팅'],
+  },
+  '203': {
+    ...SERVICE_PORTFOLIOS[6]!,
+    detailedDescription: `사무실 전체 유리 파티션 및 창문 청소 프로젝트입니다.
+
+• 작업 대상: 사무실 내부 유리 파티션, 창문
+• 청소 방식: 무공해 친환경 세정제 사용
+• 작업 범위: 회의실 유리벽, 개인 공간 파티션, 외부 창문
+• 특징: 물 얼룩 없는 깨끗한 마무리
+• 작업 시간: 3시간 소요
+
+쾌적한 사무 환경을 위한 전문 유리 청소 서비스를 제공했습니다.`,
+    tags: ['유리청소', '사무실', '파티션', '창문청소'],
+  },
+  '204': {
+    ...SERVICE_PORTFOLIOS[7]!,
+    detailedDescription: `빌라 전체 세대 베란다 유리 청소 작업입니다.
+
+• 작업 세대: 빌라 8세대 전체
+• 청소 대상: 베란다 안팎 유리, 새시 틈새
+• 특수 청소: 곰팡이 및 먼지 완벽 제거
+• 마무리: 물기 제거 및 광택 처리
+• 작업 시간: 세대당 40분 소요
+
+각 세대의 베란다를 투명하고 깨끗하게 정리했습니다.`,
+    tags: ['유리청소', '빌라', '베란다', '새시청소'],
   },
 };

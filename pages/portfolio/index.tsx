@@ -1,5 +1,5 @@
 import { createRoute, Image } from '@granite-js/react-native';
-import { FILM_PORTFOLIOS } from '@shared/constants';
+import { SERVICE_PORTFOLIOS } from '@shared/constants';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -31,12 +31,12 @@ function Page() {
             <Text style={styles.sectionSubtitle}>다양한 작업 사례를 확인해보세요</Text>
           </View>
 
-          {FILM_PORTFOLIOS.map((portfolio, index) => (
+          {SERVICE_PORTFOLIOS.map((portfolio, index) => (
             <TouchableOpacity
               key={portfolio.id}
               style={[
                 styles.portfolioRow,
-                index < FILM_PORTFOLIOS.length - 1 && styles.portfolioRowBorder,
+                index < SERVICE_PORTFOLIOS.length - 1 && styles.portfolioRowBorder,
               ]}
               onPress={() => handlePortfolioPress(portfolio.id)}
             >

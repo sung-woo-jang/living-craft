@@ -1,7 +1,8 @@
 import { createRoute, Image, useNavigation } from '@granite-js/react-native';
-import { PORTFOLIO_DETAILS } from '@shared/constants';
+import { HOME_SERVICES, isFilmPortfolio, isGlassCleaningPortfolio, PORTFOLIO_DETAILS } from '@shared/constants';
 import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
+import { useReservationStore } from '@widgets/reservation';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/portfolio/:id', {
@@ -19,8 +20,34 @@ const CAROUSEL_ITEM_WIDTH = SCREEN_WIDTH - 40;
 function Page() {
   const params = Route.useParams();
   const navigation = useNavigation();
+  const updateFormData = useReservationStore(['updateFormData']).updateFormData;
 
   const portfolio = PORTFOLIO_DETAILS[params?.id || '1'];
+
+  const handleInquiryPress = () => {
+    // portfolio가 없으면 early return
+    if (!portfolio) return;
+
+    // 현재 포트폴리오의 category로 판단 (portfolio 객체를 직접 전달)
+    if (isFilmPortfolio(portfolio)) {
+      // 인테리어 필름 서비스를 미리 선택
+      const filmService = HOME_SERVICES.find((s) => s.id === 'film');
+      if (filmService) {
+        updateFormData({ service: filmService });
+      }
+    }
+    // 유리청소 category 확인
+    else if (isGlassCleaningPortfolio(portfolio)) {
+      // 유리청소 서비스를 미리 선택
+      const glassCleaningService = HOME_SERVICES.find((s) => s.id === 'glass-cleaning');
+      if (glassCleaningService) {
+        updateFormData({ service: glassCleaningService });
+      }
+    }
+
+    // 예약 페이지로 이동
+    navigation.navigate('/reservation/service' as any);
+  };
 
   if (!portfolio) {
     return (
@@ -113,8 +140,8 @@ function Page() {
 
         {/* 문의 버튼 카드 */}
         <Card>
-          <TouchableOpacity style={styles.inquiryButton} onPress={() => navigation.navigate('/reservation/service' as any)}>
-            <Text style={styles.inquiryButtonText}>서비스 문의하기</Text>
+          <TouchableOpacity style={styles.inquiryButton} onPress={handleInquiryPress}>
+            <Text style={styles.inquiryButtonText}>견적받기</Text>
           </TouchableOpacity>
         </Card>
       </ScrollView>

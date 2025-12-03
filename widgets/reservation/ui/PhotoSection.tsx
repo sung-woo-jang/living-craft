@@ -22,7 +22,9 @@ export function PhotoSection({ photos, onChange, maxCount = 5 }: PhotoSectionPro
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>시공 전 사진 (선택)</Text>
-        <Text style={styles.subtitle}>시공이 필요한 곳의 사진을 첨부해주세요 ({photos.length}/{maxCount})</Text>
+        <Text style={styles.subtitle}>
+          시공이 필요한 곳의 사진을 첨부해주세요 ({photos.length}/{maxCount})
+        </Text>
       </View>
 
       {photos.length > 0 && (

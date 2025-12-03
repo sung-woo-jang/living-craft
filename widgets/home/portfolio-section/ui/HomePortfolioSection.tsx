@@ -1,5 +1,5 @@
 import { createRoute, Image } from '@granite-js/react-native';
-import { FILM_PORTFOLIOS } from '@shared/constants';
+import { SERVICE_PORTFOLIOS } from '@shared/constants';
 import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Badge } from '@toss/tds-react-native';
@@ -34,7 +34,7 @@ export const HomePortfolioSection = () => {
       </View>
 
       <Carousel
-        data={FILM_PORTFOLIOS}
+        data={SERVICE_PORTFOLIOS}
         renderItem={(item) => (
           <TouchableOpacity onPress={() => handlePortfolioPress(item.id)}>
             <View style={styles.carouselItem}>
