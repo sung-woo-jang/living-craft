@@ -113,7 +113,7 @@ function Page() {
 
         {/* 문의 버튼 카드 */}
         <Card>
-          <TouchableOpacity style={styles.inquiryButton} onPress={() => navigation.navigate('/reservation' as any)}>
+          <TouchableOpacity style={styles.inquiryButton} onPress={() => navigation.navigate('/reservation/service' as any)}>
             <Text style={styles.inquiryButtonText}>서비스 문의하기</Text>
           </TouchableOpacity>
         </Card>

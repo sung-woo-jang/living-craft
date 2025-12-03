@@ -25,7 +25,7 @@ export const HOME_SERVICES: HomeService[] = [
     iconName: 'icon-fill-color-mono',
     iconBgColor: '#E3F2FD',
     buttonText: '견적받기',
-    routePath: '/reservation',
+    routePath: '/reservation/service',
     duration: '하루 종일',
     features: ['현장 측정', '필름 작업', '마감 처리'],
     requiresTimeSelection: false, // 하루 종일 작업
@@ -37,7 +37,7 @@ export const HOME_SERVICES: HomeService[] = [
     iconName: 'icon-front-twinkle-blue',
     iconBgColor: '#E8F5E9',
     buttonText: '견적받기',
-    routePath: '/reservation',
+    routePath: '/reservation/service',
     duration: '1-2시간',
     features: ['외부 유리', '내부 유리', '창틀 청소'],
     requiresTimeSelection: true, // 시간대 선택 필요

@@ -2,7 +2,7 @@ import { useForm, UseFormReturn } from 'react-hook-form';
 import { Alert } from 'react-native';
 
 import { useReservationStore } from '../store/reservationStore';
-import { DEFAULT_FORM_VALUES, ReservationFormData } from '../types';
+import { DEFAULT_FORM_VALUES, ReservationFormData, StepKey } from '../types';
 
 interface UseReservationFormOptions {
   onSubmitSuccess?: () => void;
@@ -12,12 +12,13 @@ interface UseReservationFormReturn {
   // react-hook-form methods (FormProvider에 전달)
   methods: UseFormReturn<ReservationFormData>;
 
+  // Validation
+  canProceedToNext: (step: StepKey) => boolean;
+  validateStep: (step: StepKey) => boolean;
+
   // Actions
-  handleNext: () => void;
-  handlePrevious: () => void;
   handleSubmit: () => Promise<void>;
   handleDateSelect: (date: string) => void;
-  canProceedToNext: () => boolean;
 }
 
 export function useReservationForm(options?: UseReservationFormOptions): UseReservationFormReturn {
@@ -33,25 +34,19 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
   const watchedValues = watch();
 
   // zustand store
-  const { currentStep, goToNextStep, goToPreviousStep, setIsLoading, updateTimeSlotsForDate } = useReservationStore([
-    'currentStep',
-    'goToNextStep',
-    'goToPreviousStep',
-    'setIsLoading',
-    'updateTimeSlotsForDate',
-  ]);
+  const { setIsLoading, updateTimeSlotsForDate } = useReservationStore(['setIsLoading', 'updateTimeSlotsForDate']);
 
-  const canProceedToNext = (): boolean => {
-    // watch()로 구독한 값 사용 (리렌더링 트리거)
+  /**
+   * 특정 단계의 필수 입력값이 완료되었는지 검증 (watch 사용 - 리렌더링 트리거)
+   */
+  const canProceedToNext = (step: StepKey): boolean => {
     const values = watchedValues;
-    // 시간 선택이 필요 없는 서비스인지 확인 (기본값: true)
     const requiresTimeSelection = values.service?.requiresTimeSelection !== false;
 
-    switch (currentStep) {
+    switch (step) {
       case 'service':
         return values.service !== null;
       case 'datetime':
-        // 시간 선택이 필요 없는 서비스는 날짜만 선택하면 진행 가능
         if (!requiresTimeSelection) {
           return values.date !== '';
         }
@@ -69,20 +64,36 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
     }
   };
 
-  const handleNext = () => {
-    if (!canProceedToNext()) {
-      Alert.alert('알림', '필수 항목을 모두 입력해주세요.');
-      return;
-    }
-    goToNextStep();
-  };
+  /**
+   * 특정 단계 완료 여부 확인 (getValues 사용 - 이전 단계 검증용)
+   */
+  const validateStep = (step: StepKey): boolean => {
+    const values = getValues();
+    const requiresTimeSelection = values.service?.requiresTimeSelection !== false;
 
-  const handlePrevious = () => {
-    goToPreviousStep();
+    switch (step) {
+      case 'service':
+        return values.service !== null;
+      case 'datetime':
+        if (!requiresTimeSelection) {
+          return values.date !== '';
+        }
+        return values.date !== '' && values.timeSlot !== null;
+      case 'customer':
+        return (
+          values.customerInfo.name.trim() !== '' &&
+          values.customerInfo.phone.trim() !== '' &&
+          values.customerInfo.address.trim() !== ''
+        );
+      case 'confirmation':
+        return values.agreedToTerms;
+      default:
+        return false;
+    }
   };
 
   const handleSubmit = async () => {
-    if (!canProceedToNext()) {
+    if (!canProceedToNext('confirmation')) {
       Alert.alert('알림', '이용약관에 동의해주세요.');
       return;
     }
@@ -126,10 +137,9 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
 
   return {
     methods,
-    handleNext,
-    handlePrevious,
+    canProceedToNext,
+    validateStep,
     handleSubmit,
     handleDateSelect,
-    canProceedToNext,
   };
 }

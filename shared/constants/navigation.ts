@@ -3,7 +3,7 @@ import { NavigationItem } from '@shared/types';
 export const BOTTOM_NAV_ITEMS: NavigationItem[] = [
   { label: '홈', path: '/', iconName: 'icon-home-red-white' },
   { label: '포트폴리오', path: '/portfolio', iconName: 'icon-briefcase-mono' },
-  { label: '예약', path: '/reservation', iconName: 'icon-calendar-3-blue' },
+  { label: '예약', path: '/reservation/service', iconName: 'icon-calendar-3-blue' },
   { label: '마이페이지', path: '/my', iconName: 'icon-account-info-blue' },
 ];
 
@@ -21,7 +21,10 @@ export interface TabBarConfig {
 export const ROUTE_TAB_CONFIG: Record<string, TabBarConfig> = {
   '/': { isFloat: true, isVisible: true },           // 홈: 플로팅
   '/portfolio': { isFloat: false, isVisible: true }, // 포트폴리오: 고정
-  '/reservation': { isFloat: true, isVisible: false }, // 예약: 숨김
+  '/reservation/service': { isFloat: true, isVisible: false }, // 예약 - 서비스 선택: 숨김
+  '/reservation/datetime': { isFloat: true, isVisible: false }, // 예약 - 날짜/시간: 숨김
+  '/reservation/customer': { isFloat: true, isVisible: false }, // 예약 - 고객 정보: 숨김
+  '/reservation/confirmation': { isFloat: true, isVisible: false }, // 예약 - 확인: 숨김
   '/reviews': { isFloat: true, isVisible: true },    // 리뷰: 플로팅
   '/my': { isFloat: false, isVisible: true },        // 마이페이지: 고정
 };

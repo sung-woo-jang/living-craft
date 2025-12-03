@@ -2,12 +2,12 @@ import { TimeSlot } from '@shared/constants';
 import { StoreWithShallow, useStoreWithShallow } from '@shared/model';
 import { createWithEqualityFn } from 'zustand/traditional';
 
-import { StepKey } from '../types';
+import { DEFAULT_FORM_VALUES, ReservationFormData } from '../types';
 import { generateRandomDisabledDates, generateRandomTimeSlots } from '../utils';
 
 interface ReservationUIState {
-  // Step 관리
-  currentStep: StepKey;
+  // 폼 데이터 (페이지 간 유지)
+  formData: ReservationFormData;
 
   // UI 상태
   isLoading: boolean;
@@ -19,10 +19,8 @@ interface ReservationUIState {
 }
 
 interface ReservationUIActions {
-  // Step 관리
-  setCurrentStep: (step: StepKey) => void;
-  goToNextStep: () => void;
-  goToPreviousStep: () => void;
+  // 폼 데이터 관리
+  updateFormData: (data: Partial<ReservationFormData>) => void;
 
   // UI 상태
   setIsLoading: (loading: boolean) => void;
@@ -39,10 +37,8 @@ interface ReservationUIActions {
 
 type ReservationStore = ReservationUIState & ReservationUIActions;
 
-const STEP_ORDER: StepKey[] = ['service', 'datetime', 'customer', 'confirmation'];
-
 const initialState: ReservationUIState = {
-  currentStep: 'service',
+  formData: DEFAULT_FORM_VALUES,
   isLoading: false,
   isCalendarVisible: false,
   disabledDates: generateRandomDisabledDates(),
@@ -52,29 +48,10 @@ const initialState: ReservationUIState = {
 const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
   ...initialState,
 
-  // Step 관리
-  setCurrentStep: (step) => set({ currentStep: step }),
-
-  goToNextStep: () => {
-    const { currentStep } = get();
-    const currentIndex = STEP_ORDER.indexOf(currentStep);
-    if (currentIndex < STEP_ORDER.length - 1) {
-      const nextStep = STEP_ORDER[currentIndex + 1];
-      if (nextStep) {
-        set({ currentStep: nextStep });
-      }
-    }
-  },
-
-  goToPreviousStep: () => {
-    const { currentStep } = get();
-    const currentIndex = STEP_ORDER.indexOf(currentStep);
-    if (currentIndex > 0) {
-      const prevStep = STEP_ORDER[currentIndex - 1];
-      if (prevStep) {
-        set({ currentStep: prevStep });
-      }
-    }
+  // 폼 데이터 관리
+  updateFormData: (data) => {
+    const { formData } = get();
+    set({ formData: { ...formData, ...data } });
   },
 
   // UI 상태
@@ -99,7 +76,7 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
 /**
  * 예약 UI 상태를 선택적으로 구독하는 훅
  * @example
- * const { currentStep, isLoading } = useReservationStore(['currentStep', 'isLoading']);
+ * const { formData, isLoading } = useReservationStore(['formData', 'isLoading']);
  */
 export const useReservationStore: StoreWithShallow<ReservationStore> = (keys, withEqualityFn = true) =>
   useStoreWithShallow(reservationStore, keys, withEqualityFn);
