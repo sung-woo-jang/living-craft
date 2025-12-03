@@ -19,9 +19,7 @@ export const BottomNavigation: React.FC = () => {
   const shadowStyle = useShadow(shadow.medium('down'));
 
   // React Navigation의 현재 라우트 추적
-  const currentRouteName = useNavigationState(state =>
-    state?.routes[state.index]?.name
-  );
+  const currentRouteName = useNavigationState((state) => state?.routes[state.index]?.name);
 
   // 현재 경로의 탭바 설정
   const config = ROUTE_TAB_CONFIG[currentRouteName ?? '/'] ?? { isFloat: true, isVisible: true };
@@ -62,7 +60,7 @@ export const BottomNavigation: React.FC = () => {
     >
       {BOTTOM_NAV_ITEMS.map((item) => {
         const isActive = isActiveRoute(item.path);
-        const iconColor = isActive ? colors.blue500 : colors.grey600;
+        const iconColor = isActive ? undefined : colors.grey600;
         const textColor = isActive ? colors.blue500 : colors.grey600;
 
         return (
