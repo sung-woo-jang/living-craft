@@ -63,7 +63,7 @@ function Page() {
   return (
     <FormProvider {...methods}>
       <View style={styles.container}>
-        <ProgressStepper activeStepIndex={STEP_ORDER.indexOf(currentStep)} checkForFinish>
+        <ProgressStepper activeStepIndex={STEP_ORDER.indexOf(currentStep)}>
           <ProgressStep title="서비스" />
           <ProgressStep title="날짜/시간" />
           <ProgressStep title="정보입력" />
