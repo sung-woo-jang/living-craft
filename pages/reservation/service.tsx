@@ -64,7 +64,12 @@ function Page() {
             </Button>
           }
           rightButton={
-            <Button display="full" containerStyle={{ borderRadius: 8 }} disabled={!canProceedToNext('service')} onPress={handleNext}>
+            <Button
+              display="full"
+              containerStyle={{ borderRadius: 8 }}
+              disabled={!canProceedToNext('service')}
+              onPress={handleNext}
+            >
               다음
             </Button>
           }

@@ -4,6 +4,7 @@ import { defineConfig } from '@granite-js/react-native/config';
 export default defineConfig({
   scheme: 'intoss',
   appName: 'living-craft',
+
   plugins: [
     appsInToss({
       brand: {
@@ -13,6 +14,9 @@ export default defineConfig({
         bridgeColorMode: 'basic',
       },
       permissions: [],
+      navigationBar: {
+        withHomeButton: true,
+      },
     }),
   ],
 });
