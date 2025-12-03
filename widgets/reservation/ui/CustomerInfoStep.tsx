@@ -17,88 +17,78 @@ export function CustomerInfoStep() {
           <Text style={styles.sectionSubtitle}>예약자 정보를 입력해주세요</Text>
         </View>
 
-        <View style={styles.formGroup}>
-          <Controller
-            control={control}
-            name="customerInfo.name"
-            render={({ field: { onChange, value } }) => (
-              <TextField
-                variant="box"
-                label="이름 *"
-                placeholder="이름을 입력해주세요"
-                value={value}
-                onChangeText={onChange}
-              />
-            )}
-          />
-        </View>
+        <Controller
+          control={control}
+          name="customerInfo.name"
+          render={({ field: { onChange, value } }) => (
+            <TextField
+              variant="box"
+              label="이름 *"
+              placeholder="이름을 입력해주세요"
+              value={value}
+              onChangeText={onChange}
+            />
+          )}
+        />
 
-        <View style={styles.formGroup}>
-          <Controller
-            control={control}
-            name="customerInfo.phone"
-            render={({ field: { onChange, value } }) => (
-              <TextField
-                variant="box"
-                label="연락처 *"
-                placeholder="010-1234-5678"
-                keyboardType="phone-pad"
-                value={value}
-                onChangeText={onChange}
-              />
-            )}
-          />
-        </View>
+        <Controller
+          control={control}
+          name="customerInfo.phone"
+          render={({ field: { onChange, value } }) => (
+            <TextField
+              variant="box"
+              label="연락처 *"
+              placeholder="010-1234-5678"
+              keyboardType="phone-pad"
+              value={value}
+              onChangeText={onChange}
+            />
+          )}
+        />
 
-        <View style={styles.formGroup}>
-          <Controller
-            control={control}
-            name="customerInfo.address"
-            render={({ field: { onChange, value } }) => (
-              <TextField
-                variant="box"
-                label="주소 *"
-                placeholder="기본 주소를 입력해주세요"
-                value={value}
-                onChangeText={onChange}
-              />
-            )}
-          />
-        </View>
+        <Controller
+          control={control}
+          name="customerInfo.address"
+          render={({ field: { onChange, value } }) => (
+            <TextField
+              variant="box"
+              label="주소 *"
+              placeholder="기본 주소를 입력해주세요"
+              value={value}
+              onChangeText={onChange}
+            />
+          )}
+        />
 
-        <View style={styles.formGroup}>
-          <Controller
-            control={control}
-            name="customerInfo.detailAddress"
-            render={({ field: { onChange, value } }) => (
-              <TextField
-                variant="box"
-                label="상세 주소"
-                placeholder="상세 주소를 입력해주세요"
-                value={value}
-                onChangeText={onChange}
-              />
-            )}
-          />
-        </View>
+        <Controller
+          control={control}
+          name="customerInfo.detailAddress"
+          render={({ field: { onChange, value } }) => (
+            <TextField
+              variant="box"
+              label="상세 주소"
+              placeholder="상세 주소를 입력해주세요"
+              value={value}
+              onChangeText={onChange}
+            />
+          )}
+        />
 
-        <View style={styles.formGroup}>
-          <Controller
-            control={control}
-            name="customerInfo.requirements"
-            render={({ field: { onChange, value } }) => (
-              <TextField
-                variant="box"
-                label="추가 요청사항"
-                placeholder="추가로 요청하실 사항이 있으시면 입력해주세요"
-                multiline
-                numberOfLines={4}
-                value={value}
-                onChangeText={onChange}
-              />
-            )}
-          />
-        </View>
+        <Controller
+          control={control}
+          name="customerInfo.requirements"
+          render={({ field: { onChange, value } }) => (
+            <TextField
+              variant="box"
+              label="추가 요청사항"
+              placeholder="추가로 요청하실 사항이 있으시면 입력해주세요"
+              multiline
+              numberOfLines={4}
+              value={value}
+              onChangeText={onChange}
+            />
+          )}
+        />
       </Card>
     </ScrollView>
   );
@@ -125,9 +115,5 @@ const styles = StyleSheet.create({
   sectionSubtitle: {
     fontSize: 14,
     color: colors.grey600,
-  },
-  formGroup: {
-    marginBottom: 16,
-    paddingHorizontal: 8,
   },
 });
