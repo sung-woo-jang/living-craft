@@ -1,6 +1,7 @@
 import { Image } from '@granite-js/react-native';
 import { usePhotoManager } from '@shared/hooks';
 import { colors } from '@toss/tds-colors';
+import { Asset } from '@toss/tds-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ImageState } from '../types';
@@ -12,7 +13,7 @@ interface PhotoSectionProps {
 }
 
 export function PhotoSection({ photos, onChange, maxCount = 5 }: PhotoSectionProps) {
-  const { capturePhoto, selectFromAlbum, deletePhoto, canAddMore, remainingCount } = usePhotoManager({
+  const { capturePhoto, selectFromAlbum, deletePhoto, canAddMore } = usePhotoManager({
     photos,
     onChange,
     maxCount,
@@ -21,9 +22,9 @@ export function PhotoSection({ photos, onChange, maxCount = 5 }: PhotoSectionPro
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>시공 전 사진 (선택)</Text>
+        <Text style={styles.title}>사진</Text>
         <Text style={styles.subtitle}>
-          시공이 필요한 곳의 사진을 첨부해주세요 ({photos.length}/{maxCount})
+          사진을 첨부해주세요 ({photos.length}/{maxCount})
         </Text>
       </View>
 
@@ -43,10 +44,12 @@ export function PhotoSection({ photos, onChange, maxCount = 5 }: PhotoSectionPro
       {canAddMore && (
         <View style={styles.buttonContainer}>
           <Pressable style={styles.actionButton} onPress={capturePhoto}>
+            <Asset.Icon name="icon-camera" />
             <Text style={styles.actionButtonText}>촬영하기</Text>
           </Pressable>
           <Pressable style={styles.actionButton} onPress={selectFromAlbum}>
-            <Text style={styles.actionButtonText}>앨범에서 선택 ({remainingCount}장 추가 가능)</Text>
+            <Asset.Icon name="icon-picture" />
+            <Text style={styles.actionButtonText}>앨범에서 선택</Text>
           </Pressable>
         </View>
       )}
@@ -119,11 +122,14 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
+    flexDirection: 'row',
     paddingVertical: 12,
     paddingHorizontal: 16,
     backgroundColor: colors.grey100,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
   },
   actionButtonText: {
     fontSize: 14,

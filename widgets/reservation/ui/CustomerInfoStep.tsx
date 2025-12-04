@@ -90,7 +90,9 @@ export function CustomerInfoStep() {
             />
           )}
         />
+      </Card>
 
+      <Card>
         <Controller
           control={control}
           name="customerInfo.photos"
