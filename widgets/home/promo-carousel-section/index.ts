@@ -1,1 +1,1 @@
-export { HomePromoCarouselSection } from './ui';
+export * from './ui';

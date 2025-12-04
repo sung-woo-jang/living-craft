@@ -1,1 +1,1 @@
-export { HomeServicesSection } from './HomeServicesSection';
+export * from './HomeServicesSection';

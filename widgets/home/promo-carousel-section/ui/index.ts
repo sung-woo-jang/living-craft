@@ -1,1 +1,1 @@
-export { HomePromoCarouselSection } from './HomePromoCarouselSection';
+export * from './HomePromoCarouselSection';

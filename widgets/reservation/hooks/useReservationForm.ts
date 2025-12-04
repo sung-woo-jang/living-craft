@@ -1,8 +1,8 @@
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { Alert } from 'react-native';
 
-import { useReservationStore } from '../store/reservationStore';
-import { DEFAULT_FORM_VALUES, ReservationFormData, StepKey } from '../types';
+import { useReservationStore } from '../store';
+import { DEFAULT_FORM_VALUES,ReservationFormData, StepKey } from '../types';
 
 interface UseReservationFormOptions {
   onSubmitSuccess?: () => void;

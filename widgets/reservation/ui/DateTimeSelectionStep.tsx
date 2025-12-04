@@ -5,7 +5,7 @@ import { colors } from '@toss/tds-colors';
 import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useReservationStore } from '../store/reservationStore';
+import { useReservationStore } from '../store';
 import { ReservationFormData } from '../types';
 
 export function DateTimeSelectionStep() {

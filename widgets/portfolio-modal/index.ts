@@ -1,1 +1,1 @@
-export { PortfolioModal } from './ui';
+export * from './ui';

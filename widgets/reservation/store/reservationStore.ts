@@ -2,7 +2,7 @@ import { TimeSlot } from '@shared/constants';
 import { StoreWithShallow, useStoreWithShallow } from '@shared/model';
 import { createWithEqualityFn } from 'zustand/traditional';
 
-import { AddressSearchResult, DEFAULT_FORM_VALUES, ReservationFormData } from '../types';
+import { AddressSearchResult, DEFAULT_FORM_VALUES,ReservationFormData } from '../types';
 import { generateRandomDisabledDates, generateRandomTimeSlots } from '../utils';
 
 interface ReservationUIState {

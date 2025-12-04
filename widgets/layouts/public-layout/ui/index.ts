@@ -1,2 +1,2 @@
-export { BottomNavigation } from './BottomNavigation';
-export { PublicLayout } from './PublicLayout';
+export * from './BottomNavigation';
+export * from './PublicLayout';

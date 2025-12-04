@@ -1,1 +1,1 @@
-export { PortfolioModal } from './PortfolioModal';
+export * from './PortfolioModal';

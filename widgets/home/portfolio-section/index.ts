@@ -1,1 +1,1 @@
-export { HomePortfolioSection } from './ui';
+export * from './ui';

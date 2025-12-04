@@ -14,8 +14,8 @@ import {
   View,
 } from 'react-native';
 
-import { searchAddress } from '../api/naverLocalSearch';
-import { useReservationStore } from '../store/reservationStore';
+import { searchAddress } from '../api';
+import { useReservationStore } from '../store';
 import { AddressSearchResult, ReservationFormData } from '../types';
 import { PhotoSection } from './PhotoSection';
 

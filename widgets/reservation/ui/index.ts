@@ -1,6 +1,6 @@
-export { AddressSearchStep } from './AddressSearchStep';
-export { ConfirmationStep } from './ConfirmationStep';
-export { CustomerInfoStep } from './CustomerInfoStep';
-export { DateTimeSelectionStep } from './DateTimeSelectionStep';
-export { ReservationActions } from './ReservationActions';
-export { ServiceSelectionStep } from './ServiceSelectionStep';
+export * from './ConfirmationStep';
+export * from './CustomerInfoStep';
+export * from './DateTimeSelectionStep';
+export * from './PhotoSection';
+export * from './ReservationActions';
+export * from './ServiceSelectionStep';
