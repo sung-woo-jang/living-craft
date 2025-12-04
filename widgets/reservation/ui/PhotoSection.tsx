@@ -2,7 +2,7 @@ import { Image } from '@granite-js/react-native';
 import { usePhotoManager } from '@shared/hooks';
 import { colors } from '@toss/tds-colors';
 import { Asset } from '@toss/tds-react-native';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ImageStyle, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ImageState } from '../types';
 
@@ -32,7 +32,7 @@ export function PhotoSection({ photos, onChange, maxCount = 5 }: PhotoSectionPro
         <View style={styles.photoGrid}>
           {photos.map((photo) => (
             <View key={photo.id} style={styles.photoItem}>
-              <Image source={{ uri: photo.previewUri }} style={styles.photo} />
+              <Image source={{ uri: photo.previewUri }} style={styles.photo as any} />
               <Pressable style={styles.deleteButton} onPress={() => deletePhoto(photo.id)}>
                 <Text style={styles.deleteButtonText}>X</Text>
               </Pressable>
@@ -44,11 +44,11 @@ export function PhotoSection({ photos, onChange, maxCount = 5 }: PhotoSectionPro
       {canAddMore && (
         <View style={styles.buttonContainer}>
           <Pressable style={styles.actionButton} onPress={capturePhoto}>
-            <Asset.Icon name="icon-camera" />
+            <Asset.Icon name="icon-camera" frameShape={Asset.frameShape.CleanW40} />
             <Text style={styles.actionButtonText}>촬영하기</Text>
           </Pressable>
           <Pressable style={styles.actionButton} onPress={selectFromAlbum}>
-            <Asset.Icon name="icon-picture" />
+            <Asset.Icon name="icon-picture" frameShape={Asset.frameShape.CleanW40} />
             <Text style={styles.actionButtonText}>앨범에서 선택</Text>
           </Pressable>
         </View>
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   photo: {
     width: '100%',
     height: '100%',
-  },
+  } as ImageStyle,
   deleteButton: {
     position: 'absolute',
     top: 4,
@@ -122,19 +122,20 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
-    flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    flexDirection: 'column',
+    paddingVertical: 16,
+    paddingHorizontal: 12,
     backgroundColor: colors.grey100,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 8,
+    height: 100,
   },
   actionButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.grey800,
+    color: colors.grey700,
   },
   maxCountNotice: {
     paddingHorizontal: 8,
