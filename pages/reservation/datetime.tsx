@@ -43,7 +43,6 @@ function Page() {
       Alert.alert('알림', '서비스를 먼저 선택해주세요.', [
         { text: '확인', onPress: () => navigation.navigate('/reservation/service' as never) },
       ]);
-      return;
     }
   }, [navigation, validateStep]);
 

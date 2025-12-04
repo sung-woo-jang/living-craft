@@ -52,10 +52,12 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
         }
         return values.date !== '' && values.timeSlot !== null;
       case 'customer':
+        // 이름, 연락처, 주소, 상세주소 모두 필수
         return (
           values.customerInfo.name.trim() !== '' &&
           values.customerInfo.phone.trim() !== '' &&
-          values.customerInfo.address.trim() !== ''
+          values.customerInfo.address.trim() !== '' &&
+          values.customerInfo.detailAddress.trim() !== ''
         );
       case 'confirmation':
         return values.agreedToTerms;
@@ -80,10 +82,12 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
         }
         return values.date !== '' && values.timeSlot !== null;
       case 'customer':
+        // 이름, 연락처, 주소, 상세주소 모두 필수
         return (
           values.customerInfo.name.trim() !== '' &&
           values.customerInfo.phone.trim() !== '' &&
-          values.customerInfo.address.trim() !== ''
+          values.customerInfo.address.trim() !== '' &&
+          values.customerInfo.detailAddress.trim() !== ''
         );
       case 'confirmation':
         return values.agreedToTerms;
