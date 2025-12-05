@@ -182,15 +182,13 @@ export function CustomerInfoStep() {
             <Text style={styles.sectionSubtitle}>서비스를 받으실 주소입니다</Text>
           </View>
 
-          <View style={styles.selectedAddressBox}>
-            <Text style={styles.selectedAddressLabel}>선택된 주소</Text>
-            <Text style={styles.selectedAddressText}>{currentAddress}</Text>
-            {currentDetailAddress && <Text style={styles.detailAddressText}>{currentDetailAddress}</Text>}
-          </View>
-
-          <TouchableOpacity style={styles.changeAddressButton} onPress={handleChangeAddress}>
-            <Text style={styles.changeAddressText}>주소 변경</Text>
-          </TouchableOpacity>
+          <TextField.Button
+            variant="box"
+            label="선택된 주소"
+            value={currentDetailAddress ? `${currentAddress} ${currentDetailAddress}` : currentAddress}
+            onPress={handleChangeAddress}
+            placeholder="주소를 선택하세요"
+          />
         </Card>
       );
     }
@@ -204,10 +202,13 @@ export function CustomerInfoStep() {
             <Text style={styles.detailTitle}>자세한 주소를 알려주세요</Text>
           </View>
 
-          <View style={styles.selectedAddressBox}>
-            <Text style={styles.selectedAddressLabel}>선택된 주소</Text>
-            <Text style={styles.selectedAddressText}>{selectedAddress.roadAddress}</Text>
-          </View>
+          <TextField.Button
+            variant="box"
+            label="선택된 주소"
+            value={selectedAddress.roadAddress}
+            onPress={handleBackFromDetail}
+            placeholder="주소를 선택하세요"
+          />
 
           <DetailAddressInput onConfirm={handleConfirmAddress} />
         </Card>
@@ -383,26 +384,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.grey900,
   },
-  selectedAddressBox: {
-    backgroundColor: colors.grey100,
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  selectedAddressLabel: {
-    fontSize: 12,
-    color: colors.grey600,
-    marginBottom: 4,
-  },
-  selectedAddressText: {
-    fontSize: 16,
-    color: colors.grey900,
-  },
-  detailAddressText: {
-    fontSize: 14,
-    color: colors.grey700,
-    marginTop: 4,
-  },
   confirmButton: {
     backgroundColor: colors.blue500,
     paddingVertical: 14,
@@ -420,14 +401,5 @@ const styles = StyleSheet.create({
   },
   confirmButtonTextDisabled: {
     color: colors.grey500,
-  },
-  changeAddressButton: {
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  changeAddressText: {
-    fontSize: 14,
-    color: colors.blue500,
-    fontWeight: '500',
   },
 });

@@ -124,16 +124,13 @@ export function AddressSelectionSection({ onAddressSelect }: Props) {
   // 시/도 + 구/군 모두 선택된 경우: 주소 검색 UI
   return (
     <>
-      <View style={styles.selectedRegionContainer}>
-        <View style={styles.selectedRegionTag}>
-          <Text style={styles.selectedRegionText}>
-            {addressSelection.region.name} {addressSelection.city.name}
-          </Text>
-          <TouchableOpacity onPress={handleChangeRegion} style={styles.changeButton}>
-            <Text style={styles.changeButtonText}>변경</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <TextField.Button
+        variant="box"
+        label="서비스 지역"
+        value={`${addressSelection.region.name} ${addressSelection.city.name}`}
+        onPress={handleChangeRegion}
+        placeholder="지역을 선택하세요"
+      />
 
       <TextField
         variant="box"
@@ -189,32 +186,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'center',
-  },
-  selectedRegionContainer: {
-    marginBottom: 16,
-  },
-  selectedRegionTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.blue100,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  selectedRegionText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.blue700,
-  },
-  changeButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  changeButtonText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.blue600,
   },
   loadingContainer: {
     paddingVertical: 40,
