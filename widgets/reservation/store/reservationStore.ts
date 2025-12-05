@@ -2,7 +2,14 @@ import { TimeSlot } from '@shared/constants';
 import { StoreWithShallow, useStoreWithShallow } from '@shared/model';
 import { createWithEqualityFn } from 'zustand/traditional';
 
-import { AddressSearchResult, DEFAULT_FORM_VALUES,ReservationFormData } from '../types';
+import {
+  AddressSearchResult,
+  AddressSelection,
+  CityData,
+  DEFAULT_FORM_VALUES,
+  RegionData,
+  ReservationFormData,
+} from '../types';
 import { generateRandomDisabledDates, generateRandomTimeSlots } from '../utils';
 
 interface ReservationUIState {
@@ -19,6 +26,15 @@ interface ReservationUIState {
   isAddressSearching: boolean;
   showAddressDetailInput: boolean;
   selectedAddress: AddressSearchResult | null;
+
+  // 지역 선택 상태 (새로 추가)
+  addressSelection: AddressSelection;
+  isRegionBottomSheetOpen: boolean;
+  isCityBottomSheetOpen: boolean;
+  regions: RegionData[];
+  cities: CityData[];
+  isLoadingRegions: boolean;
+  isLoadingCities: boolean;
 
   // 유틸 데이터
   disabledDates: Date[];
@@ -43,6 +59,18 @@ interface ReservationUIActions {
   selectAddress: (address: AddressSearchResult) => void;
   resetAddressSearch: () => void;
 
+  // 지역 선택 액션 (새로 추가)
+  setAddressSelection: (selection: Partial<AddressSelection>) => void;
+  setIsRegionBottomSheetOpen: (open: boolean) => void;
+  setIsCityBottomSheetOpen: (open: boolean) => void;
+  setRegions: (regions: RegionData[]) => void;
+  setCities: (cities: CityData[]) => void;
+  setIsLoadingRegions: (loading: boolean) => void;
+  setIsLoadingCities: (loading: boolean) => void;
+  selectRegion: (region: RegionData) => void;
+  selectCity: (city: CityData) => void;
+  resetRegionSelection: () => void;
+
   // 유틸 데이터
   updateTimeSlotsForDate: (date: string) => void;
 
@@ -61,6 +89,13 @@ const initialState: ReservationUIState = {
   isAddressSearching: false,
   showAddressDetailInput: false,
   selectedAddress: null,
+  addressSelection: { region: null, city: null },
+  isRegionBottomSheetOpen: false,
+  isCityBottomSheetOpen: false,
+  regions: [],
+  cities: [],
+  isLoadingRegions: false,
+  isLoadingCities: false,
   disabledDates: generateRandomDisabledDates(),
   timeSlots: [],
 };
@@ -93,7 +128,47 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
       isAddressSearching: false,
       showAddressDetailInput: false,
       selectedAddress: null,
+      addressSelection: { region: null, city: null },
+      cities: [],
     }),
+
+  // 지역 선택 액션
+  setAddressSelection: (selection) => {
+    const { addressSelection } = get();
+    set({ addressSelection: { ...addressSelection, ...selection } });
+  },
+  setIsRegionBottomSheetOpen: (open) => set({ isRegionBottomSheetOpen: open }),
+  setIsCityBottomSheetOpen: (open) => set({ isCityBottomSheetOpen: open }),
+  setRegions: (regions) => set({ regions }),
+  setCities: (cities) => set({ cities }),
+  setIsLoadingRegions: (loading) => set({ isLoadingRegions: loading }),
+  setIsLoadingCities: (loading) => set({ isLoadingCities: loading }),
+
+  selectRegion: (region) => {
+    set({
+      addressSelection: { region, city: null },
+      isRegionBottomSheetOpen: false,
+      isCityBottomSheetOpen: true,
+      cities: [], // 이전 구/군 목록 초기화
+    });
+  },
+
+  selectCity: (city) => {
+    const { addressSelection } = get();
+    set({
+      addressSelection: { ...addressSelection, city },
+      isCityBottomSheetOpen: false,
+    });
+  },
+
+  resetRegionSelection: () => {
+    set({
+      addressSelection: { region: null, city: null },
+      isRegionBottomSheetOpen: false,
+      isCityBottomSheetOpen: false,
+      cities: [],
+    });
+  },
 
   // 유틸 데이터
   updateTimeSlotsForDate: (date) => {

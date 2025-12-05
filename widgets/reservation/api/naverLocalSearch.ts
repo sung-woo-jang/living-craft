@@ -14,15 +14,17 @@ interface NaverLocalSearchResponse {
 
 /**
  * 네이버 지역 검색 API를 호출합니다.
- * 인천 지역만 검색되도록 필터링합니다.
+ * 선택된 지역 정보를 기반으로 검색합니다.
+ * @param query 검색어 (예: "숙골로")
+ * @param regionPrefix 지역 접두어 (예: "인천 남동구")
  */
-export async function searchAddress(query: string): Promise<AddressSearchResult[]> {
+export async function searchAddress(query: string, regionPrefix: string = '인천'): Promise<AddressSearchResult[]> {
   if (!query.trim()) {
     return [];
   }
 
-  // 인천 지역으로 검색 범위 제한
-  const searchQuery = `인천 ${query}`;
+  // 지역 접두어를 포함하여 검색
+  const searchQuery = `${regionPrefix} ${query}`.trim();
 
   try {
     const params = new URLSearchParams({
@@ -46,11 +48,14 @@ export async function searchAddress(query: string): Promise<AddressSearchResult[
 
     const data: NaverLocalSearchResponse = await response.json();
 
-    // 인천 지역만 필터링 및 변환
+    // 선택된 지역으로 필터링 및 변환
+    // regionPrefix의 첫 번째 단어 (시/도 이름)를 추출하여 필터링
+    const regionName = regionPrefix.split(' ')[0];
+
     return data.items
       .filter((item) => {
         const address = item.roadAddress || item.address;
-        return address.includes('인천');
+        return address.includes(regionName || '인천');
       })
       .map((item) => ({
         roadAddress: item.roadAddress || item.address,

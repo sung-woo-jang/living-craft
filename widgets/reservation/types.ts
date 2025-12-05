@@ -47,6 +47,27 @@ export interface AddressSearchResult {
   zipCode: string; // 우편번호
 }
 
+// 시/도 정보
+export interface RegionData {
+  id: string; // 예: "incheon"
+  name: string; // 예: "인천광역시"
+  code?: string; // 행정구역 코드 (선택사항)
+}
+
+// 구/군 정보
+export interface CityData {
+  id: string; // 예: "namdong-gu"
+  name: string; // 예: "남동구"
+  regionId: string; // 상위 시/도 ID
+  code?: string; // 행정구역 코드 (선택사항)
+}
+
+// 주소 선택 상태
+export interface AddressSelection {
+  region: RegionData | null;
+  city: CityData | null;
+}
+
 export const DEFAULT_FORM_VALUES: ReservationFormData = {
   service: null,
   date: '',
