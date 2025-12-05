@@ -85,7 +85,8 @@
       "WebFetch(domain:developers.naver.com)",
       "mcp__postman__createCollectionRequest",
       "mcp__postman__putCollection",
-      "Bash(yarn typecheck:*)"
+      "Bash(yarn typecheck:*)",
+      "Bash(yarn remove:*)"
     ],
     "deny": [
       "Bash(npm run dev:*)",
