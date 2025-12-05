@@ -104,7 +104,7 @@ export function AddressSelectionSection({ onAddressSelect }: Props) {
       <View style={styles.selectRegionContainer}>
         <Text style={styles.selectRegionTitle}>지역 선택</Text>
         <Text style={styles.selectRegionSubtitle}>먼저 서비스를 받으실 지역을 선택해주세요</Text>
-        <View style={styles.selectButton}>
+        <View style={styles.buttonContainer}>
           <Button onPress={handleOpenRegionSheet}>시/도 선택하기</Button>
         </View>
       </View>
@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.grey900,
     marginBottom: 8,
+    textAlign: 'center',
   },
   selectRegionSubtitle: {
     fontSize: 14,
@@ -186,8 +187,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: 'center',
   },
-  selectButton: {
-    minWidth: 200,
+  buttonContainer: {
+    alignItems: 'center',
   },
   selectedRegionContainer: {
     marginBottom: 16,
