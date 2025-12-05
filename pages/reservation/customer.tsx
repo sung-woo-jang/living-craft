@@ -2,16 +2,8 @@ import { createRoute } from '@granite-js/react-native';
 import { ProgressStep, ProgressStepper } from '@shared/ui/progress-stepper';
 import { colors } from '@toss/tds-colors';
 import { BottomCTA, Button } from '@toss/tds-react-native';
-import {
-  CitySelectBottomSheet,
-  CustomerInfoStep,
-  getCitiesByRegion,
-  getRegions,
-  RegionSelectBottomSheet,
-  useReservationForm,
-  useReservationStore,
-} from '@widgets/reservation';
-import { useCallback, useEffect } from 'react';
+import { CustomerInfoStep, useReservationForm, useReservationStore } from '@widgets/reservation';
+import { useEffect } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { Alert, StyleSheet, View } from 'react-native';
 
@@ -22,46 +14,7 @@ export const Route = createRoute('/reservation/customer', {
 function Page() {
   const navigation = Route.useNavigation();
 
-  const {
-    formData,
-    updateFormData,
-    isLoading,
-    // BottomSheet 관련 상태
-    isRegionBottomSheetOpen,
-    isCityBottomSheetOpen,
-    regions,
-    cities,
-    isLoadingRegions,
-    isLoadingCities,
-    addressSelection,
-    setIsRegionBottomSheetOpen,
-    setIsCityBottomSheetOpen,
-    setRegions,
-    setCities,
-    setIsLoadingRegions,
-    setIsLoadingCities,
-    selectRegion,
-    selectCity,
-  } = useReservationStore([
-    'formData',
-    'updateFormData',
-    'isLoading',
-    'isRegionBottomSheetOpen',
-    'isCityBottomSheetOpen',
-    'regions',
-    'cities',
-    'isLoadingRegions',
-    'isLoadingCities',
-    'addressSelection',
-    'setIsRegionBottomSheetOpen',
-    'setIsCityBottomSheetOpen',
-    'setRegions',
-    'setCities',
-    'setIsLoadingRegions',
-    'setIsLoadingCities',
-    'selectRegion',
-    'selectCity',
-  ]);
+  const { formData, updateFormData, isLoading } = useReservationStore(['formData', 'updateFormData', 'isLoading']);
 
   const { methods, canProceedToNext, validateStep } = useReservationForm();
 
@@ -92,64 +45,6 @@ function Page() {
       ]);
     }
   }, [navigation, validateStep]);
-
-  // 지역 목록 로드
-  const loadRegions = useCallback(async () => {
-    setIsLoadingRegions(true);
-    try {
-      const data = await getRegions();
-      setRegions(data);
-    } catch (error) {
-      console.error('지역 목록 로드 실패:', error);
-      setRegions([]);
-    } finally {
-      setIsLoadingRegions(false);
-    }
-  }, [setIsLoadingRegions, setRegions]);
-
-  // 구/군 목록 로드
-  const loadCities = useCallback(
-    async (regionId: string) => {
-      setIsLoadingCities(true);
-      try {
-        const data = await getCitiesByRegion(regionId);
-        setCities(data);
-      } catch (error) {
-        console.error('구/군 목록 로드 실패:', error);
-        setCities([]);
-      } finally {
-        setIsLoadingCities(false);
-      }
-    },
-    [setIsLoadingCities, setCities]
-  );
-
-  // 시/도 바텀시트 오픈 시 지역 목록 로드
-  useEffect(() => {
-    if (isRegionBottomSheetOpen && regions.length === 0) {
-      loadRegions();
-    }
-  }, [isRegionBottomSheetOpen, regions.length, loadRegions]);
-
-  // 구/군 바텀시트 오픈 시 구/군 목록 로드
-  useEffect(() => {
-    if (isCityBottomSheetOpen && addressSelection.region) {
-      loadCities(addressSelection.region.id);
-    }
-  }, [isCityBottomSheetOpen, addressSelection.region, loadCities]);
-
-  // BottomSheet 핸들러
-  const handleCloseRegionSheet = useCallback(() => {
-    setIsRegionBottomSheetOpen(false);
-  }, [setIsRegionBottomSheetOpen]);
-
-  const handleCloseCitySheet = useCallback(() => {
-    setIsCityBottomSheetOpen(false);
-  }, [setIsCityBottomSheetOpen]);
-
-  const handleBackToRegion = useCallback(() => {
-    setIsRegionBottomSheetOpen(true);
-  }, [setIsRegionBottomSheetOpen]);
 
   const handlePrevious = () => {
     navigation.navigate('/reservation/datetime' as never);
@@ -202,29 +97,6 @@ function Page() {
           }
         />
       </View>
-
-      {/* BottomSheet들을 container View 바깥에 배치하여 전체 화면을 덮도록 함 */}
-      {isRegionBottomSheetOpen && (
-        <RegionSelectBottomSheet
-          isOpen={isRegionBottomSheetOpen}
-          regions={regions}
-          isLoading={isLoadingRegions}
-          onClose={handleCloseRegionSheet}
-          onSelect={selectRegion}
-        />
-      )}
-
-      {isCityBottomSheetOpen && addressSelection.region && (
-        <CitySelectBottomSheet
-          isOpen={isCityBottomSheetOpen}
-          selectedRegion={addressSelection.region}
-          cities={cities}
-          isLoading={isLoadingCities}
-          onClose={handleCloseCitySheet}
-          onSelect={selectCity}
-          onBackToRegion={handleBackToRegion}
-        />
-      )}
     </FormProvider>
   );
 }

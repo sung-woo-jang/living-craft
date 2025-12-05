@@ -45,20 +45,20 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
 
     switch (step) {
       case 'service':
-        return values.service !== null;
+        // 서비스 선택 + 주소 입력 완료 필수
+        return (
+          values.service !== null &&
+          values.customerInfo.address.trim() !== '' &&
+          values.customerInfo.detailAddress.trim() !== ''
+        );
       case 'datetime':
         if (!requiresTimeSelection) {
           return values.date !== '';
         }
         return values.date !== '' && values.timeSlot !== null;
       case 'customer':
-        // 이름, 연락처, 주소, 상세주소 모두 필수
-        return (
-          values.customerInfo.name.trim() !== '' &&
-          values.customerInfo.phone.trim() !== '' &&
-          values.customerInfo.address.trim() !== '' &&
-          values.customerInfo.detailAddress.trim() !== ''
-        );
+        // 이름, 연락처 필수 (주소는 service 단계에서 이미 입력됨)
+        return values.customerInfo.name.trim() !== '' && values.customerInfo.phone.trim() !== '';
       case 'confirmation':
         return values.agreedToTerms;
       default:
@@ -75,20 +75,20 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
 
     switch (step) {
       case 'service':
-        return values.service !== null;
+        // 서비스 선택 + 주소 입력 완료 필수
+        return (
+          values.service !== null &&
+          values.customerInfo.address.trim() !== '' &&
+          values.customerInfo.detailAddress.trim() !== ''
+        );
       case 'datetime':
         if (!requiresTimeSelection) {
           return values.date !== '';
         }
         return values.date !== '' && values.timeSlot !== null;
       case 'customer':
-        // 이름, 연락처, 주소, 상세주소 모두 필수
-        return (
-          values.customerInfo.name.trim() !== '' &&
-          values.customerInfo.phone.trim() !== '' &&
-          values.customerInfo.address.trim() !== '' &&
-          values.customerInfo.detailAddress.trim() !== ''
-        );
+        // 이름, 연락처 필수 (주소는 service 단계에서 이미 입력됨)
+        return values.customerInfo.name.trim() !== '' && values.customerInfo.phone.trim() !== '';
       case 'confirmation':
         return values.agreedToTerms;
       default:

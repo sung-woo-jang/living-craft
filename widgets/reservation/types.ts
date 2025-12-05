@@ -68,6 +68,16 @@ export interface AddressSelection {
   city: CityData | null;
 }
 
+// 서비스 가능 구/군 정보 (서비스 ID 포함)
+export interface ServiceableCity extends CityData {
+  serviceIds: string[]; // 해당 구/군에서 가능한 서비스 ID 목록
+}
+
+// 서비스 가능 시/도 정보
+export interface ServiceableRegion extends RegionData {
+  cities: ServiceableCity[];
+}
+
 export const DEFAULT_FORM_VALUES: ReservationFormData = {
   service: null,
   date: '',
