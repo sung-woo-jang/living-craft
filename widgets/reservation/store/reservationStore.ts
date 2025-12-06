@@ -81,6 +81,7 @@ interface ReservationUIActions {
   // 서비스 가능 지역 액션
   loadServiceableRegions: () => Promise<void>;
   updateAvailableServices: () => void;
+  getFilteredRegionsForService: (serviceId: string) => ServiceableRegion[];
 
   // 유틸 데이터
   updateTimeSlotsForDate: (date: string) => void;
@@ -243,6 +244,18 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
         formData: { ...formData, service: null },
       }),
     });
+  },
+
+  getFilteredRegionsForService: (serviceId) => {
+    const { serviceableRegions } = get();
+    if (!serviceId) return [];
+
+    return serviceableRegions
+      .map((region) => ({
+        ...region,
+        cities: region.cities.filter((city) => city.serviceIds.includes(serviceId)),
+      }))
+      .filter((region) => region.cities.length > 0);
   },
 
   // 유틸 데이터

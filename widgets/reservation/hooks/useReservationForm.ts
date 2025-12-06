@@ -34,7 +34,11 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
   const watchedValues = watch();
 
   // zustand store
-  const { setIsLoading, updateTimeSlotsForDate } = useReservationStore(['setIsLoading', 'updateTimeSlotsForDate']);
+  const { setIsLoading, updateTimeSlotsForDate, availableServiceIds } = useReservationStore([
+    'setIsLoading',
+    'updateTimeSlotsForDate',
+    'availableServiceIds',
+  ]);
 
   /**
    * 특정 단계의 필수 입력값이 완료되었는지 검증 (watch 사용 - 리렌더링 트리거)
@@ -45,11 +49,13 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
 
     switch (step) {
       case 'service':
-        // 서비스 선택 + 주소 입력 완료 필수
+        // 서비스 선택 + 주소 입력 완료 + 지역에서 해당 서비스 가능 여부 확인
         return (
           values.service !== null &&
           values.customerInfo.address.trim() !== '' &&
-          values.customerInfo.detailAddress.trim() !== ''
+          values.customerInfo.detailAddress.trim() !== '' &&
+          // 선택된 서비스가 현재 지역에서 가능한지 확인
+          (availableServiceIds.length === 0 || availableServiceIds.includes(values.service.id))
         );
       case 'datetime':
         if (!requiresTimeSelection) {
@@ -75,11 +81,13 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
 
     switch (step) {
       case 'service':
-        // 서비스 선택 + 주소 입력 완료 필수
+        // 서비스 선택 + 주소 입력 완료 + 지역에서 해당 서비스 가능 여부 확인
         return (
           values.service !== null &&
           values.customerInfo.address.trim() !== '' &&
-          values.customerInfo.detailAddress.trim() !== ''
+          values.customerInfo.detailAddress.trim() !== '' &&
+          // 선택된 서비스가 현재 지역에서 가능한지 확인
+          (availableServiceIds.length === 0 || availableServiceIds.includes(values.service.id))
         );
       case 'datetime':
         if (!requiresTimeSelection) {

@@ -12,7 +12,7 @@ import {
   useReservationForm,
   useReservationStore,
 } from '@widgets/reservation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -30,8 +30,8 @@ function Page() {
     addressSelection,
     isRegionBottomSheetOpen,
     isCityBottomSheetOpen,
-    serviceableRegions,
     cities,
+    serviceableRegions,
     // 주소 검색 상태
     showAddressDetailInput,
     selectedAddress,
@@ -44,14 +44,15 @@ function Page() {
     selectCity,
     selectAddress,
     resetAddressSearch,
+    getFilteredRegionsForService,
   } = useReservationStore([
     'formData',
     'updateFormData',
     'addressSelection',
     'isRegionBottomSheetOpen',
     'isCityBottomSheetOpen',
-    'serviceableRegions',
     'cities',
+    'serviceableRegions',
     'showAddressDetailInput',
     'selectedAddress',
     'loadServiceableRegions',
@@ -62,9 +63,13 @@ function Page() {
     'selectCity',
     'selectAddress',
     'resetAddressSearch',
+    'getFilteredRegionsForService',
   ]);
 
   const { methods, canProceedToNext } = useReservationForm();
+
+  // 서비스 변경 감지를 위한 이전 서비스 ID 추적
+  const prevServiceIdRef = useRef<string | null>(null);
 
   // 현재 주소 값 감시
   const currentAddress = methods.watch('customerInfo.address');
@@ -72,6 +77,18 @@ function Page() {
 
   // 주소가 완전히 입력되었는지 확인
   const hasCompleteAddress = currentAddress && currentAddress.trim() !== '' && currentDetailAddress && currentDetailAddress.trim() !== '';
+
+  // React Hook Form에서 직접 watch (즉각적인 반응성)
+  const currentService = methods.watch('service');
+
+  // 선택된 서비스에 따라 필터링된 지역 목록
+  const filteredRegions = useMemo(() => {
+    if (!currentService) return [];
+    return getFilteredRegionsForService(currentService.id);
+  }, [currentService, getFilteredRegionsForService, serviceableRegions]);
+
+  // 서비스가 선택되었는지 여부
+  const hasSelectedService = currentService !== null;
 
   // 마운트 시 서비스 가능 지역 로드 + 폼 데이터 복원
   useEffect(() => {
@@ -87,15 +104,32 @@ function Page() {
     return () => subscription.unsubscribe();
   }, [methods.watch, updateFormData]);
 
-  // 구/군 BottomSheet 오픈 시 목록 로드 (serviceableRegions에서 직접 가져옴)
+  // 구/군 BottomSheet 오픈 시 목록 로드 (필터링된 지역에서 가져옴)
   useEffect(() => {
-    if (isCityBottomSheetOpen && addressSelection.region && serviceableRegions.length > 0) {
-      const selectedRegion = serviceableRegions.find((r) => r.id === addressSelection.region?.id);
+    if (isCityBottomSheetOpen && addressSelection.region && filteredRegions.length > 0) {
+      const selectedRegion = filteredRegions.find((r) => r.id === addressSelection.region?.id);
       if (selectedRegion) {
         setCities(selectedRegion.cities);
       }
     }
-  }, [isCityBottomSheetOpen, addressSelection.region, serviceableRegions]);
+  }, [isCityBottomSheetOpen, addressSelection.region, filteredRegions]);
+
+  // 서비스 변경 시 주소 초기화
+  useEffect(() => {
+    if (!currentService) {
+      prevServiceIdRef.current = null;
+      return;
+    }
+
+    // 이전 서비스와 다른 경우에만 초기화 (최초 선택 제외)
+    if (prevServiceIdRef.current !== null && prevServiceIdRef.current !== currentService.id) {
+      resetAddressSearch();
+      methods.setValue('customerInfo.address', '');
+      methods.setValue('customerInfo.detailAddress', '');
+    }
+
+    prevServiceIdRef.current = currentService.id;
+  }, [currentService?.id, resetAddressSearch, methods]);
 
   // 주소 선택 핸들러
   const handleAddressSelect = useCallback(
@@ -159,6 +193,22 @@ function Page() {
 
   // 주소 정보 섹션 렌더링
   const renderAddressSection = () => {
+    // 서비스가 선택되지 않은 경우
+    if (!hasSelectedService) {
+      return (
+        <Card>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>서비스 지역</Text>
+            <Text style={styles.sectionSubtitle}>먼저 서비스를 선택해주세요</Text>
+          </View>
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateText}>위에서 원하시는 서비스를 선택하시면</Text>
+            <Text style={styles.emptyStateText}>해당 서비스가 가능한 지역을 선택하실 수 있습니다</Text>
+          </View>
+        </Card>
+      );
+    }
+
     // 이미 주소가 설정된 경우 - 표시만
     if (hasCompleteAddress) {
       return (
@@ -214,8 +264,8 @@ function Page() {
     );
   };
 
-  // 서비스 가능 지역 목록에서 regions 추출
-  const serviceableRegionsList = serviceableRegions.map((r) => ({
+  // 선택된 서비스에 대해 필터링된 지역 목록
+  const serviceableRegionsList = filteredRegions.map((r) => ({
     id: r.id,
     name: r.name,
     code: r.code,
@@ -231,10 +281,15 @@ function Page() {
           <ProgressStep title="확인" />
         </ProgressStepper>
 
-        <ScrollView style={styles.contentContainer} contentContainerStyle={styles.scrollContent}>
-          {renderAddressSection()}
+        <ScrollView
+          style={styles.contentContainer}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          automaticallyAdjustKeyboardInsets
+        >
+          <ServiceSelectionStep />
 
-          {hasCompleteAddress && <ServiceSelectionStep />}
+          {renderAddressSection()}
         </ScrollView>
 
         <BottomCTA.Double
@@ -360,5 +415,17 @@ const styles = StyleSheet.create({
   },
   confirmButtonTextDisabled: {
     color: colors.grey500,
+  },
+  // 빈 상태 스타일
+  emptyState: {
+    paddingVertical: 40,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  emptyStateText: {
+    fontSize: 14,
+    color: colors.grey600,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });
