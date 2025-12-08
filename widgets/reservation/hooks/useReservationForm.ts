@@ -115,13 +115,19 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
 
     try {
       const values = getValues();
+      // API 명세서 형식에 맞게 데이터 평탄화
       const reservationData = {
         serviceId: values.service?.id,
         estimateDate: values.estimateDate,
         estimateTime: values.estimateTimeSlot?.time,
         constructionDate: values.constructionDate,
         constructionTime: values.constructionTimeSlot?.time ?? null,
-        customerInfo: values.customerInfo,
+        address: values.customerInfo.address,
+        detailAddress: values.customerInfo.detailAddress,
+        customerName: values.customerInfo.name,
+        customerPhone: values.customerInfo.phone,
+        memo: values.customerInfo.memo,
+        photos: values.customerInfo.photos.map((photo) => photo.previewUri),
       };
 
       console.log('예약 데이터:', reservationData);

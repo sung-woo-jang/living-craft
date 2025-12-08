@@ -86,7 +86,8 @@
       "mcp__postman__createCollectionRequest",
       "mcp__postman__putCollection",
       "Bash(yarn typecheck:*)",
-      "Bash(yarn remove:*)"
+      "Bash(yarn remove:*)",
+      "mcp__postman__getEnabledTools"
     ],
     "deny": [
       "Bash(npm run dev:*)",

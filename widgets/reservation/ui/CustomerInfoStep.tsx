@@ -51,7 +51,7 @@ export function CustomerInfoStep() {
 
         <Controller
           control={control}
-          name="customerInfo.requirements"
+          name="customerInfo.memo"
           render={({ field: { onChange, value } }) => (
             <TextField
               variant="box"

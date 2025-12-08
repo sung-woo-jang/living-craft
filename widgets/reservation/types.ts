@@ -10,7 +10,7 @@ export interface CustomerInfo {
   phone: string;
   address: string;
   detailAddress: string;
-  requirements: string;
+  memo: string;
   photos: ImageState[];
 }
 
@@ -99,7 +99,7 @@ export const DEFAULT_FORM_VALUES: ReservationFormData = {
     phone: '',
     address: '',
     detailAddress: '',
-    requirements: '',
+    memo: '',
     photos: [],
   },
   agreedToTerms: false,
