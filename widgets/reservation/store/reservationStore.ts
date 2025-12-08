@@ -2,8 +2,9 @@ import { TimeSlot } from '@shared/constants';
 import { StoreWithShallow, useStoreWithShallow } from '@shared/model';
 import { createWithEqualityFn } from 'zustand/traditional';
 
-import { getAvailableServiceIds, getServiceableRegions } from '../api';
+import { checkAddressEstimateFee, getAvailableServiceIds, getServiceableRegions } from '../api';
 import {
+  AddressEstimateInfo,
   AddressSearchResult,
   AddressSelection,
   CityData,
@@ -28,6 +29,7 @@ interface ReservationUIState {
   isAddressSearching: boolean;
   showAddressDetailInput: boolean;
   selectedAddress: AddressSearchResult | null;
+  isAddressSearchDrawerOpen: boolean;
 
   // 지역 선택 상태
   addressSelection: AddressSelection;
@@ -42,6 +44,10 @@ interface ReservationUIState {
   serviceableRegions: ServiceableRegion[];
   isLoadingServiceableRegions: boolean;
   availableServiceIds: string[];
+
+  // 견적 비용 상태
+  addressEstimateInfo: AddressEstimateInfo | null;
+  isCheckingEstimateFee: boolean;
 
   // 유틸 데이터
   disabledDates: Date[];
@@ -65,6 +71,8 @@ interface ReservationUIActions {
   setShowAddressDetailInput: (show: boolean) => void;
   selectAddress: (address: AddressSearchResult) => void;
   resetAddressSearch: () => void;
+  openAddressSearchDrawer: () => void;
+  closeAddressSearchDrawer: () => void;
 
   // 지역 선택 액션 (새로 추가)
   setAddressSelection: (selection: Partial<AddressSelection>) => void;
@@ -82,6 +90,10 @@ interface ReservationUIActions {
   loadServiceableRegions: () => Promise<void>;
   updateAvailableServices: () => void;
   getFilteredRegionsForService: (serviceId: string) => ServiceableRegion[];
+
+  // 견적 비용 액션
+  checkEstimateFee: (address: string, serviceId: string) => Promise<void>;
+  resetEstimateFeeInfo: () => void;
 
   // 유틸 데이터
   updateTimeSlotsForDate: (date: string) => void;
@@ -101,6 +113,7 @@ const initialState: ReservationUIState = {
   isAddressSearching: false,
   showAddressDetailInput: false,
   selectedAddress: null,
+  isAddressSearchDrawerOpen: false,
   addressSelection: { region: null, city: null },
   isRegionBottomSheetOpen: false,
   isCityBottomSheetOpen: false,
@@ -111,6 +124,8 @@ const initialState: ReservationUIState = {
   serviceableRegions: [],
   isLoadingServiceableRegions: false,
   availableServiceIds: [],
+  addressEstimateInfo: null,
+  isCheckingEstimateFee: false,
   disabledDates: generateRandomDisabledDates(),
   timeSlots: [],
 };
@@ -143,9 +158,12 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
       isAddressSearching: false,
       showAddressDetailInput: false,
       selectedAddress: null,
+      isAddressSearchDrawerOpen: false,
       addressSelection: { region: null, city: null },
       cities: [],
     }),
+  openAddressSearchDrawer: () => set({ isAddressSearchDrawerOpen: true }),
+  closeAddressSearchDrawer: () => set({ isAddressSearchDrawerOpen: false }),
 
   // 지역 선택 액션
   setAddressSelection: (selection) => {
@@ -256,6 +274,30 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
         cities: region.cities.filter((city) => city.serviceIds.includes(serviceId)),
       }))
       .filter((region) => region.cities.length > 0);
+  },
+
+  // 견적 비용 액션
+  checkEstimateFee: async (address, serviceId) => {
+    set({ isCheckingEstimateFee: true });
+    try {
+      const estimateInfo = await checkAddressEstimateFee(address, serviceId);
+      set({
+        addressEstimateInfo: estimateInfo,
+        isCheckingEstimateFee: false,
+      });
+    } catch {
+      set({
+        addressEstimateInfo: null,
+        isCheckingEstimateFee: false,
+      });
+    }
+  },
+
+  resetEstimateFeeInfo: () => {
+    set({
+      addressEstimateInfo: null,
+      isCheckingEstimateFee: false,
+    });
   },
 
   // 유틸 데이터

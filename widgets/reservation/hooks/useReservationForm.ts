@@ -53,7 +53,6 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
         return (
           values.service !== null &&
           values.customerInfo.address.trim() !== '' &&
-          values.customerInfo.detailAddress.trim() !== '' &&
           // 선택된 서비스가 현재 지역에서 가능한지 확인
           (availableServiceIds.length === 0 || availableServiceIds.includes(values.service.id))
         );
@@ -85,7 +84,6 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
         return (
           values.service !== null &&
           values.customerInfo.address.trim() !== '' &&
-          values.customerInfo.detailAddress.trim() !== '' &&
           // 선택된 서비스가 현재 지역에서 가능한지 확인
           (availableServiceIds.length === 0 || availableServiceIds.includes(values.service.id))
         );

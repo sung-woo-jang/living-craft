@@ -1,3 +1,4 @@
+export * from './AddressSearchDrawer';
 export * from './AddressSelectionSection';
 export * from './CitySelectBottomSheet';
 export * from './ConfirmationStep';

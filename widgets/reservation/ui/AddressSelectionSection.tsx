@@ -1,68 +1,33 @@
 import { colors } from '@toss/tds-colors';
 import { Button, TextField } from '@toss/tds-react-native';
-import { useCallback, useState } from 'react';
-import { ActivityIndicator, Keyboard, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { searchAddress } from '../api';
 import { useReservationStore } from '../store';
 import type { AddressSearchResult } from '../types';
 
 interface Props {
-  onAddressSelect: (address: AddressSearchResult) => void;
+  selectedAddress: AddressSearchResult | null;
+  detailAddress: string;
+  onOpenSearchDrawer: () => void;
+  onClearAddress: () => void;
+  onDetailAddressChange: (value: string) => void;
 }
 
-export function AddressSelectionSection({ onAddressSelect }: Props) {
-  const {
-    addressSelection,
-    addressSearchQuery,
-    addressSearchResults,
-    isAddressSearching,
-    setAddressSearchQuery,
-    setAddressSearchResults,
-    setIsAddressSearching,
-    setIsRegionBottomSheetOpen,
-    resetRegionSelection,
-  } = useReservationStore([
-    'addressSelection',
-    'addressSearchQuery',
-    'addressSearchResults',
-    'isAddressSearching',
-    'setAddressSearchQuery',
-    'setAddressSearchResults',
-    'setIsAddressSearching',
-    'setIsRegionBottomSheetOpen',
-    'resetRegionSelection',
-  ]);
-
-  const [hasSearched, setHasSearched] = useState(false);
-
-  const handleSearch = useCallback(
-    async (searchQuery?: string) => {
-      const query = searchQuery ?? addressSearchQuery;
-      if (!query.trim()) {
-        return;
-      }
-
-      // 선택된 지역 정보 기반으로 검색
-      const { region, city } = addressSelection;
-      const regionPrefix = city ? `${region?.name} ${city.name}` : region?.name || '인천';
-
-      Keyboard.dismiss();
-      setIsAddressSearching(true);
-      setHasSearched(true);
-
-      try {
-        const results = await searchAddress(query, regionPrefix);
-        setAddressSearchResults(results);
-      } catch (error) {
-        console.error('주소 검색 오류:', error);
-        setAddressSearchResults([]);
-      } finally {
-        setIsAddressSearching(false);
-      }
-    },
-    [addressSearchQuery, addressSelection, setIsAddressSearching, setAddressSearchResults]
-  );
+export function AddressSelectionSection({
+  selectedAddress,
+  detailAddress,
+  onOpenSearchDrawer,
+  onClearAddress,
+  onDetailAddressChange,
+}: Props) {
+  const { addressSelection, addressEstimateInfo, setIsRegionBottomSheetOpen, resetRegionSelection } =
+    useReservationStore([
+      'addressSelection',
+      'addressEstimateInfo',
+      'setIsRegionBottomSheetOpen',
+      'resetRegionSelection',
+    ]);
 
   const handleOpenRegionSheet = useCallback(() => {
     setIsRegionBottomSheetOpen(true);
@@ -70,33 +35,27 @@ export function AddressSelectionSection({ onAddressSelect }: Props) {
 
   const handleChangeRegion = useCallback(() => {
     resetRegionSelection();
-    setAddressSearchQuery('');
-    setAddressSearchResults([]);
-    setHasSearched(false);
+    onClearAddress();
     setIsRegionBottomSheetOpen(true);
-  }, [resetRegionSelection, setAddressSearchQuery, setAddressSearchResults, setIsRegionBottomSheetOpen]);
+  }, [resetRegionSelection, onClearAddress, setIsRegionBottomSheetOpen]);
 
-  const renderAddressItem = useCallback(
-    ({ item }: { item: AddressSearchResult }) => (
-      <TouchableOpacity style={styles.addressItem} onPress={() => onAddressSelect(item)}>
-        {item.zipCode && (
-          <View style={styles.addressRow}>
-            <Text style={styles.addressLabel}>우편번호</Text>
-            <Text style={styles.addressValue}>{item.zipCode}</Text>
-          </View>
-        )}
-        <View style={styles.addressRow}>
-          <Text style={styles.addressLabel}>도로명</Text>
-          <Text style={styles.addressValue}>{item.roadAddress}</Text>
-        </View>
-        <View style={styles.addressRow}>
-          <Text style={styles.addressLabel}>구주소</Text>
-          <Text style={styles.addressValue}>{item.jibunAddress}</Text>
-        </View>
-      </TouchableOpacity>
-    ),
-    [onAddressSelect]
-  );
+  // 선택된 주소에서 시/도 + 구/군 부분 제외하고 표시
+  // 예: "인천광역시 남동구 숙골로 456" → "숙골로 456"
+  const displayAddress = useMemo(() => {
+    if (!selectedAddress) return '';
+
+    const { region, city } = addressSelection;
+    if (!region || !city) return selectedAddress.roadAddress;
+
+    let address = selectedAddress.roadAddress;
+
+    // 시/도 이름 제거
+    address = address.replace(region.name, '').trim();
+    // 구/군 이름 제거
+    address = address.replace(city.name, '').trim();
+
+    return address;
+  }, [selectedAddress, addressSelection]);
 
   // 지역 미선택 시: 시/도 선택 버튼
   if (!addressSelection.region) {
@@ -121,46 +80,51 @@ export function AddressSelectionSection({ onAddressSelect }: Props) {
     );
   }
 
-  // 시/도 + 구/군 모두 선택된 경우: 주소 검색 UI
+  // 시/도 + 구/군 모두 선택된 경우
   return (
     <>
+      {/* 서비스 지역 */}
       <TextField.Button
         variant="box"
-        label="서비스 지역"
+        label="서비스 지역 *"
         value={`${addressSelection.region.name} ${addressSelection.city.name}`}
         onPress={handleChangeRegion}
         placeholder="지역을 선택하세요"
       />
 
-      <TextField
+      {/* 주소 검색 버튼 - 선택된 주소가 있으면 value에 표시 */}
+      <TextField.Button
         variant="box"
-        label="주소 검색 *"
-        labelOption="sustain"
-        placeholder="건물, 지번 또는 도로명 검색"
-        value={addressSearchQuery}
-        onChangeText={setAddressSearchQuery}
-        onSubmitEditing={() => handleSearch()}
-        returnKeyType="search"
+        label="서비스 주소 *"
+        value={displayAddress}
+        onPress={onOpenSearchDrawer}
+        placeholder="주소 검색하기"
       />
 
-      {isAddressSearching ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.blue500} />
+      {/* 상세 주소 입력 (주소 선택 후에만 표시) */}
+      {selectedAddress && (
+        <TextField
+          variant="box"
+          label="상세 주소 (선택)"
+          labelOption="sustain"
+          placeholder="동, 호수 입력"
+          value={detailAddress}
+          onChangeText={onDetailAddressChange}
+        />
+      )}
+
+      {/* 견적 비용 안내 */}
+      {selectedAddress && addressEstimateInfo?.hasEstimateFee && (
+        <View style={styles.estimateContainer}>
+          <Text style={styles.estimateIcon}>⚠️</Text>
+          <View style={styles.estimateTextContainer}>
+            <Text style={styles.estimateTitle}>도서/원거리 지역</Text>
+            <Text style={styles.estimateDescription}>
+              추가비용 {addressEstimateInfo.estimateFee?.toLocaleString()}원이 발생할 수 있습니다
+            </Text>
+          </View>
         </View>
-      ) : hasSearched && addressSearchResults.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>검색 결과가 없어요.</Text>
-        </View>
-      ) : addressSearchResults.length > 0 ? (
-        <View style={styles.resultList}>
-          {addressSearchResults.map((item, index) => (
-            <View key={`${item.roadAddress}-${index}`}>
-              {renderAddressItem({ item })}
-              {index < addressSearchResults.length - 1 && <View style={styles.separator} />}
-            </View>
-          ))}
-        </View>
-      ) : null}
+      )}
     </>
   );
 }
@@ -187,41 +151,30 @@ const styles = StyleSheet.create({
   buttonContainer: {
     alignItems: 'center',
   },
-  loadingContainer: {
-    paddingVertical: 40,
-    alignItems: 'center',
-  },
-  emptyContainer: {
-    paddingVertical: 40,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.grey600,
-  },
-  resultList: {
-    maxHeight: 300,
-    marginTop: 16,
-  },
-  addressItem: {
-    paddingVertical: 16,
-  },
-  addressRow: {
+  estimateContainer: {
     flexDirection: 'row',
+    backgroundColor: colors.yellow100,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 12,
+    alignItems: 'flex-start',
+  },
+  estimateIcon: {
+    fontSize: 16,
+    marginRight: 12,
+  },
+  estimateTextContainer: {
+    flex: 1,
+  },
+  estimateTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.yellow900,
     marginBottom: 4,
   },
-  addressLabel: {
-    width: 60,
+  estimateDescription: {
     fontSize: 14,
-    color: colors.grey500,
-  },
-  addressValue: {
-    flex: 1,
-    fontSize: 14,
-    color: colors.grey900,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: colors.grey200,
+    color: colors.yellow800,
+    lineHeight: 20,
   },
 });

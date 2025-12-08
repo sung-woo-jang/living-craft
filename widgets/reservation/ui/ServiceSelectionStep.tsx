@@ -2,26 +2,14 @@ import { HOME_SERVICES } from '@shared/constants/home-services';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset } from '@toss/tds-react-native';
-import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useReservationStore } from '../store';
 import { ReservationFormData } from '../types';
 
 export function ServiceSelectionStep() {
   const { watch, setValue } = useFormContext<ReservationFormData>();
   const selectedService = watch('service');
-
-  const { availableServiceIds } = useReservationStore(['availableServiceIds']);
-
-  // 선택된 지역에서 가능한 서비스만 필터링
-  const availableServices = useMemo(() => {
-    if (availableServiceIds.length === 0) {
-      return HOME_SERVICES; // 지역이 선택되지 않은 경우 전체 서비스 표시
-    }
-    return HOME_SERVICES.filter((service) => availableServiceIds.includes(service.id));
-  }, [availableServiceIds]);
 
   return (
     <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
@@ -31,13 +19,13 @@ export function ServiceSelectionStep() {
           <Text style={styles.sectionSubtitle}>원하시는 서비스를 선택해주세요</Text>
         </View>
 
-        {availableServices.map((service, index) => (
+        {HOME_SERVICES.map((service, index) => (
           <TouchableOpacity
             key={service.id}
             style={[
               styles.serviceRow,
               selectedService?.id === service.id && styles.serviceRowSelected,
-              index < availableServices.length - 1 && styles.serviceRowBorder,
+              index < HOME_SERVICES.length - 1 && styles.serviceRowBorder,
             ]}
             onPress={() => setValue('service', service)}
           >

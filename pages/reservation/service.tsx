@@ -2,9 +2,10 @@ import { createRoute } from '@granite-js/react-native';
 import { Card } from '@shared/ui';
 import { ProgressStep, ProgressStepper } from '@shared/ui/progress-stepper';
 import { colors } from '@toss/tds-colors';
-import { BottomCTA, Button, IconButton, TextField } from '@toss/tds-react-native';
+import { BottomCTA, Button } from '@toss/tds-react-native';
 import type { AddressSearchResult } from '@widgets/reservation';
 import {
+  AddressSearchDrawer,
   AddressSelectionSection,
   CitySelectBottomSheet,
   RegionSelectBottomSheet,
@@ -14,7 +15,7 @@ import {
 } from '@widgets/reservation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export const Route = createRoute('/reservation/service', {
   component: Page,
@@ -33,8 +34,7 @@ function Page() {
     cities,
     serviceableRegions,
     // 주소 검색 상태
-    showAddressDetailInput,
-    selectedAddress,
+    isAddressSearchDrawerOpen,
     // 액션
     loadServiceableRegions,
     setIsRegionBottomSheetOpen,
@@ -42,9 +42,12 @@ function Page() {
     setCities,
     selectRegion,
     selectCity,
-    selectAddress,
     resetAddressSearch,
     getFilteredRegionsForService,
+    checkEstimateFee,
+    resetEstimateFeeInfo,
+    openAddressSearchDrawer,
+    closeAddressSearchDrawer,
   } = useReservationStore([
     'formData',
     'updateFormData',
@@ -53,17 +56,19 @@ function Page() {
     'isCityBottomSheetOpen',
     'cities',
     'serviceableRegions',
-    'showAddressDetailInput',
-    'selectedAddress',
+    'isAddressSearchDrawerOpen',
     'loadServiceableRegions',
     'setIsRegionBottomSheetOpen',
     'setIsCityBottomSheetOpen',
     'setCities',
     'selectRegion',
     'selectCity',
-    'selectAddress',
     'resetAddressSearch',
     'getFilteredRegionsForService',
+    'checkEstimateFee',
+    'resetEstimateFeeInfo',
+    'openAddressSearchDrawer',
+    'closeAddressSearchDrawer',
   ]);
 
   const { methods, canProceedToNext } = useReservationForm();
@@ -71,12 +76,17 @@ function Page() {
   // 서비스 변경 감지를 위한 이전 서비스 ID 추적
   const prevServiceIdRef = useRef<string | null>(null);
 
+  // 상세 주소 로컬 상태 (inline 입력용)
+  const [detailAddress, setDetailAddress] = useState('');
+
+  // 로컬에서 관리하는 선택된 주소 (Drawer에서 선택 후 유지)
+  const [localSelectedAddress, setLocalSelectedAddress] = useState<AddressSearchResult | null>(null);
+
   // 현재 주소 값 감시
   const currentAddress = methods.watch('customerInfo.address');
-  const currentDetailAddress = methods.watch('customerInfo.detailAddress');
 
-  // 주소가 완전히 입력되었는지 확인
-  const hasCompleteAddress = currentAddress && currentAddress.trim() !== '' && currentDetailAddress && currentDetailAddress.trim() !== '';
+  // 주소가 입력되었는지 확인 (상세 주소는 선택사항)
+  const hasCompleteAddress = currentAddress && currentAddress.trim() !== '';
 
   // React Hook Form에서 직접 watch (즉각적인 반응성)
   const currentService = methods.watch('service');
@@ -89,6 +99,13 @@ function Page() {
 
   // 서비스가 선택되었는지 여부
   const hasSelectedService = currentService !== null;
+
+  // 지역 prefix (주소 검색용)
+  const regionPrefix = useMemo(() => {
+    if (!addressSelection.region) return '';
+    if (!addressSelection.city) return addressSelection.region.name;
+    return `${addressSelection.region.name} ${addressSelection.city.name}`;
+  }, [addressSelection]);
 
   // 마운트 시 서비스 가능 지역 로드 + 폼 데이터 복원
   useEffect(() => {
@@ -114,7 +131,17 @@ function Page() {
     }
   }, [isCityBottomSheetOpen, addressSelection.region, filteredRegions]);
 
-  // 서비스 변경 시 주소 초기화
+  // 서비스 변경 시 주소 초기화를 위한 핸들러
+  const resetAddressState = useCallback(() => {
+    resetAddressSearch();
+    resetEstimateFeeInfo();
+    setLocalSelectedAddress(null);
+    setDetailAddress('');
+    methods.setValue('customerInfo.address', '');
+    methods.setValue('customerInfo.detailAddress', '');
+  }, [resetAddressSearch, resetEstimateFeeInfo, methods]);
+
+  // 서비스 변경 감지 - 서비스 변경 시 주소 상태 초기화 필요
   useEffect(() => {
     if (!currentService) {
       prevServiceIdRef.current = null;
@@ -123,51 +150,52 @@ function Page() {
 
     // 이전 서비스와 다른 경우에만 초기화 (최초 선택 제외)
     if (prevServiceIdRef.current !== null && prevServiceIdRef.current !== currentService.id) {
-      resetAddressSearch();
-      methods.setValue('customerInfo.address', '');
-      methods.setValue('customerInfo.detailAddress', '');
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 서비스 변경 시 의도적인 상태 초기화
+      resetAddressState();
     }
 
     prevServiceIdRef.current = currentService.id;
-  }, [currentService?.id, resetAddressSearch, methods]);
+  }, [currentService?.id, resetAddressState]);
 
-  // 주소 선택 핸들러
+  // 주소 선택 핸들러 (Drawer에서 선택 시)
   const handleAddressSelect = useCallback(
     (address: AddressSearchResult) => {
-      selectAddress(address);
-    },
-    [selectAddress]
-  );
-
-  // 상세 주소 확인 핸들러
-  const handleConfirmAddress = useCallback(
-    (detailAddress: string) => {
-      if (!selectedAddress || !detailAddress.trim()) {
-        return;
-      }
+      setLocalSelectedAddress(address);
+      closeAddressSearchDrawer();
 
       // 폼 데이터 업데이트
-      methods.setValue('customerInfo.address', selectedAddress.roadAddress);
-      methods.setValue('customerInfo.detailAddress', detailAddress.trim());
+      methods.setValue('customerInfo.address', address.roadAddress);
 
-      // 검색 상태 초기화 (주소는 유지)
-      resetAddressSearch();
+      // 견적 비용 조회
+      if (currentService) {
+        checkEstimateFee(address.roadAddress, currentService.id);
+      }
     },
-    [selectedAddress, methods, resetAddressSearch]
+    [closeAddressSearchDrawer, methods, currentService, checkEstimateFee]
   );
 
-  // 상세 주소 입력에서 뒤로가기
-  const handleBackFromDetail = useCallback(() => {
-    resetAddressSearch();
-  }, [resetAddressSearch]);
-
-  // 주소 변경 핸들러
-  const handleChangeAddress = useCallback(() => {
-    // 주소 변경을 위해 폼 값 초기화하고 검색 모드로
+  // 주소 삭제 핸들러
+  const handleClearAddress = useCallback(() => {
+    setLocalSelectedAddress(null);
+    setDetailAddress('');
     methods.setValue('customerInfo.address', '');
     methods.setValue('customerInfo.detailAddress', '');
-    resetAddressSearch();
-  }, [methods, resetAddressSearch]);
+    resetEstimateFeeInfo();
+  }, [methods, resetEstimateFeeInfo]);
+
+  // 상세 주소 변경 핸들러
+  const handleDetailAddressChange = useCallback(
+    (value: string) => {
+      setDetailAddress(value);
+      methods.setValue('customerInfo.detailAddress', value);
+    },
+    [methods]
+  );
+
+  // 주소 검색 Drawer 열기
+  const handleOpenSearchDrawer = useCallback(() => {
+    openAddressSearchDrawer();
+  }, [openAddressSearchDrawer]);
 
   // 시/도 선택 시 구/군 BottomSheet 오픈을 위해 뒤로가기 핸들러
   const handleBackToRegion = useCallback(() => {
@@ -209,49 +237,7 @@ function Page() {
       );
     }
 
-    // 이미 주소가 설정된 경우 - 표시만
-    if (hasCompleteAddress) {
-      return (
-        <Card>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>서비스 지역</Text>
-            <Text style={styles.sectionSubtitle}>서비스를 받으실 주소입니다</Text>
-          </View>
-
-          <TextField.Button
-            variant="box"
-            label="선택된 주소"
-            value={currentDetailAddress ? `${currentAddress} ${currentDetailAddress}` : currentAddress}
-            onPress={handleChangeAddress}
-            placeholder="주소를 선택하세요"
-          />
-        </Card>
-      );
-    }
-
-    // 상세 주소 입력 모드
-    if (showAddressDetailInput && selectedAddress) {
-      return (
-        <Card>
-          <View style={styles.detailHeader}>
-            <IconButton name="icon-arrow-back-ios-mono" onPress={handleBackFromDetail} accessibilityLabel="뒤로 가기" />
-            <Text style={styles.detailTitle}>자세한 주소를 알려주세요</Text>
-          </View>
-
-          <TextField.Button
-            variant="box"
-            label="선택된 주소"
-            value={selectedAddress.roadAddress}
-            onPress={handleBackFromDetail}
-            placeholder="주소를 선택하세요"
-          />
-
-          <DetailAddressInput onConfirm={handleConfirmAddress} />
-        </Card>
-      );
-    }
-
-    // 주소 선택/검색 모드
+    // 주소 선택 UI
     return (
       <Card>
         <View style={styles.sectionHeader}>
@@ -259,7 +245,13 @@ function Page() {
           <Text style={styles.sectionSubtitle}>서비스를 받으실 지역을 선택해주세요</Text>
         </View>
 
-        <AddressSelectionSection onAddressSelect={handleAddressSelect} />
+        <AddressSelectionSection
+          selectedAddress={localSelectedAddress}
+          detailAddress={detailAddress}
+          onOpenSearchDrawer={handleOpenSearchDrawer}
+          onClearAddress={handleClearAddress}
+          onDetailAddressChange={handleDetailAddressChange}
+        />
       </Card>
     );
   };
@@ -330,32 +322,15 @@ function Page() {
         onClose={() => setIsCityBottomSheetOpen(false)}
         onBackToRegion={handleBackToRegion}
       />
-    </FormProvider>
-  );
-}
 
-// 상세 주소 입력 컴포넌트 (내부 상태 관리)
-function DetailAddressInput({ onConfirm }: { onConfirm: (value: string) => void }) {
-  const [detailAddress, setDetailAddress] = useState('');
-
-  return (
-    <View>
-      <TextField
-        variant="box"
-        label="상세 주소 *"
-        labelOption="sustain"
-        placeholder="상세주소를 입력해주세요 (예: 우리푸름빌 402호)"
-        value={detailAddress}
-        onChangeText={setDetailAddress}
+      {/* 주소 검색 Drawer */}
+      <AddressSearchDrawer
+        isOpen={isAddressSearchDrawerOpen}
+        regionPrefix={regionPrefix}
+        onClose={closeAddressSearchDrawer}
+        onSelect={handleAddressSelect}
       />
-      <TouchableOpacity
-        style={[styles.confirmButton, !detailAddress.trim() && styles.confirmButtonDisabled]}
-        onPress={() => onConfirm(detailAddress)}
-        disabled={!detailAddress.trim()}
-      >
-        <Text style={[styles.confirmButtonText, !detailAddress.trim() && styles.confirmButtonTextDisabled]}>확인</Text>
-      </TouchableOpacity>
-    </View>
+    </FormProvider>
   );
 }
 
@@ -384,37 +359,6 @@ const styles = StyleSheet.create({
   sectionSubtitle: {
     fontSize: 14,
     color: colors.grey600,
-  },
-  // 상세 주소 입력 스타일
-  detailHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 8,
-    paddingBottom: 16,
-    gap: 8,
-  },
-  detailTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.grey900,
-  },
-  confirmButton: {
-    backgroundColor: colors.blue500,
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  confirmButtonDisabled: {
-    backgroundColor: colors.grey300,
-  },
-  confirmButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.white,
-  },
-  confirmButtonTextDisabled: {
-    color: colors.grey500,
   },
   // 빈 상태 스타일
   emptyState: {

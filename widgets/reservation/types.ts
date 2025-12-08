@@ -78,6 +78,13 @@ export interface ServiceableRegion extends RegionData {
   cities: ServiceableCity[];
 }
 
+// 주소 견적 비용 조회 결과
+export interface AddressEstimateInfo {
+  hasEstimateFee: boolean; // 견적 비용 발생 여부
+  estimateFee?: number; // 견적 비용 (원)
+  estimateFeeReason?: string; // 비용 사유 (예: "도서지역 추가비용")
+}
+
 export const DEFAULT_FORM_VALUES: ReservationFormData = {
   service: null,
   date: '',
