@@ -9,8 +9,12 @@ export function ConfirmationStep() {
   const { watch, setValue } = useFormContext<ReservationFormData>();
 
   const selectedService = watch('service');
-  const selectedDate = watch('date');
-  const selectedTimeSlot = watch('timeSlot');
+  // 견적 날짜/시간
+  const estimateDate = watch('estimateDate');
+  const estimateTimeSlot = watch('estimateTimeSlot');
+  // 시공 날짜/시간
+  const constructionDate = watch('constructionDate');
+  const constructionTimeSlot = watch('constructionTimeSlot');
   const customerInfo = watch('customerInfo');
   const agreedToTerms = watch('agreedToTerms');
 
@@ -30,16 +34,30 @@ export function ConfirmationStep() {
             <Text style={styles.summaryLabel}>서비스</Text>
             <Text style={styles.summaryValue}>{selectedService?.title}</Text>
           </View>
+
+          {/* 견적 희망 일정 */}
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>날짜</Text>
-            <Text style={styles.summaryValue}>{selectedDate}</Text>
+            <Text style={styles.summaryLabel}>견적 희망 날짜</Text>
+            <Text style={styles.summaryValue}>{estimateDate}</Text>
           </View>
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>시간</Text>
+            <Text style={styles.summaryLabel}>견적 희망 시간</Text>
+            <Text style={styles.summaryValue}>{estimateTimeSlot?.time}</Text>
+          </View>
+
+          {/* 시공 희망 일정 */}
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>시공 희망 날짜</Text>
+            <Text style={styles.summaryValue}>{constructionDate}</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>시공 희망 시간</Text>
             <Text style={styles.summaryValue}>
-              {requiresTimeSelection ? selectedTimeSlot?.time : '하루 종일'}
+              {requiresTimeSelection ? constructionTimeSlot?.time : '하루 종일'}
             </Text>
           </View>
+
+          {/* 고객 정보 */}
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>고객명</Text>
             <Text style={styles.summaryValue}>{customerInfo.name}</Text>

@@ -21,7 +21,12 @@ interface ReservationUIState {
 
   // UI 상태
   isLoading: boolean;
-  isCalendarVisible: boolean;
+  // 견적 캘린더/시간
+  isEstimateCalendarVisible: boolean;
+  estimateTimeSlots: TimeSlot[];
+  // 시공 캘린더/시간
+  isConstructionCalendarVisible: boolean;
+  constructionTimeSlots: TimeSlot[];
 
   // 주소 검색 상태
   addressSearchQuery: string;
@@ -51,7 +56,6 @@ interface ReservationUIState {
 
   // 유틸 데이터
   disabledDates: Date[];
-  timeSlots: TimeSlot[];
 }
 
 interface ReservationUIActions {
@@ -60,9 +64,14 @@ interface ReservationUIActions {
 
   // UI 상태
   setIsLoading: (loading: boolean) => void;
-  setIsCalendarVisible: (visible: boolean) => void;
-  openCalendar: () => void;
-  closeCalendar: () => void;
+  // 견적 캘린더
+  openEstimateCalendar: () => void;
+  closeEstimateCalendar: () => void;
+  updateEstimateTimeSlots: (date: string) => void;
+  // 시공 캘린더
+  openConstructionCalendar: () => void;
+  closeConstructionCalendar: () => void;
+  updateConstructionTimeSlots: (date: string) => void;
 
   // 주소 검색 상태
   setAddressSearchQuery: (query: string) => void;
@@ -95,9 +104,6 @@ interface ReservationUIActions {
   checkEstimateFee: (address: string, serviceId: string) => Promise<void>;
   resetEstimateFeeInfo: () => void;
 
-  // 유틸 데이터
-  updateTimeSlotsForDate: (date: string) => void;
-
   // 리셋
   reset: () => void;
 }
@@ -107,7 +113,10 @@ type ReservationStore = ReservationUIState & ReservationUIActions;
 const initialState: ReservationUIState = {
   formData: DEFAULT_FORM_VALUES,
   isLoading: false,
-  isCalendarVisible: false,
+  isEstimateCalendarVisible: false,
+  estimateTimeSlots: [],
+  isConstructionCalendarVisible: false,
+  constructionTimeSlots: [],
   addressSearchQuery: '',
   addressSearchResults: [],
   isAddressSearching: false,
@@ -127,7 +136,6 @@ const initialState: ReservationUIState = {
   addressEstimateInfo: null,
   isCheckingEstimateFee: false,
   disabledDates: generateRandomDisabledDates(),
-  timeSlots: [],
 };
 
 const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
@@ -141,9 +149,28 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
 
   // UI 상태
   setIsLoading: (loading) => set({ isLoading: loading }),
-  setIsCalendarVisible: (visible) => set({ isCalendarVisible: visible }),
-  openCalendar: () => set({ isCalendarVisible: true }),
-  closeCalendar: () => set({ isCalendarVisible: false }),
+
+  // 견적 캘린더/시간
+  openEstimateCalendar: () => set({ isEstimateCalendarVisible: true }),
+  closeEstimateCalendar: () => set({ isEstimateCalendarVisible: false }),
+  updateEstimateTimeSlots: (date) => {
+    if (!date) {
+      set({ estimateTimeSlots: [] });
+      return;
+    }
+    set({ estimateTimeSlots: generateRandomTimeSlots(date) });
+  },
+
+  // 시공 캘린더/시간
+  openConstructionCalendar: () => set({ isConstructionCalendarVisible: true }),
+  closeConstructionCalendar: () => set({ isConstructionCalendarVisible: false }),
+  updateConstructionTimeSlots: (date) => {
+    if (!date) {
+      set({ constructionTimeSlots: [] });
+      return;
+    }
+    set({ constructionTimeSlots: generateRandomTimeSlots(date) });
+  },
 
   // 주소 검색 상태
   setAddressSearchQuery: (query) => set({ addressSearchQuery: query }),
@@ -298,15 +325,6 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
       addressEstimateInfo: null,
       isCheckingEstimateFee: false,
     });
-  },
-
-  // 유틸 데이터
-  updateTimeSlotsForDate: (date) => {
-    if (!date) {
-      set({ timeSlots: [] });
-      return;
-    }
-    set({ timeSlots: generateRandomTimeSlots(date) });
   },
 
   // 리셋

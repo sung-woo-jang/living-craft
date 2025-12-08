@@ -4,6 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - 항상 한국말을 할 것
 - 존댓말을 사용할 것
+- AskUserQuestion 도구로 선택형 질문을 적극 활용할것
 
 ## 개발 환경
 
@@ -74,12 +75,12 @@ TypeScript와 Babel 모두에서 다음 경로 별칭을 사용합니다:
 
 1. **pages**: 라우트 페이지. 주로 widgets를 조합하여 화면을 구성합니다
 2. **widgets**: 특정 도메인에 종속된 기능 단위 컴포넌트
-   - 예: `widgets/home/hero`, `widgets/layouts/public-layout`
-   - 각 widget은 자체 `ui/` 디렉토리를 가질 수 있습니다
+    - 예: `widgets/home/hero`, `widgets/layouts/public-layout`
+    - 각 widget은 자체 `ui/` 디렉토리를 가질 수 있습니다
 3. **shared**: 도메인에 독립적인 공용 리소스
-   - `shared/ui`: 재사용 가능한 컴포넌트 (Carousel, Drawer, FilterTabs 등)
-   - `shared/hooks`: 공용 훅 (useBoolean 등)
-   - `shared/constants`: 상수 데이터
+    - `shared/ui`: 재사용 가능한 컴포넌트 (Carousel, Drawer, FilterTabs 등)
+    - `shared/hooks`: 공용 훅 (useBoolean 등)
+    - `shared/constants`: 상수 데이터
 
 ### 의존성 규칙
 
@@ -103,8 +104,8 @@ TypeScript와 Babel 모두에서 다음 경로 별칭을 사용합니다:
 1. `pages/` 디렉토리에 `.tsx` 파일 생성
 2. `createRoute` 함수로 라우트 정의
 3. 파일 구조가 자동으로 URL 경로가 됨
-   - `pages/about.tsx` → `/about`
-   - `pages/portfolio/[id].tsx` → `/portfolio/:id`
+    - `pages/about.tsx` → `/about`
+    - `pages/portfolio/[id].tsx` → `/portfolio/:id`
 
 ### 새 위젯 추가하기
 
@@ -128,6 +129,7 @@ TypeScript와 Babel 모두에서 다음 경로 별칭을 사용합니다:
 ## Granite 설정
 
 `granite.config.ts`에서 앱 설정을 관리합니다:
+
 - 앱 이름: `living-craft`
 - URL 스킴: `intoss`
 - Apps-in-Toss 플랫폼과 통합
@@ -135,6 +137,7 @@ TypeScript와 Babel 모두에서 다음 경로 별칭을 사용합니다:
 ## 참고 문서
 
 프로젝트의 `docs/` 디렉토리에 다음 문서들이 있습니다:
+
 - Carousel 컴포넌트 사용법
 - Image 컴포넌트 사용법
 - NavigationBar 사용법

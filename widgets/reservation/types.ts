@@ -1,6 +1,5 @@
 import { ImageResponse } from '@apps-in-toss/framework';
-import { TimeSlot } from '@shared/constants';
-import { HomeService } from '@shared/constants/home-services';
+import { HomeService, TimeSlot } from '@shared/constants';
 
 export interface ImageState extends ImageResponse {
   previewUri: string;
@@ -17,8 +16,12 @@ export interface CustomerInfo {
 
 export interface ReservationFormData {
   service: HomeService | null;
-  date: string;
-  timeSlot: TimeSlot | null;
+  // 견적 희망 날짜/시간
+  estimateDate: string;
+  estimateTimeSlot: TimeSlot | null;
+  // 시공 희망 날짜/시간
+  constructionDate: string;
+  constructionTimeSlot: TimeSlot | null;
   customerInfo: CustomerInfo;
   agreedToTerms: boolean;
 }
@@ -87,8 +90,10 @@ export interface AddressEstimateInfo {
 
 export const DEFAULT_FORM_VALUES: ReservationFormData = {
   service: null,
-  date: '',
-  timeSlot: null,
+  estimateDate: '',
+  estimateTimeSlot: null,
+  constructionDate: '',
+  constructionTimeSlot: null,
   customerInfo: {
     name: '',
     phone: '',

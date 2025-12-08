@@ -8,7 +8,6 @@ export interface HomeService {
   routePath: string;
   // 예약용 추가 필드
   duration?: string;
-  features?: string[];
   /**
    * 시간 선택이 필요한 서비스인지 여부
    * - true: 특정 시간대 선택 필요 (기본값)
@@ -27,7 +26,6 @@ export const HOME_SERVICES: HomeService[] = [
     buttonText: '견적받기',
     routePath: '/reservation/service',
     duration: '하루 종일',
-    features: ['현장 측정', '필름 작업', '마감 처리'],
     requiresTimeSelection: false, // 하루 종일 작업
   },
   {
@@ -39,7 +37,6 @@ export const HOME_SERVICES: HomeService[] = [
     buttonText: '견적받기',
     routePath: '/reservation/service',
     duration: '1-2시간',
-    features: ['외부 유리', '내부 유리', '창틀 청소'],
     requiresTimeSelection: true, // 시간대 선택 필요
   },
 ];

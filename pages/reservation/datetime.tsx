@@ -15,11 +15,22 @@ function Page() {
   const navigation = Route.useNavigation();
   const backEvent = useBackEvent();
 
-  const { formData, updateFormData, isCalendarVisible, closeCalendar } = useReservationStore([
+  const {
+    formData,
+    updateFormData,
+    // 견적 캘린더
+    isEstimateCalendarVisible,
+    closeEstimateCalendar,
+    // 시공 캘린더
+    isConstructionCalendarVisible,
+    closeConstructionCalendar,
+  } = useReservationStore([
     'formData',
     'updateFormData',
-    'isCalendarVisible',
-    'closeCalendar',
+    'isEstimateCalendarVisible',
+    'closeEstimateCalendar',
+    'isConstructionCalendarVisible',
+    'closeConstructionCalendar',
   ]);
 
   const { methods, canProceedToNext, validateStep } = useReservationForm();
@@ -48,15 +59,23 @@ function Page() {
 
   // 캘린더 열림 상태에서 뒤로가기 처리
   useEffect(() => {
-    if (isCalendarVisible) {
+    // 둘 중 하나라도 열려있으면 뒤로가기 이벤트 등록
+    const isAnyCalendarVisible = isEstimateCalendarVisible || isConstructionCalendarVisible;
+
+    if (isAnyCalendarVisible) {
       const handleBackPress = () => {
-        closeCalendar();
+        if (isEstimateCalendarVisible) {
+          closeEstimateCalendar();
+        }
+        if (isConstructionCalendarVisible) {
+          closeConstructionCalendar();
+        }
       };
       backEvent.addEventListener(handleBackPress);
       return () => backEvent.removeEventListener(handleBackPress);
     }
     return () => {};
-  }, [isCalendarVisible, closeCalendar, backEvent]);
+  }, [isEstimateCalendarVisible, isConstructionCalendarVisible, closeEstimateCalendar, closeConstructionCalendar, backEvent]);
 
   const handlePrevious = () => {
     navigation.navigate('/reservation/service' as never);
@@ -64,7 +83,7 @@ function Page() {
 
   const handleNext = () => {
     if (!canProceedToNext('datetime')) {
-      Alert.alert('알림', '날짜와 시간을 선택해주세요.');
+      Alert.alert('알림', '견적 및 시공 희망 날짜와 시간을 선택해주세요.');
       return;
     }
     navigation.navigate('/reservation/customer' as never);

@@ -2,7 +2,7 @@ import { useForm, UseFormReturn } from 'react-hook-form';
 import { Alert } from 'react-native';
 
 import { useReservationStore } from '../store';
-import { DEFAULT_FORM_VALUES,ReservationFormData, StepKey } from '../types';
+import { DEFAULT_FORM_VALUES, ReservationFormData, StepKey } from '../types';
 
 interface UseReservationFormOptions {
   onSubmitSuccess?: () => void;
@@ -18,7 +18,6 @@ interface UseReservationFormReturn {
 
   // Actions
   handleSubmit: () => Promise<void>;
-  handleDateSelect: (date: string) => void;
 }
 
 export function useReservationForm(options?: UseReservationFormOptions): UseReservationFormReturn {
@@ -28,17 +27,13 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
     mode: 'onChange',
   });
 
-  const { getValues, setValue, watch } = methods;
+  const { getValues, watch } = methods;
 
   // 폼 값 변경을 구독하여 버튼 상태 업데이트
   const watchedValues = watch();
 
   // zustand store
-  const { setIsLoading, updateTimeSlotsForDate, availableServiceIds } = useReservationStore([
-    'setIsLoading',
-    'updateTimeSlotsForDate',
-    'availableServiceIds',
-  ]);
+  const { setIsLoading, availableServiceIds } = useReservationStore(['setIsLoading', 'availableServiceIds']);
 
   /**
    * 특정 단계의 필수 입력값이 완료되었는지 검증 (watch 사용 - 리렌더링 트리거)
@@ -56,11 +51,15 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
           // 선택된 서비스가 현재 지역에서 가능한지 확인
           (availableServiceIds.length === 0 || availableServiceIds.includes(values.service.id))
         );
-      case 'datetime':
-        if (!requiresTimeSelection) {
-          return values.date !== '';
-        }
-        return values.date !== '' && values.timeSlot !== null;
+      case 'datetime': {
+        // 견적 날짜 + 시간 필수
+        const hasEstimateData = values.estimateDate !== '' && values.estimateTimeSlot !== null;
+        // 시공 날짜 필수 + 시간은 requiresTimeSelection에 따라 결정
+        const hasConstructionData = requiresTimeSelection
+          ? values.constructionDate !== '' && values.constructionTimeSlot !== null
+          : values.constructionDate !== '';
+        return hasEstimateData && hasConstructionData;
+      }
       case 'customer':
         // 이름, 연락처 필수 (주소는 service 단계에서 이미 입력됨)
         return values.customerInfo.name.trim() !== '' && values.customerInfo.phone.trim() !== '';
@@ -87,11 +86,15 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
           // 선택된 서비스가 현재 지역에서 가능한지 확인
           (availableServiceIds.length === 0 || availableServiceIds.includes(values.service.id))
         );
-      case 'datetime':
-        if (!requiresTimeSelection) {
-          return values.date !== '';
-        }
-        return values.date !== '' && values.timeSlot !== null;
+      case 'datetime': {
+        // 견적 날짜 + 시간 필수
+        const hasEstimateStep = values.estimateDate !== '' && values.estimateTimeSlot !== null;
+        // 시공 날짜 필수 + 시간은 requiresTimeSelection에 따라 결정
+        const hasConstructionStep = requiresTimeSelection
+          ? values.constructionDate !== '' && values.constructionTimeSlot !== null
+          : values.constructionDate !== '';
+        return hasEstimateStep && hasConstructionStep;
+      }
       case 'customer':
         // 이름, 연락처 필수 (주소는 service 단계에서 이미 입력됨)
         return values.customerInfo.name.trim() !== '' && values.customerInfo.phone.trim() !== '';
@@ -114,8 +117,10 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
       const values = getValues();
       const reservationData = {
         serviceId: values.service?.id,
-        date: values.date,
-        timeSlot: values.timeSlot?.time,
+        estimateDate: values.estimateDate,
+        estimateTime: values.estimateTimeSlot?.time,
+        constructionDate: values.constructionDate,
+        constructionTime: values.constructionTimeSlot?.time ?? null,
         customerInfo: values.customerInfo,
       };
 
@@ -139,17 +144,10 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
     }
   };
 
-  const handleDateSelect = (date: string) => {
-    setValue('date', date);
-    setValue('timeSlot', null);
-    updateTimeSlotsForDate(date);
-  };
-
   return {
     methods,
     canProceedToNext,
     validateStep,
     handleSubmit,
-    handleDateSelect,
   };
 }
