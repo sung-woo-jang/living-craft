@@ -1,8 +1,8 @@
 import { createRoute, Image } from '@granite-js/react-native';
-import { SERVICE_PORTFOLIOS } from '@shared/constants';
+import { usePortfolios } from '@shared/hooks/usePortfolios';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/portfolio', {
   component: Page,
@@ -14,9 +14,46 @@ export const Route = createRoute('/portfolio', {
 function Page() {
   const navigation = Route.useNavigation();
 
+  const { data: portfoliosResponse, isLoading } = usePortfolios();
+
   const handlePortfolioPress = (portfolioId: number) => {
     navigation.navigate('/portfolio/:id' as any, { id: String(portfolioId) });
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.blue500} />
+          <Text style={styles.loadingText}>포트폴리오를 불러오는 중...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  const portfolios = portfoliosResponse?.data || [];
+
+  if (portfolios.length === 0) {
+    return (
+      <View style={styles.container}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <Card>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>작업 사례</Text>
+              <Text style={styles.sectionSubtitle}>다양한 작업 사례를 확인해보세요</Text>
+            </View>
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>등록된 포트폴리오가 없습니다.</Text>
+            </View>
+          </Card>
+        </ScrollView>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -31,17 +68,14 @@ function Page() {
             <Text style={styles.sectionSubtitle}>다양한 작업 사례를 확인해보세요</Text>
           </View>
 
-          {SERVICE_PORTFOLIOS.map((portfolio, index) => (
+          {portfolios.map((portfolio, index) => (
             <TouchableOpacity
               key={portfolio.id}
-              style={[
-                styles.portfolioRow,
-                index < SERVICE_PORTFOLIOS.length - 1 && styles.portfolioRowBorder,
-              ]}
+              style={[styles.portfolioRow, index < portfolios.length - 1 && styles.portfolioRowBorder]}
               onPress={() => handlePortfolioPress(portfolio.id)}
             >
               <Image
-                source={{ uri: portfolio.thumbnail || undefined }}
+                source={{ uri: portfolio.images[0] || undefined }}
                 style={styles.thumbnail}
                 onError={() => {
                   console.warn(`Failed to load portfolio thumbnail: ${portfolio.id}`);
@@ -81,6 +115,25 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingVertical: 10,
     paddingBottom: 100,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  loadingText: {
+    fontSize: 15,
+    color: colors.grey600,
+  },
+  emptyContainer: {
+    paddingVertical: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: 15,
+    color: colors.grey600,
   },
 
   // Section Header

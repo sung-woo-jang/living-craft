@@ -1,9 +1,9 @@
 import { createRoute, Image } from '@granite-js/react-native';
-import { SERVICE_PORTFOLIOS } from '@shared/constants';
+import { usePortfolios } from '@shared/hooks/usePortfolios';
 import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Badge } from '@toss/tds-react-native';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -13,11 +13,12 @@ const TempRoute = createRoute('/_layout' as any, { component: () => null });
 /**
  * 홈페이지 포트폴리오 섹션 - 작업 사례
  * 다양한 서비스 작업 사례를 이미지 카드로 표시
- *
- * TODO: GET /api/portfolio - 작업 사례 목록 조회
  */
 export const HomePortfolioSection = () => {
   const navigation = TempRoute.useNavigation();
+
+  // 홈 페이지에서는 최신 5개만 표시
+  const { data: portfoliosResponse, isLoading } = usePortfolios({ limit: 5, page: 1 });
 
   const handlePortfolioPress = (portfolioId: number) => {
     navigation.navigate('/portfolio/:id' as any, { id: String(portfolioId) });
@@ -27,6 +28,34 @@ export const HomePortfolioSection = () => {
     navigation.navigate('/portfolio' as any);
   };
 
+  if (isLoading) {
+    return (
+      <Card>
+        <View style={styles.header}>
+          <Text style={styles.title}>작업 사례</Text>
+        </View>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.blue500} />
+        </View>
+      </Card>
+    );
+  }
+
+  const portfolios = portfoliosResponse?.data || [];
+
+  if (portfolios.length === 0) {
+    return (
+      <Card>
+        <View style={styles.header}>
+          <Text style={styles.title}>작업 사례</Text>
+        </View>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>등록된 작업 사례가 없습니다.</Text>
+        </View>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <View style={styles.header}>
@@ -34,12 +63,12 @@ export const HomePortfolioSection = () => {
       </View>
 
       <Carousel
-        data={SERVICE_PORTFOLIOS}
+        data={portfolios}
         renderItem={(item) => (
           <TouchableOpacity onPress={() => handlePortfolioPress(item.id)}>
             <View style={styles.carouselItem}>
               <Image
-                source={{ uri: item.thumbnail || undefined }}
+                source={{ uri: item.images[0] || undefined }}
                 style={styles.image}
                 onError={() => {
                   console.warn(`Failed to load home portfolio image: ${item.id}`);
@@ -84,6 +113,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.grey900,
+  },
+  loadingContainer: {
+    paddingVertical: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyContainer: {
+    paddingVertical: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: 15,
+    color: colors.grey600,
   },
   carouselItem: {
     backgroundColor: colors.white,

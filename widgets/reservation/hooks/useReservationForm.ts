@@ -1,3 +1,4 @@
+import { useCreateReservation } from '@shared/hooks/useReservations';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { Alert } from 'react-native';
 
@@ -34,6 +35,9 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
 
   // zustand store
   const { setIsLoading, availableServiceIds } = useReservationStore(['setIsLoading', 'availableServiceIds']);
+
+  // TanStack Query mutation
+  const { mutateAsync: createReservation } = useCreateReservation();
 
   /**
    * 특정 단계의 필수 입력값이 완료되었는지 검증 (watch 사용 - 리렌더링 트리거)
@@ -115,11 +119,23 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
 
     try {
       const values = getValues();
+
+      // 필수 값 검증
+      if (!values.service?.id) {
+        throw new Error('서비스를 선택해주세요.');
+      }
+      if (!values.estimateDate || !values.estimateTimeSlot?.time) {
+        throw new Error('견적 날짜와 시간을 선택해주세요.');
+      }
+      if (!values.constructionDate) {
+        throw new Error('시공 날짜를 선택해주세요.');
+      }
+
       // API 명세서 형식에 맞게 데이터 평탄화
       const reservationData = {
-        serviceId: values.service?.id,
+        serviceId: values.service.id,
         estimateDate: values.estimateDate,
-        estimateTime: values.estimateTimeSlot?.time,
+        estimateTime: values.estimateTimeSlot.time,
         constructionDate: values.constructionDate,
         constructionTime: values.constructionTimeSlot?.time ?? null,
         address: values.customerInfo.address,
@@ -130,11 +146,8 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
         photos: values.customerInfo.photos.map((photo) => photo.previewUri),
       };
 
-      console.log('예약 데이터:', reservationData);
-
-      await new Promise((resolve) => {
-        setTimeout(resolve, 1500);
-      });
+      // 실제 API 호출
+      await createReservation(reservationData);
 
       Alert.alert('예약 완료', '예약이 성공적으로 완료되었습니다!', [
         {
@@ -142,9 +155,9 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
           onPress: () => options?.onSubmitSuccess?.(),
         },
       ]);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      Alert.alert('오류', '예약 처리 중 오류가 발생했습니다.');
+      const message = error instanceof Error ? error.message : '예약 처리 중 오류가 발생했습니다.';
+      Alert.alert('오류', message);
     } finally {
       setIsLoading(false);
     }

@@ -1,18 +1,19 @@
-import { FILM_REVIEWS } from '@shared/constants';
+import { useReviews } from '@shared/hooks/useReviews';
 import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset } from '@toss/tds-react-native';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 /**
  * 홈페이지 리뷰 섹션 - 서비스 후기
  * 고객 서비스 후기를 카드 형태로 표시
- *
- * TODO: GET /api/reviews - 고객 후기 목록 조회
  */
 export const HomeReviewsSection = () => {
+  // 홈 페이지에서는 최신 5개만 표시
+  const { data: reviewsResponse, isLoading } = useReviews({ limit: 5, page: 1 });
+
   const renderStars = (rating: number) => {
     return (
       <View style={{ flexDirection: 'row', gap: 2, marginBottom: 12 }}>
@@ -28,6 +29,34 @@ export const HomeReviewsSection = () => {
     );
   };
 
+  if (isLoading) {
+    return (
+      <Card>
+        <View style={styles.header}>
+          <Text style={styles.title}>입주민이 알려주는 이야기</Text>
+        </View>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.blue500} />
+        </View>
+      </Card>
+    );
+  }
+
+  const reviews = reviewsResponse?.data || [];
+
+  if (reviews.length === 0) {
+    return (
+      <Card>
+        <View style={styles.header}>
+          <Text style={styles.title}>입주민이 알려주는 이야기</Text>
+        </View>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>등록된 리뷰가 없습니다.</Text>
+        </View>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <View style={styles.header}>
@@ -35,20 +64,20 @@ export const HomeReviewsSection = () => {
       </View>
 
       <Carousel
-        data={FILM_REVIEWS}
+        data={reviews}
         renderItem={(review) => (
           <View style={styles.reviewCard}>
             <View style={styles.cardHeader}>
               <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarText}>{review.author[0]}</Text>
+                <Text style={styles.avatarText}>{review.customer.name[0]}</Text>
               </View>
               <View style={styles.authorInfo}>
-                <Text style={styles.authorName}>{review.author}</Text>
-                <Text style={styles.service}>{review.service}</Text>
+                <Text style={styles.authorName}>{review.customer.name}</Text>
+                <Text style={styles.service}>{review.service.title}</Text>
               </View>
             </View>
             {renderStars(review.rating)}
-            <Text style={styles.content}>{review.content}</Text>
+            <Text style={styles.content}>{review.comment}</Text>
           </View>
         )}
         itemWidth={SCREEN_WIDTH - 40}
@@ -74,6 +103,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.grey900,
+  },
+  loadingContainer: {
+    paddingVertical: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyContainer: {
+    paddingVertical: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: 15,
+    color: colors.grey600,
   },
   reviewCard: {
     backgroundColor: colors.white,

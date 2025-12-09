@@ -1,10 +1,11 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
-import { MY_MOCK_RESERVATIONS, STATUS_COLORS, STATUS_LABELS } from '@shared/constants';
+import { ReservationStatus } from '@shared/api/types';
+import { useMyReservations } from '@shared/hooks/useReservations';
 import { EmptyState } from '@shared/ui/empty-state';
 import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
 import { useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/my/reservations', {
   component: Page,
@@ -12,22 +13,51 @@ export const Route = createRoute('/my/reservations', {
 
 const FILTER_OPTIONS: FilterOption[] = [
   { key: 'all', label: '전체' },
-  { key: 'confirmed', label: '확정' },
-  { key: 'completed', label: '완료' },
-  { key: 'cancelled', label: '취소' },
+  { key: ReservationStatus.CONFIRMED, label: '확정' },
+  { key: ReservationStatus.COMPLETED, label: '완료' },
+  { key: ReservationStatus.CANCELLED, label: '취소' },
 ];
+
+const STATUS_LABELS: Record<ReservationStatus, string> = {
+  [ReservationStatus.PENDING]: '대기',
+  [ReservationStatus.CONFIRMED]: '확정',
+  [ReservationStatus.COMPLETED]: '완료',
+  [ReservationStatus.CANCELLED]: '취소',
+};
+
+const STATUS_COLORS: Record<ReservationStatus, string> = {
+  [ReservationStatus.PENDING]: colors.yellow500,
+  [ReservationStatus.CONFIRMED]: colors.blue500,
+  [ReservationStatus.COMPLETED]: colors.green500,
+  [ReservationStatus.CANCELLED]: colors.grey400,
+};
 
 /**
  * 내 예약 페이지
- *
- * 필요한 API 연결:
- * 1. GET /api/users/me/reservations - 내 예약 목록 조회
  */
 function Page() {
   const navigation = useNavigation();
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | ReservationStatus>('all');
 
-  const filteredReservations = MY_MOCK_RESERVATIONS.filter(
+  const { data: reservationsResponse, isLoading } = useMyReservations();
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>내 예약</Text>
+          <Text style={styles.subtitle}>예약 내역을 확인하세요</Text>
+        </View>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.blue500} />
+          <Text style={styles.loadingText}>예약 목록을 불러오는 중...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  const allReservations = reservationsResponse?.data || [];
+  const filteredReservations = allReservations.filter(
     (reservation) => activeFilter === 'all' || reservation.status === activeFilter
   );
 
@@ -40,7 +70,11 @@ function Page() {
       </View>
 
       {/* 필터 */}
-      <FilterTabs options={FILTER_OPTIONS} activeKey={activeFilter} onFilterChange={setActiveFilter} />
+      <FilterTabs
+        options={FILTER_OPTIONS}
+        activeKey={activeFilter}
+        onFilterChange={(key) => setActiveFilter(key as 'all' | ReservationStatus)}
+      />
 
       {/* 예약 목록 */}
       {filteredReservations.length === 0 ? (
@@ -54,26 +88,26 @@ function Page() {
       ) : (
         <FlatList
           data={filteredReservations}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
             <View style={styles.reservationCard}>
               <View style={styles.cardHeader}>
                 <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[item.status] }]}>
                   <Text style={styles.statusText}>{STATUS_LABELS[item.status]}</Text>
                 </View>
-                <Text style={styles.reservationNumber}>{item.reservationNumber}</Text>
+                <Text style={styles.reservationNumber}>#{item.reservationNumber}</Text>
               </View>
 
-              <Text style={styles.serviceName}>{item.serviceName}</Text>
+              <Text style={styles.serviceName}>{item.service.title}</Text>
 
               <View style={styles.cardDetails}>
                 <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>📅 예약일</Text>
-                  <Text style={styles.detailValue}>{item.date}</Text>
+                  <Text style={styles.detailLabel}>📅 견적 날짜</Text>
+                  <Text style={styles.detailValue}>{item.estimateDate}</Text>
                 </View>
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>🕐 시간</Text>
-                  <Text style={styles.detailValue}>{item.time}</Text>
+                  <Text style={styles.detailValue}>{item.estimateTime}</Text>
                 </View>
               </View>
 
@@ -81,15 +115,17 @@ function Page() {
                 <TouchableOpacity style={styles.detailButton}>
                   <Text style={styles.detailButtonText}>상세보기</Text>
                 </TouchableOpacity>
-                {item.canCancel && (
+                {item.status === ReservationStatus.CONFIRMED && (
                   <TouchableOpacity style={styles.cancelButton}>
                     <Text style={styles.cancelButtonText}>취소</Text>
                   </TouchableOpacity>
                 )}
-                {item.canReview && (
+                {item.status === ReservationStatus.COMPLETED && !item.hasReview && (
                   <TouchableOpacity
                     style={styles.reviewButton}
-                    onPress={() => navigation.navigate('/reviews/write/:reservationId', { reservationId: item.id })}
+                    onPress={() =>
+                      navigation.navigate('/reviews/write/:reservationId', { reservationId: String(item.id) })
+                    }
                   >
                     <Text style={styles.reviewButtonText}>리뷰 작성</Text>
                   </TouchableOpacity>
@@ -126,6 +162,16 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
+    color: colors.grey600,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  loadingText: {
+    fontSize: 15,
     color: colors.grey600,
   },
   list: {

@@ -1,10 +1,11 @@
 import { createRoute } from '@granite-js/react-native';
-import { HOME_SERVICES, HomeService } from '@shared/constants/home-services';
+import { Service } from '@shared/api/types';
+import { useServices } from '@shared/hooks/useServices';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset } from '@toss/tds-react-native';
 import { useReservationStore } from '@widgets/reservation';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // 네비게이션 훅 사용을 위한 임시 라우트
 const TempRoute = createRoute('/_layout' as any, { component: () => null });
@@ -17,13 +18,41 @@ export const HomeServicesSection = () => {
   const navigation = TempRoute.useNavigation();
   const updateFormData = useReservationStore(['updateFormData']).updateFormData;
 
-  const handleQuotePress = (service: HomeService) => {
+  const { data: services, isLoading } = useServices();
+
+  const handleQuotePress = (service: Service) => {
     // 클릭한 서비스를 미리 선택
     updateFormData({ service });
 
     // 예약 페이지로 이동
-    navigation.navigate(service.routePath as any);
+    navigation.navigate('/reservation/service' as any);
   };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <View style={styles.header}>
+          <Text style={styles.title}>한 번에 인테리어 준비 끝내기</Text>
+        </View>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.blue500} />
+        </View>
+      </Card>
+    );
+  }
+
+  if (!services || services.length === 0) {
+    return (
+      <Card>
+        <View style={styles.header}>
+          <Text style={styles.title}>한 번에 인테리어 준비 끝내기</Text>
+        </View>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>등록된 서비스가 없습니다.</Text>
+        </View>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -32,14 +61,8 @@ export const HomeServicesSection = () => {
       </View>
 
       <View style={styles.serviceList}>
-        {HOME_SERVICES.map((service, index) => (
-          <View
-            key={service.id}
-            style={[
-              styles.serviceRow,
-              index < HOME_SERVICES.length - 1 && styles.serviceRowBorder,
-            ]}
-          >
+        {services.map((service, index) => (
+          <View key={service.id} style={[styles.serviceRow, index < services.length - 1 && styles.serviceRowBorder]}>
             <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor }]}>
               <Asset.Icon name={service.iconName} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
             </View>
@@ -49,11 +72,8 @@ export const HomeServicesSection = () => {
               <Text style={styles.serviceDescription}>{service.description}</Text>
             </View>
 
-            <TouchableOpacity
-              style={styles.quoteButton}
-              onPress={() => handleQuotePress(service)}
-            >
-              <Text style={styles.quoteButtonText}>{service.buttonText}</Text>
+            <TouchableOpacity style={styles.quoteButton} onPress={() => handleQuotePress(service)}>
+              <Text style={styles.quoteButtonText}>견적 받기</Text>
             </TouchableOpacity>
           </View>
         ))}
@@ -72,6 +92,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.grey900,
+  },
+  loadingContainer: {
+    paddingVertical: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyContainer: {
+    paddingVertical: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: 15,
+    color: colors.grey600,
   },
   serviceList: {
     paddingHorizontal: 4,

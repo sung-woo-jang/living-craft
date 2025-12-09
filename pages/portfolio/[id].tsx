@@ -33,7 +33,7 @@ function Page() {
       // 인테리어 필름 서비스를 미리 선택
       const filmService = HOME_SERVICES.find((s) => s.id === 'film');
       if (filmService) {
-        updateFormData({ service: filmService });
+        updateFormData({ service: filmService as any });
       }
     }
     // 유리청소 category 확인
@@ -41,7 +41,7 @@ function Page() {
       // 유리청소 서비스를 미리 선택
       const glassCleaningService = HOME_SERVICES.find((s) => s.id === 'glass-cleaning');
       if (glassCleaningService) {
-        updateFormData({ service: glassCleaningService });
+        updateFormData({ service: glassCleaningService as any });
       }
     }
 

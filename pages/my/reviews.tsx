@@ -1,9 +1,9 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
-import { MOCK_MY_REVIEWS } from '@shared/constants';
+import { useMyReviews } from '@shared/hooks/useUsers';
 import { EmptyState } from '@shared/ui/empty-state';
 import { colors } from '@toss/tds-colors';
 import { Asset } from '@toss/tds-react-native';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/my/reviews', {
   component: Page,
@@ -11,14 +11,30 @@ export const Route = createRoute('/my/reviews', {
 
 /**
  * 내 리뷰 페이지
- *
- * 필요한 API 연결:
- * 1. GET /api/users/me/reviews - 내가 작성한 리뷰 목록 조회
  */
 function Page() {
   const navigation = useNavigation();
 
-  if (MOCK_MY_REVIEWS.length === 0) {
+  const { data: myReviews, isLoading } = useMyReviews();
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>내 리뷰</Text>
+          <Text style={styles.subtitle}>작성한 리뷰를 확인하세요</Text>
+        </View>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.blue500} />
+          <Text style={styles.loadingText}>리뷰를 불러오는 중...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  const reviews = myReviews || [];
+
+  if (reviews.length === 0) {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -42,18 +58,18 @@ function Page() {
       {/* 헤더 */}
       <View style={styles.header}>
         <Text style={styles.title}>내 리뷰</Text>
-        <Text style={styles.subtitle}>총 {MOCK_MY_REVIEWS.length}개의 리뷰를 작성했습니다</Text>
+        <Text style={styles.subtitle}>총 {reviews.length}개의 리뷰를 작성했습니다</Text>
       </View>
 
       {/* 리뷰 목록 */}
       <FlatList
-        data={MOCK_MY_REVIEWS}
-        keyExtractor={(item) => item.id}
+        data={reviews}
+        keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
           <View style={styles.reviewCard}>
             {/* 서비스 정보 */}
-            <TouchableOpacity onPress={() => navigation.navigate('/portfolio/:id', { id: String(item.serviceId) })}>
-              <Text style={styles.serviceName}>{item.serviceName}</Text>
+            <TouchableOpacity>
+              <Text style={styles.serviceName}>{item.service.title}</Text>
             </TouchableOpacity>
 
             {/* 평점 */}
@@ -73,7 +89,7 @@ function Page() {
             <Text style={styles.comment}>{item.comment}</Text>
 
             {/* 작성일 */}
-            <Text style={styles.date}>{item.date}</Text>
+            <Text style={styles.date}>{new Date(item.createdAt).toLocaleDateString('ko-KR')}</Text>
           </View>
         )}
         contentContainerStyle={styles.list}
@@ -104,6 +120,16 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
+    color: colors.grey600,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  loadingText: {
+    fontSize: 15,
     color: colors.grey600,
   },
   list: {

@@ -1,15 +1,49 @@
-import { HOME_SERVICES } from '@shared/constants/home-services';
+import { useServices } from '@shared/hooks/useServices';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset } from '@toss/tds-react-native';
 import { useFormContext } from 'react-hook-form';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { ReservationFormData } from '../types';
 
 export function ServiceSelectionStep() {
   const { watch, setValue } = useFormContext<ReservationFormData>();
   const selectedService = watch('service');
+
+  const { data: services, isLoading } = useServices();
+
+  if (isLoading) {
+    return (
+      <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
+        <Card>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>서비스 선택</Text>
+            <Text style={styles.sectionSubtitle}>원하시는 서비스를 선택해주세요</Text>
+          </View>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.blue500} />
+          </View>
+        </Card>
+      </ScrollView>
+    );
+  }
+
+  if (!services || services.length === 0) {
+    return (
+      <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
+        <Card>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>서비스 선택</Text>
+            <Text style={styles.sectionSubtitle}>원하시는 서비스를 선택해주세요</Text>
+          </View>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>등록된 서비스가 없습니다.</Text>
+          </View>
+        </Card>
+      </ScrollView>
+    );
+  }
 
   return (
     <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
@@ -19,13 +53,13 @@ export function ServiceSelectionStep() {
           <Text style={styles.sectionSubtitle}>원하시는 서비스를 선택해주세요</Text>
         </View>
 
-        {HOME_SERVICES.map((service, index) => (
+        {services.map((service, index) => (
           <TouchableOpacity
             key={service.id}
             style={[
               styles.serviceRow,
               selectedService?.id === service.id && styles.serviceRowSelected,
-              index < HOME_SERVICES.length - 1 && styles.serviceRowBorder,
+              index < services.length - 1 && styles.serviceRowBorder,
             ]}
             onPress={() => setValue('service', service)}
           >
@@ -68,6 +102,20 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     fontSize: 14,
+    color: colors.grey600,
+  },
+  loadingContainer: {
+    paddingVertical: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyContainer: {
+    paddingVertical: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: 15,
     color: colors.grey600,
   },
   serviceRow: {

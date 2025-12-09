@@ -1,4 +1,4 @@
-import { Portfolio } from '@shared/ui/portfolio-card';
+import { Portfolio } from '@shared/api/types';
 
 // 포트폴리오 상세 정보 인터페이스
 export interface PortfolioDetail extends Portfolio {
@@ -7,18 +7,17 @@ export interface PortfolioDetail extends Portfolio {
 }
 
 // Unsplash 인테리어 이미지 URL 생성 헬퍼
-const getUnsplashUrl = (id: number, width = 800, height = 600) =>
-  `https://picsum.photos/seed/${id}/${width}/${height}`;
+const getUnsplashUrl = (id: number, width = 800, height = 600) => `https://picsum.photos/seed/${id}/${width}/${height}`;
 
 // 각 포트폴리오에 이미지 할당
-export const MOCK_PORTFOLIOS: Portfolio[] = [
+// TODO: Phase 8에서 삭제 예정 (Mock 데이터)
+export const MOCK_PORTFOLIOS = [
   {
     id: 1,
     projectName: '강남 아파트 전체 리모델링',
     client: '김○○',
     duration: '2024.10 - 2024.12',
     category: '주거공간',
-    thumbnail: getUnsplashUrl(1001),
     description: '30평대 아파트 전체 리모델링. 모던하고 깔끔한 공간으로 재탄생',
     images: Array.from({ length: 29 }, (_, i) => getUnsplashUrl(1001 + i + 1)),
   },
@@ -28,7 +27,6 @@ export const MOCK_PORTFOLIOS: Portfolio[] = [
     client: '○○카페',
     duration: '2024.09 - 2024.10',
     category: '상업공간',
-    thumbnail: getUnsplashUrl(2001),
     description: '빈티지 감성의 카페 인테리어. 따뜻하고 아늑한 분위기 연출',
     images: Array.from({ length: 29 }, (_, i) => getUnsplashUrl(2001 + i + 1)),
   },
@@ -38,7 +36,6 @@ export const MOCK_PORTFOLIOS: Portfolio[] = [
     client: '○○기업',
     duration: '2024.08 - 2024.09',
     category: '상업공간',
-    thumbnail: getUnsplashUrl(3001),
     description: '20평 규모 사무실 공간. 효율적이고 쾌적한 업무 환경 구축',
     images: Array.from({ length: 29 }, (_, i) => getUnsplashUrl(3001 + i + 1)),
   },
@@ -48,7 +45,6 @@ export const MOCK_PORTFOLIOS: Portfolio[] = [
     client: '이○○',
     duration: '2024.07 - 2024.09',
     category: '주거공간',
-    thumbnail: getUnsplashUrl(4001),
     description: '단독주택 전체 인테리어. 밝고 따뜻한 북유럽 스타일 적용',
     images: Array.from({ length: 29 }, (_, i) => getUnsplashUrl(4001 + i + 1)),
   },
@@ -58,7 +54,6 @@ export const MOCK_PORTFOLIOS: Portfolio[] = [
     client: '박○○',
     duration: '2024.06 - 2024.07',
     category: '가구제작',
-    thumbnail: getUnsplashUrl(5001),
     description: '거실 전체를 활용한 맞춤 수납장. 공간 효율 극대화',
     images: Array.from({ length: 29 }, (_, i) => getUnsplashUrl(5001 + i + 1)),
   },
@@ -68,7 +63,6 @@ export const MOCK_PORTFOLIOS: Portfolio[] = [
     client: '최○○',
     duration: '2024.04 - 2024.06',
     category: '리모델링',
-    thumbnail: getUnsplashUrl(6001),
     description: '30년 된 빌라의 완전한 변신. 구조 변경부터 마감까지',
     images: Array.from({ length: 29 }, (_, i) => getUnsplashUrl(6001 + i + 1)),
   },
@@ -78,7 +72,6 @@ export const MOCK_PORTFOLIOS: Portfolio[] = [
     client: '정○○',
     duration: '2024.03 - 2024.05',
     category: '주거공간',
-    thumbnail: getUnsplashUrl(7001),
     description: '고급스러운 펜트하우스 인테리어. 럭셔리 모던 스타일',
     images: Array.from({ length: 29 }, (_, i) => getUnsplashUrl(7001 + i + 1)),
   },
@@ -88,14 +81,14 @@ export const MOCK_PORTFOLIOS: Portfolio[] = [
     client: '○○레스토랑',
     duration: '2024.01 - 2024.03',
     category: '상업공간',
-    thumbnail: getUnsplashUrl(8001),
     description: '30석 규모 레스토랑. 우아하고 세련된 분위기의 다이닝 공간',
     images: Array.from({ length: 28 }, (_, i) => getUnsplashUrl(8001 + i + 1)),
   },
-];
+] as Portfolio[];
 
 // 서비스 관련 포트폴리오 (백엔드 API 형태와 동일)
-export const SERVICE_PORTFOLIOS: Portfolio[] = [
+// TODO: Phase 8에서 삭제 예정 (Mock 데이터)
+export const SERVICE_PORTFOLIOS = [
   // 인테리어 필름 (4개)
   {
     id: 101,
@@ -103,7 +96,6 @@ export const SERVICE_PORTFOLIOS: Portfolio[] = [
     client: '김○○',
     duration: '2024.11',
     category: '인테리어필름',
-    thumbnail: getUnsplashUrl(9001),
     description: '싱크대와 주방 가구 필름 작업',
     images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(9001 + i + 1)),
   },
@@ -113,7 +105,6 @@ export const SERVICE_PORTFOLIOS: Portfolio[] = [
     client: '이○○',
     duration: '2024.11',
     category: '인테리어필름',
-    thumbnail: getUnsplashUrl(9101),
     description: '원목 패턴 필름으로 따뜻한 분위기 연출',
     images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(9101 + i + 1)),
   },
@@ -123,7 +114,6 @@ export const SERVICE_PORTFOLIOS: Portfolio[] = [
     client: '박○○',
     duration: '2024.10',
     category: '인테리어필름',
-    thumbnail: getUnsplashUrl(9201),
     description: '대리석 패턴으로 고급스러운 분위기',
     images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(9201 + i + 1)),
   },
@@ -133,7 +123,6 @@ export const SERVICE_PORTFOLIOS: Portfolio[] = [
     client: '최○○',
     duration: '2024.10',
     category: '인테리어필름',
-    thumbnail: getUnsplashUrl(9301),
     description: '방수 필름으로 깨끗한 욕실 완성',
     images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(9301 + i + 1)),
   },
@@ -144,7 +133,6 @@ export const SERVICE_PORTFOLIOS: Portfolio[] = [
     client: '김○○',
     duration: '2024.11',
     category: '유리청소',
-    thumbnail: getUnsplashUrl(10001),
     description: '30층 아파트 전면 유리창 청소 작업',
     images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(10001 + i + 1)),
   },
@@ -154,7 +142,6 @@ export const SERVICE_PORTFOLIOS: Portfolio[] = [
     client: '○○상가',
     duration: '2024.11',
     category: '유리청소',
-    thumbnail: getUnsplashUrl(10101),
     description: '3층 규모 상가 건물 외벽 유리 청소',
     images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(10101 + i + 1)),
   },
@@ -164,7 +151,6 @@ export const SERVICE_PORTFOLIOS: Portfolio[] = [
     client: '○○기업',
     duration: '2024.10',
     category: '유리청소',
-    thumbnail: getUnsplashUrl(10201),
     description: '사무실 전체 유리 파티션 및 창문 청소',
     images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(10201 + i + 1)),
   },
@@ -174,11 +160,10 @@ export const SERVICE_PORTFOLIOS: Portfolio[] = [
     client: '이○○',
     duration: '2024.10',
     category: '유리청소',
-    thumbnail: getUnsplashUrl(10301),
     description: '빌라 전체 세대 베란다 유리 청소',
     images: Array.from({ length: 10 }, (_, i) => getUnsplashUrl(10301 + i + 1)),
   },
-];
+] as Portfolio[];
 
 // category 기반 헬퍼 함수 (확장성 향상)
 export const isFilmPortfolio = (portfolio: Portfolio): boolean => {

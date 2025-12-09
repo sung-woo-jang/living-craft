@@ -1,7 +1,8 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
 import { MENU_ITEMS, MOCK_USER } from '@shared/constants';
+import { useCurrentUser, useLogout } from '@shared/hooks/useAuth';
 import { colors } from '@toss/tds-colors';
-import { Asset } from '@toss/tds-react-native';
+import { Asset, Button } from '@toss/tds-react-native';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/my', {
@@ -16,6 +17,23 @@ export const Route = createRoute('/my', {
  */
 function Page() {
   const navigation = useNavigation();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const currentUser = useCurrentUser();
+
+  // 현재 사용자 정보 (API 연동 전까지는 Mock 데이터 사용)
+  const user = currentUser || MOCK_USER;
+
+  /**
+   * 로그아웃 처리
+   */
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        // 로그인 페이지로 리다이렉트
+        navigation.navigate('/unauthorized' as any);
+      },
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -27,10 +45,10 @@ function Page() {
         {/* 프로필 섹션 */}
         <View style={styles.profileSection}>
           <View style={styles.profileAvatar}>
-            <Text style={styles.profileAvatarText}>{MOCK_USER.name[0]}</Text>
+            <Text style={styles.profileAvatarText}>{user.name[0]}</Text>
           </View>
-          <Text style={styles.profileName}>{MOCK_USER.name}</Text>
-          <Text style={styles.profileEmail}>{MOCK_USER.email}</Text>
+          <Text style={styles.profileName}>{user.name}</Text>
+          <Text style={styles.profileEmail}>{user.email}</Text>
         </View>
 
         {/* 메뉴 리스트 */}
@@ -54,6 +72,13 @@ function Page() {
               </View>
             </TouchableOpacity>
           ))}
+        </View>
+
+        {/* 로그아웃 버튼 */}
+        <View style={styles.logoutSection}>
+          <Button type="light" style="weak" display="full" onPress={handleLogout} disabled={isLoggingOut}>
+            <Text style={styles.logoutButtonText}>{isLoggingOut ? '로그아웃 중...' : '로그아웃'}</Text>
+          </Button>
         </View>
       </ScrollView>
     </View>
@@ -157,6 +182,15 @@ const styles = StyleSheet.create({
   menuArrow: {
     fontSize: 24,
     color: colors.grey400,
+  },
+  logoutSection: {
+    padding: 20,
+    paddingTop: 24,
+  },
+  logoutButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.grey700,
   },
   appInfo: {
     padding: 20,
