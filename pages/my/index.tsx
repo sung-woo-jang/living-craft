@@ -1,8 +1,9 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
-import { MENU_ITEMS, MOCK_USER } from '@shared/constants';
-import { useCurrentUser, useLogout } from '@shared/hooks/useAuth';
+import { MENU_ITEMS } from '@shared/constants';
+import { useLogout } from '@shared/hooks/useAuth';
+import { useMe } from '@shared/hooks/useUsers';
 import { colors } from '@toss/tds-colors';
-import { Asset, Button } from '@toss/tds-react-native';
+import { Asset, Button, Skeleton } from '@toss/tds-react-native';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/my', {
@@ -18,10 +19,7 @@ export const Route = createRoute('/my', {
 function Page() {
   const navigation = useNavigation();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
-  const currentUser = useCurrentUser();
-
-  // 현재 사용자 정보 (API 연동 전까지는 Mock 데이터 사용)
-  const user = currentUser || MOCK_USER;
+  const { data: user, isLoading } = useMe();
 
   /**
    * 로그아웃 처리
@@ -34,6 +32,52 @@ function Page() {
       },
     });
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          {/* 프로필 섹션 Skeleton */}
+          <View style={styles.profileSection}>
+            <Skeleton width={80} height={80} borderRadius={40} />
+            <View style={{ height: 16 }} />
+            <Skeleton width={100} height={22} borderRadius={4} />
+            <View style={{ height: 6 }} />
+            <Skeleton width={160} height={14} borderRadius={4} />
+          </View>
+
+          {/* 메뉴 리스트 Skeleton */}
+          <View style={styles.menuSection}>
+            {Array.from({ length: 2 }).map((_, index) => (
+              <View key={index} style={styles.menuItem}>
+                <View style={styles.menuItemLeft}>
+                  <Skeleton width={24} height={24} borderRadius={4} />
+                  <View style={styles.menuText}>
+                    <Skeleton width="50%" height={16} borderRadius={4} />
+                    <View style={{ height: 4 }} />
+                    <Skeleton width="70%" height={13} borderRadius={4} />
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    );
+  }
+
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>로그인이 필요합니다.</Text>
+          <Button type="primary" style="weak" onPress={() => navigation.navigate('/unauthorized' as any)}>
+            로그인하기
+          </Button>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -199,5 +243,15 @@ const styles = StyleSheet.create({
   appVersion: {
     fontSize: 12,
     color: colors.grey500,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.grey600,
   },
 });

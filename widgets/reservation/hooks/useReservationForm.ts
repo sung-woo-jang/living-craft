@@ -34,7 +34,7 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
   const watchedValues = watch();
 
   // zustand store
-  const { setIsLoading, availableServiceIds } = useReservationStore(['setIsLoading', 'availableServiceIds']);
+  const { setIsLoading } = useReservationStore(['setIsLoading']);
 
   // TanStack Query mutation
   const { mutateAsync: createReservation } = useCreateReservation();
@@ -48,13 +48,8 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
 
     switch (step) {
       case 'service':
-        // 서비스 선택 + 주소 입력 완료 + 지역에서 해당 서비스 가능 여부 확인
-        return (
-          values.service !== null &&
-          values.customerInfo.address.trim() !== '' &&
-          // 선택된 서비스가 현재 지역에서 가능한지 확인
-          (availableServiceIds.length === 0 || availableServiceIds.includes(values.service.id))
-        );
+        // 서비스 선택 + 주소 입력 완료
+        return values.service !== null && values.customerInfo.address.trim() !== '';
       case 'datetime': {
         // 견적 날짜 + 시간 필수
         const hasEstimateData = values.estimateDate !== '' && values.estimateTimeSlot !== null;
@@ -83,13 +78,8 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
 
     switch (step) {
       case 'service':
-        // 서비스 선택 + 주소 입력 완료 + 지역에서 해당 서비스 가능 여부 확인
-        return (
-          values.service !== null &&
-          values.customerInfo.address.trim() !== '' &&
-          // 선택된 서비스가 현재 지역에서 가능한지 확인
-          (availableServiceIds.length === 0 || availableServiceIds.includes(values.service.id))
-        );
+        // 서비스 선택 + 주소 입력 완료
+        return values.service !== null && values.customerInfo.address.trim() !== '';
       case 'datetime': {
         // 견적 날짜 + 시간 필수
         const hasEstimateStep = values.estimateDate !== '' && values.estimateTimeSlot !== null;

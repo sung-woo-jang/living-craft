@@ -1,125 +1,188 @@
-import type { AddressEstimateInfo, ServiceableRegion } from '../types';
+import type { Service, ServiceRegion } from '@shared/api/types';
+
+import type { AddressEstimateInfo } from '../types';
 
 /**
- * 서비스 가능 지역 Mock 데이터
- * - 인천: 필름 + 유리청소 (일부 지역 유리청소 불가)
- * - 서울: 유리청소만 가능
- * TODO: 백엔드 API 연동 시 실제 엔드포인트로 교체
+ * 서비스 목록 Mock 데이터 (Backend API 구조)
+ * TODO: 백엔드 API 연동 시 GET /api/services로 교체
  */
-const MOCK_SERVICEABLE_REGIONS: ServiceableRegion[] = [
+const MOCK_SERVICES: Service[] = [
   {
-    id: 'incheon',
-    name: '인천광역시',
-    cities: [
-      { id: 'jung-gu', name: '중구', regionId: 'incheon', serviceIds: ['film', 'glass-cleaning'] },
-      { id: 'dong-gu', name: '동구', regionId: 'incheon', serviceIds: ['film', 'glass-cleaning'] },
-      { id: 'michuhol-gu', name: '미추홀구', regionId: 'incheon', serviceIds: ['film', 'glass-cleaning'] },
-      { id: 'yeonsu-gu', name: '연수구', regionId: 'incheon', serviceIds: ['film', 'glass-cleaning'] },
-      { id: 'namdong-gu', name: '남동구', regionId: 'incheon', serviceIds: ['film', 'glass-cleaning'] },
-      { id: 'bupyeong-gu', name: '부평구', regionId: 'incheon', serviceIds: ['film', 'glass-cleaning'] },
-      { id: 'gyeyang-gu', name: '계양구', regionId: 'incheon', serviceIds: ['film', 'glass-cleaning'] },
-      { id: 'seo-gu', name: '서구', regionId: 'incheon', serviceIds: ['film', 'glass-cleaning'] },
-      { id: 'ganghwa-gun', name: '강화군', regionId: 'incheon', serviceIds: ['film'] }, // 유리청소는 불가
-      { id: 'ongjin-gun', name: '옹진군', regionId: 'incheon', serviceIds: ['film'] }, // 유리청소는 불가
+    id: 1,
+    title: '인테리어 필름',
+    description: '싱크대, 가구, 문틀 등에 필름 시공',
+    icon: { id: 1, name: 'icon-fill-color-mono', type: 'MONO' },
+    iconBgColor: '#E3F2FD',
+    duration: '하루 종일',
+    requiresTimeSelection: false,
+    isActive: true,
+    sortOrder: 1,
+    serviceRegions: [
+      {
+        id: 'incheon',
+        name: '인천광역시',
+        estimateFee: 0,
+        cities: [
+          { id: 'jung-gu', name: '중구', estimateFee: null },
+          { id: 'dong-gu', name: '동구', estimateFee: null },
+          { id: 'michuhol-gu', name: '미추홀구', estimateFee: null },
+          { id: 'yeonsu-gu', name: '연수구', estimateFee: null },
+          { id: 'namdong-gu', name: '남동구', estimateFee: null },
+          { id: 'bupyeong-gu', name: '부평구', estimateFee: null },
+          { id: 'gyeyang-gu', name: '계양구', estimateFee: null },
+          { id: 'seo-gu', name: '서구', estimateFee: null },
+          { id: 'ganghwa-gun', name: '강화군', estimateFee: 30000 }, // 도서지역 추가비용
+          { id: 'ongjin-gun', name: '옹진군', estimateFee: 30000 }, // 도서지역 추가비용
+        ],
+      },
     ],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 'seoul',
-    name: '서울특별시',
-    cities: [
-      // 서울은 유리청소만 가능
-      { id: 'gangnam-gu', name: '강남구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'gangdong-gu', name: '강동구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'gangbuk-gu', name: '강북구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'gangseo-gu', name: '강서구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'gwanak-gu', name: '관악구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'gwangjin-gu', name: '광진구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'guro-gu', name: '구로구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'geumcheon-gu', name: '금천구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'nowon-gu', name: '노원구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'dobong-gu', name: '도봉구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'dongdaemun-gu', name: '동대문구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'dongjak-gu', name: '동작구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'mapo-gu', name: '마포구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'seodaemun-gu', name: '서대문구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'seocho-gu', name: '서초구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'seongdong-gu', name: '성동구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'seongbuk-gu', name: '성북구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'songpa-gu', name: '송파구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'yangcheon-gu', name: '양천구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'yeongdeungpo-gu', name: '영등포구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'yongsan-gu', name: '용산구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'eunpyeong-gu', name: '은평구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'jongno-gu', name: '종로구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'jung-gu-seoul', name: '중구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
-      { id: 'jungnang-gu', name: '중랑구', regionId: 'seoul', serviceIds: ['glass-cleaning'] },
+    id: 2,
+    title: '유리 청소',
+    description: '외벽, 베란다, 창문 유리 전문 청소',
+    icon: { id: 2, name: 'icon-sparkle-mono', type: 'MONO' },
+    iconBgColor: '#E8F5E9',
+    duration: '1-2시간',
+    requiresTimeSelection: true,
+    isActive: true,
+    sortOrder: 2,
+    serviceRegions: [
+      {
+        id: 'incheon',
+        name: '인천광역시',
+        estimateFee: 0,
+        cities: [
+          { id: 'jung-gu', name: '중구', estimateFee: null },
+          { id: 'dong-gu', name: '동구', estimateFee: null },
+          { id: 'michuhol-gu', name: '미추홀구', estimateFee: null },
+          { id: 'yeonsu-gu', name: '연수구', estimateFee: null },
+          { id: 'namdong-gu', name: '남동구', estimateFee: null },
+          { id: 'bupyeong-gu', name: '부평구', estimateFee: null },
+          { id: 'gyeyang-gu', name: '계양구', estimateFee: null },
+          { id: 'seo-gu', name: '서구', estimateFee: null },
+          // 강화군, 옹진군은 유리청소 불가 (제외)
+        ],
+      },
+      {
+        id: 'seoul',
+        name: '서울특별시',
+        estimateFee: 0,
+        cities: [
+          { id: 'gangnam-gu', name: '강남구', estimateFee: null },
+          { id: 'gangdong-gu', name: '강동구', estimateFee: null },
+          { id: 'gangbuk-gu', name: '강북구', estimateFee: null },
+          { id: 'gangseo-gu', name: '강서구', estimateFee: null },
+          { id: 'gwanak-gu', name: '관악구', estimateFee: null },
+          { id: 'gwangjin-gu', name: '광진구', estimateFee: null },
+          { id: 'guro-gu', name: '구로구', estimateFee: null },
+          { id: 'geumcheon-gu', name: '금천구', estimateFee: null },
+          { id: 'nowon-gu', name: '노원구', estimateFee: null },
+          { id: 'dobong-gu', name: '도봉구', estimateFee: null },
+          { id: 'dongdaemun-gu', name: '동대문구', estimateFee: null },
+          { id: 'dongjak-gu', name: '동작구', estimateFee: null },
+          { id: 'mapo-gu', name: '마포구', estimateFee: null },
+          { id: 'seodaemun-gu', name: '서대문구', estimateFee: null },
+          { id: 'seocho-gu', name: '서초구', estimateFee: null },
+          { id: 'seongdong-gu', name: '성동구', estimateFee: null },
+          { id: 'seongbuk-gu', name: '성북구', estimateFee: null },
+          { id: 'songpa-gu', name: '송파구', estimateFee: null },
+          { id: 'yangcheon-gu', name: '양천구', estimateFee: null },
+          { id: 'yeongdeungpo-gu', name: '영등포구', estimateFee: null },
+          { id: 'yongsan-gu', name: '용산구', estimateFee: null },
+          { id: 'eunpyeong-gu', name: '은평구', estimateFee: null },
+          { id: 'jongno-gu', name: '종로구', estimateFee: null },
+          { id: 'jung-gu-seoul', name: '중구', estimateFee: null },
+          { id: 'jungnang-gu', name: '중랑구', estimateFee: null },
+        ],
+      },
     ],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
 ];
 
 /**
- * 서비스 가능 지역 목록 조회
- * 서비스별 가용성 정보가 포함된 지역 목록을 반환
- * TODO: 백엔드 API 연동 시 실제 엔드포인트로 교체
- * @returns 서비스 가능 지역 목록
+ * 서비스 목록 조회 (Backend API와 동일한 구조)
+ * TODO: 백엔드 API 연동 시 GET /api/services로 교체
+ * @returns 서비스 목록
  */
-export async function getServiceableRegions(): Promise<ServiceableRegion[]> {
+export async function getServices(): Promise<Service[]> {
   // Mock 응답 (실제 API 연동 전)
   return new Promise((resolve) => {
-    setTimeout(() => resolve(MOCK_SERVICEABLE_REGIONS), 300);
+    setTimeout(() => resolve(MOCK_SERVICES), 300);
   });
 
   // 실제 API 연동 예시:
-  // const response = await fetch('/api/serviceable-regions');
+  // const response = await fetch('/api/services');
   // if (!response.ok) {
-  //   throw new Error('Failed to fetch serviceable regions');
+  //   throw new Error('Failed to fetch services');
   // }
-  // return response.json();
+  // const result: SuccessResponse<Service[]> = await response.json();
+  // return result.data;
 }
 
 /**
- * 특정 지역에서 가능한 서비스 ID 목록 조회
- * @param regionId 시/도 ID
- * @param cityId 구/군 ID
- * @returns 서비스 ID 목록
+ * 특정 서비스에서 가능한 지역 목록 조회
+ * @param services - 전체 서비스 목록
+ * @param serviceId - 서비스 ID
+ * @returns 해당 서비스의 지역 목록
  */
-export function getAvailableServiceIds(
-  regions: ServiceableRegion[],
-  regionId: string,
-  cityId: string
-): string[] {
-  const region = regions.find((r) => r.id === regionId);
-  if (!region) return [];
-
-  const city = region.cities.find((c) => c.id === cityId);
-  if (!city) return [];
-
-  return city.serviceIds;
+export function getServiceableRegionsForService(
+  services: Service[],
+  serviceId: number
+): ServiceRegion[] {
+  const service = services.find((s) => s.id === serviceId);
+  return service?.serviceRegions ?? [];
 }
 
 /**
  * 주소 기반 견적 비용 조회
- * 도서/원거리 지역의 경우 견적 비용이 발생할 수 있음
+ * 선택된 지역/도시의 estimateFee를 기반으로 비용 계산
  * TODO: 백엔드 API 연동 시 실제 엔드포인트로 교체
- * @param address 도로명 주소
- * @param _serviceId 서비스 ID (향후 서비스별 차등 비용 적용 가능)
+ * @param serviceId - 서비스 ID
+ * @param regionId - 시/도 ID
+ * @param cityId - 시/군/구 ID
  * @returns 견적 비용 정보
  */
-export async function checkAddressEstimateFee(
-  address: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- 향후 서비스별 차등 비용 적용 가능
-  _serviceId: string
+export async function checkEstimateFeeByRegion(
+  serviceId: number,
+  regionId: string,
+  cityId: string
 ): Promise<AddressEstimateInfo> {
-  // Mock: 주소에 "영종" 또는 "강화" 포함 시 견적 비용 발생
   return new Promise((resolve) => {
     setTimeout(() => {
-      const isRemoteArea = address.includes('영종') || address.includes('강화');
+      const service = MOCK_SERVICES.find((s) => s.id === serviceId);
+      if (!service) {
+        resolve({ hasEstimateFee: false });
+        return;
+      }
 
-      if (isRemoteArea) {
+      const region = service.serviceRegions?.find((r: ServiceRegion) => r.id === regionId);
+      if (!region) {
+        resolve({ hasEstimateFee: false });
+        return;
+      }
+
+      const city = region.cities.find((c: { id: string; name: string; estimateFee: number | null }) => c.id === cityId);
+      if (!city) {
+        resolve({ hasEstimateFee: false });
+        return;
+      }
+
+      // 도시의 estimateFee가 있으면 그것 사용, 없으면 지역 기본 비용 사용
+      const fee = city.estimateFee ?? region.estimateFee;
+
+      if (fee > 0) {
         resolve({
           hasEstimateFee: true,
-          estimateFee: 30000,
-          estimateFeeReason: '도서/원거리 지역 추가비용',
+          estimateFee: fee,
+          estimateFeeReason:
+            city.estimateFee !== null && city.estimateFee > 0
+              ? '해당 지역 추가 출장비'
+              : '지역 기본 출장비',
         });
       } else {
         resolve({ hasEstimateFee: false });
@@ -128,9 +191,12 @@ export async function checkAddressEstimateFee(
   });
 
   // 실제 API 연동 예시:
-  // const response = await fetch(`/api/estimate-fee?address=${encodeURIComponent(address)}&serviceId=${serviceId}`);
+  // const response = await fetch(
+  //   `/api/estimate-fee?serviceId=${serviceId}&regionId=${regionId}&cityId=${cityId}`
+  // );
   // if (!response.ok) {
   //   throw new Error('Failed to check estimate fee');
   // }
-  // return response.json();
+  // const result: SuccessResponse<AddressEstimateInfo> = await response.json();
+  // return result.data;
 }

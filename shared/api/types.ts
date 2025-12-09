@@ -174,29 +174,57 @@ export interface ServiceRegion {
 }
 
 /**
+ * 아이콘 타입
+ */
+export type IconType = 'FILL' | 'MONO' | 'COLOR';
+
+/**
+ * 아이콘 정보
+ */
+export interface Icon {
+  id: number;
+  name: string;
+  type: IconType;
+}
+
+/**
  * 서비스 정보
  */
 export interface Service {
-  id: string; // "film", "glass-cleaning" 등
+  id: number;
   title: string;
   description: string;
-  iconName: string;
+  icon: Icon;
   iconBgColor: string;
   duration: string;
   requiresTimeSelection: boolean;
   isActive: boolean;
   sortOrder: number;
-  serviceableRegions: ServiceRegion[];
+  serviceRegions?: ServiceRegion[];
   createdAt: string;
   updatedAt: string;
 }
 
 /**
+ * 시간 타입 (견적/시공)
+ */
+export type TimeType = 'estimate' | 'construction';
+
+/**
  * 예약 가능 시간 조회 요청
  */
 export interface AvailableTimesRequest {
-  serviceId: string;
+  serviceId: number;
   date: string; // YYYY-MM-DD
+  type: TimeType;
+}
+
+/**
+ * 시간 슬롯 정보
+ */
+export interface TimeSlotDto {
+  time: string; // HH:mm
+  available: boolean;
 }
 
 /**
@@ -204,9 +232,10 @@ export interface AvailableTimesRequest {
  */
 export interface AvailableTimesResponse {
   date: string;
-  availableTimes: string[]; // ["09:00", "10:00", ...]
-  isHoliday: boolean;
-  message?: string;
+  dayOfWeek: string; // '월', '화', ... '일'
+  isAvailable: boolean; // 전체 예약 가능 여부 (휴무일이면 false)
+  times: TimeSlotDto[];
+  defaultTime: string; // 하루 종일 작업 시 기본 시작 시간
 }
 
 // ========================================
@@ -227,7 +256,7 @@ export enum ReservationStatus {
  * 예약 생성 요청
  */
 export interface CreateReservationRequest {
-  serviceId: string;
+  serviceId: number;
   estimateDate: string; // YYYY-MM-DD
   estimateTime: string; // HH:mm
   constructionDate: string; // YYYY-MM-DD
@@ -249,7 +278,7 @@ export interface Reservation {
   customer: User;
   customerId: number;
   service: Service;
-  serviceId: string;
+  serviceId: number;
   estimateDate: string;
   estimateTime: string;
   constructionDate: string;
@@ -347,7 +376,7 @@ export interface CreateReviewRequest {
  * 리뷰 목록 조회 파라미터
  */
 export interface ReviewListParams extends PaginationParams {
-  serviceId?: string;
+  serviceId?: number;
   rating?: number;
 }
 

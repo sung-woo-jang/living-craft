@@ -1,8 +1,8 @@
-import { TimeSlot } from '@shared/constants';
+import { Service } from '@shared/api/types';
 import { StoreWithShallow, useStoreWithShallow } from '@shared/model';
 import { createWithEqualityFn } from 'zustand/traditional';
 
-import { checkAddressEstimateFee, getAvailableServiceIds, getServiceableRegions } from '../api';
+import { checkEstimateFeeByRegion, getServices, getServiceableRegionsForService } from '../api';
 import {
   AddressEstimateInfo,
   AddressSearchResult,
@@ -13,7 +13,6 @@ import {
   ReservationFormData,
   ServiceableRegion,
 } from '../types';
-import { generateRandomDisabledDates, generateRandomTimeSlots } from '../utils';
 
 interface ReservationUIState {
   // 폼 데이터 (페이지 간 유지)
@@ -21,12 +20,10 @@ interface ReservationUIState {
 
   // UI 상태
   isLoading: boolean;
-  // 견적 캘린더/시간
+  // 견적 캘린더
   isEstimateCalendarVisible: boolean;
-  estimateTimeSlots: TimeSlot[];
-  // 시공 캘린더/시간
+  // 시공 캘린더
   isConstructionCalendarVisible: boolean;
-  constructionTimeSlots: TimeSlot[];
 
   // 주소 검색 상태
   addressSearchQuery: string;
@@ -45,17 +42,13 @@ interface ReservationUIState {
   isLoadingRegions: boolean;
   isLoadingCities: boolean;
 
-  // 서비스 가능 지역 상태
-  serviceableRegions: ServiceableRegion[];
-  isLoadingServiceableRegions: boolean;
-  availableServiceIds: string[];
+  // 서비스 목록 (각 서비스가 가능 지역 포함)
+  services: Service[];
+  isLoadingServices: boolean;
 
   // 견적 비용 상태
   addressEstimateInfo: AddressEstimateInfo | null;
   isCheckingEstimateFee: boolean;
-
-  // 유틸 데이터
-  disabledDates: Date[];
 }
 
 interface ReservationUIActions {
@@ -67,11 +60,9 @@ interface ReservationUIActions {
   // 견적 캘린더
   openEstimateCalendar: () => void;
   closeEstimateCalendar: () => void;
-  updateEstimateTimeSlots: (date: string) => void;
   // 시공 캘린더
   openConstructionCalendar: () => void;
   closeConstructionCalendar: () => void;
-  updateConstructionTimeSlots: (date: string) => void;
 
   // 주소 검색 상태
   setAddressSearchQuery: (query: string) => void;
@@ -95,13 +86,12 @@ interface ReservationUIActions {
   selectCity: (city: CityData) => void;
   resetRegionSelection: () => void;
 
-  // 서비스 가능 지역 액션
-  loadServiceableRegions: () => Promise<void>;
-  updateAvailableServices: () => void;
-  getFilteredRegionsForService: (serviceId: string) => ServiceableRegion[];
+  // 서비스 목록 액션
+  loadServices: () => Promise<void>;
+  getFilteredRegionsForService: (serviceId: number) => ServiceableRegion[];
 
   // 견적 비용 액션
-  checkEstimateFee: (address: string, serviceId: string) => Promise<void>;
+  checkEstimateFee: () => Promise<void>;
   resetEstimateFeeInfo: () => void;
 
   // 리셋
@@ -114,9 +104,7 @@ const initialState: ReservationUIState = {
   formData: DEFAULT_FORM_VALUES,
   isLoading: false,
   isEstimateCalendarVisible: false,
-  estimateTimeSlots: [],
   isConstructionCalendarVisible: false,
-  constructionTimeSlots: [],
   addressSearchQuery: '',
   addressSearchResults: [],
   isAddressSearching: false,
@@ -130,12 +118,10 @@ const initialState: ReservationUIState = {
   cities: [],
   isLoadingRegions: false,
   isLoadingCities: false,
-  serviceableRegions: [],
-  isLoadingServiceableRegions: false,
-  availableServiceIds: [],
+  services: [],
+  isLoadingServices: false,
   addressEstimateInfo: null,
   isCheckingEstimateFee: false,
-  disabledDates: generateRandomDisabledDates(),
 };
 
 const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
@@ -150,27 +136,13 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
   // UI 상태
   setIsLoading: (loading) => set({ isLoading: loading }),
 
-  // 견적 캘린더/시간
+  // 견적 캘린더
   openEstimateCalendar: () => set({ isEstimateCalendarVisible: true }),
   closeEstimateCalendar: () => set({ isEstimateCalendarVisible: false }),
-  updateEstimateTimeSlots: (date) => {
-    if (!date) {
-      set({ estimateTimeSlots: [] });
-      return;
-    }
-    set({ estimateTimeSlots: generateRandomTimeSlots(date) });
-  },
 
-  // 시공 캘린더/시간
+  // 시공 캘린더
   openConstructionCalendar: () => set({ isConstructionCalendarVisible: true }),
   closeConstructionCalendar: () => set({ isConstructionCalendarVisible: false }),
-  updateConstructionTimeSlots: (date) => {
-    if (!date) {
-      set({ constructionTimeSlots: [] });
-      return;
-    }
-    set({ constructionTimeSlots: generateRandomTimeSlots(date) });
-  },
 
   // 주소 검색 상태
   setAddressSearchQuery: (query) => set({ addressSearchQuery: query }),
@@ -220,25 +192,11 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
   },
 
   selectCity: (city) => {
-    const { addressSelection, serviceableRegions, formData } = get();
-
-    // 선택된 지역에서 가능한 서비스 ID 목록 조회
-    const availableIds = addressSelection.region
-      ? getAvailableServiceIds(serviceableRegions, addressSelection.region.id, city.id)
-      : [];
-
-    // 현재 선택된 서비스가 새 지역에서도 가능한지 확인
-    const currentService = formData.service;
-    const shouldResetService = currentService && !availableIds.includes(currentService.id);
+    const { addressSelection } = get();
 
     set({
       addressSelection: { ...addressSelection, city },
       isCityBottomSheetOpen: false,
-      availableServiceIds: availableIds,
-      // 새 지역에서 불가능한 서비스면 초기화
-      ...(shouldResetService && {
-        formData: { ...formData, service: null },
-      }),
     });
   },
 
@@ -248,66 +206,44 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
       isRegionBottomSheetOpen: false,
       isCityBottomSheetOpen: false,
       cities: [],
-      availableServiceIds: [],
     });
   },
 
-  // 서비스 가능 지역 액션
-  loadServiceableRegions: async () => {
-    set({ isLoadingServiceableRegions: true });
+  // 서비스 목록 로드
+  loadServices: async () => {
+    set({ isLoadingServices: true });
     try {
-      const regions = await getServiceableRegions();
+      const services = await getServices();
       set({
-        serviceableRegions: regions,
-        isLoadingServiceableRegions: false,
+        services,
+        isLoadingServices: false,
       });
     } catch {
-      set({ isLoadingServiceableRegions: false });
+      set({ isLoadingServices: false });
     }
-  },
-
-  updateAvailableServices: () => {
-    const { addressSelection, serviceableRegions, formData } = get();
-    if (!addressSelection.region || !addressSelection.city) {
-      set({ availableServiceIds: [] });
-      return;
-    }
-
-    const availableIds = getAvailableServiceIds(
-      serviceableRegions,
-      addressSelection.region.id,
-      addressSelection.city.id
-    );
-
-    // 현재 선택된 서비스가 새 지역에서도 가능한지 확인
-    const currentService = formData.service;
-    const shouldResetService = currentService && !availableIds.includes(currentService.id);
-
-    set({
-      availableServiceIds: availableIds,
-      ...(shouldResetService && {
-        formData: { ...formData, service: null },
-      }),
-    });
   },
 
   getFilteredRegionsForService: (serviceId) => {
-    const { serviceableRegions } = get();
+    const { services } = get();
     if (!serviceId) return [];
 
-    return serviceableRegions
-      .map((region) => ({
-        ...region,
-        cities: region.cities.filter((city) => city.serviceIds.includes(serviceId)),
-      }))
-      .filter((region) => region.cities.length > 0);
+    return getServiceableRegionsForService(services, serviceId);
   },
 
   // 견적 비용 액션
-  checkEstimateFee: async (address, serviceId) => {
+  checkEstimateFee: async () => {
+    const { formData, addressSelection } = get();
+    const { service } = formData;
+    const { region, city } = addressSelection;
+
+    if (!service || !region || !city) {
+      set({ addressEstimateInfo: null });
+      return;
+    }
+
     set({ isCheckingEstimateFee: true });
     try {
-      const estimateInfo = await checkAddressEstimateFee(address, serviceId);
+      const estimateInfo = await checkEstimateFeeByRegion(service.id, region.id, city.id);
       set({
         addressEstimateInfo: estimateInfo,
         isCheckingEstimateFee: false,
@@ -328,7 +264,7 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
   },
 
   // 리셋
-  reset: () => set({ ...initialState, disabledDates: generateRandomDisabledDates() }),
+  reset: () => set(initialState),
 }));
 
 /**

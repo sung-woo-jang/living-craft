@@ -1,6 +1,5 @@
 import { ImageResponse } from '@apps-in-toss/framework';
-import { Service } from '@shared/api/types';
-import { TimeSlot } from '@shared/constants';
+import { Service, TimeSlotDto } from '@shared/api/types';
 
 export interface ImageState extends ImageResponse {
   previewUri: string;
@@ -19,10 +18,10 @@ export interface ReservationFormData {
   service: Service | null;
   // 견적 희망 날짜/시간
   estimateDate: string;
-  estimateTimeSlot: TimeSlot | null;
+  estimateTimeSlot: TimeSlotDto | null;
   // 시공 희망 날짜/시간
   constructionDate: string;
-  constructionTimeSlot: TimeSlot | null;
+  constructionTimeSlot: TimeSlotDto | null;
   customerInfo: CustomerInfo;
   agreedToTerms: boolean;
 }
@@ -72,13 +71,18 @@ export interface AddressSelection {
   city: CityData | null;
 }
 
-// 서비스 가능 구/군 정보 (서비스 ID 포함)
-export interface ServiceableCity extends CityData {
-  serviceIds: string[]; // 해당 구/군에서 가능한 서비스 ID 목록
+// 서비스 가능 구/군 정보 (Backend API ServiceCity와 동일)
+export interface ServiceableCity {
+  id: string;
+  name: string;
+  estimateFee: number | null; // null이면 지역 기본 비용 적용
 }
 
-// 서비스 가능 시/도 정보
-export interface ServiceableRegion extends RegionData {
+// 서비스 가능 시/도 정보 (Backend API ServiceRegion과 동일)
+export interface ServiceableRegion {
+  id: string;
+  name: string;
+  estimateFee: number; // 해당 지역 기본 출장 비용
   cities: ServiceableCity[];
 }
 

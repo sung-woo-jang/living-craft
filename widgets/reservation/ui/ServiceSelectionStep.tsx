@@ -1,9 +1,9 @@
 import { useServices } from '@shared/hooks/useServices';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { Asset } from '@toss/tds-react-native';
+import { Asset, Skeleton } from '@toss/tds-react-native';
 import { useFormContext } from 'react-hook-form';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { ReservationFormData } from '../types';
 
@@ -22,7 +22,17 @@ export function ServiceSelectionStep() {
             <Text style={styles.sectionSubtitle}>원하시는 서비스를 선택해주세요</Text>
           </View>
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.blue500} />
+            {Array.from({ length: 2 }).map((_, index) => (
+              <View key={index} style={[styles.serviceRow, index < 1 && styles.serviceRowBorder]}>
+                <Skeleton width={48} height={48} borderRadius={24} />
+                <View style={styles.serviceInfo}>
+                  <Skeleton width="60%" height={17} borderRadius={4} />
+                  <View style={{ height: 4 }} />
+                  <Skeleton width="80%" height={14} borderRadius={4} />
+                </View>
+                <Skeleton width={24} height={24} borderRadius={12} />
+              </View>
+            ))}
           </View>
         </Card>
       </ScrollView>
@@ -64,7 +74,7 @@ export function ServiceSelectionStep() {
             onPress={() => setValue('service', service)}
           >
             <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor }]}>
-              <Asset.Icon name={service.iconName} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
+              <Asset.Icon name={service.icon?.name} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
             </View>
 
             <View style={styles.serviceInfo}>
@@ -105,9 +115,7 @@ const styles = StyleSheet.create({
     color: colors.grey600,
   },
   loadingContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingBottom: 8,
   },
   emptyContainer: {
     paddingVertical: 60,

@@ -1,7 +1,9 @@
+import { useAvailableTimes } from '@shared/hooks/useServices';
 import { Card } from '@shared/ui';
 import { CalendarBottomSheet } from '@shared/ui/calendar-bottom-sheet';
 import { formatDateToString, parseStringToDate } from '@shared/ui/calendar-bottom-sheet/utils';
 import { colors } from '@toss/tds-colors';
+import { Skeleton } from '@toss/tds-react-native';
 import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -11,31 +13,21 @@ import { ReservationFormData } from '../types';
 export function DateTimeSelectionStep() {
   const { watch, setValue } = useFormContext<ReservationFormData>();
   const {
-    disabledDates,
-    // 견적 캘린더/시간
+    // 견적 캘린더
     isEstimateCalendarVisible,
-    estimateTimeSlots,
     openEstimateCalendar,
     closeEstimateCalendar,
-    updateEstimateTimeSlots,
-    // 시공 캘린더/시간
+    // 시공 캘린더
     isConstructionCalendarVisible,
-    constructionTimeSlots,
     openConstructionCalendar,
     closeConstructionCalendar,
-    updateConstructionTimeSlots,
   } = useReservationStore([
-    'disabledDates',
     'isEstimateCalendarVisible',
-    'estimateTimeSlots',
     'openEstimateCalendar',
     'closeEstimateCalendar',
-    'updateEstimateTimeSlots',
     'isConstructionCalendarVisible',
-    'constructionTimeSlots',
     'openConstructionCalendar',
     'closeConstructionCalendar',
-    'updateConstructionTimeSlots',
   ]);
 
   const selectedService = watch('service');
@@ -45,6 +37,21 @@ export function DateTimeSelectionStep() {
   // 시공 날짜/시간
   const constructionDate = watch('constructionDate');
   const constructionTimeSlot = watch('constructionTimeSlot');
+
+  // API로 예약 가능 시간 조회
+  const { data: estimateTimesResponse, isLoading: isLoadingEstimateTimes } = useAvailableTimes(
+    selectedService?.id ?? 0,
+    estimateDate,
+    'estimate',
+    !!selectedService?.id && !!estimateDate
+  );
+
+  const { data: constructionTimesResponse, isLoading: isLoadingConstructionTimes } = useAvailableTimes(
+    selectedService?.id ?? 0,
+    constructionDate,
+    'construction',
+    !!selectedService?.id && !!constructionDate
+  );
 
   // 시공 시간 선택이 필요한지 확인 (기본값: true)
   const requiresTimeSelection = selectedService?.requiresTimeSelection !== false;
@@ -57,7 +64,6 @@ export function DateTimeSelectionStep() {
     const dateString = formatDateToString(date);
     setValue('estimateDate', dateString);
     setValue('estimateTimeSlot', null);
-    updateEstimateTimeSlots(dateString);
     closeEstimateCalendar();
   };
 
@@ -66,7 +72,6 @@ export function DateTimeSelectionStep() {
     const dateString = formatDateToString(date);
     setValue('constructionDate', dateString);
     setValue('constructionTimeSlot', null);
-    updateConstructionTimeSlots(dateString);
     closeConstructionCalendar();
   };
 
@@ -91,30 +96,42 @@ export function DateTimeSelectionStep() {
           {estimateDate && (
             <View style={styles.timeSlotSection}>
               <Text style={styles.timeSlotLabel}>시간 선택</Text>
-              <View style={styles.timeSlotGrid}>
-                {estimateTimeSlots.map((slot) => (
-                  <TouchableOpacity
-                    key={slot.id}
-                    style={[
-                      styles.timeSlot,
-                      estimateTimeSlot?.id === slot.id && styles.timeSlotSelected,
-                      !slot.available && styles.timeSlotDisabled,
-                    ]}
-                    onPress={() => slot.available && setValue('estimateTimeSlot', slot)}
-                    disabled={!slot.available}
-                  >
-                    <Text
+              {isLoadingEstimateTimes ? (
+                <View style={styles.timeSlotGrid}>
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <Skeleton key={i} width={72} height={44} />
+                  ))}
+                </View>
+              ) : estimateTimesResponse?.isAvailable === false ? (
+                <View style={styles.unavailableNotice}>
+                  <Text style={styles.unavailableText}>예약이 불가능한 날짜입니다.</Text>
+                </View>
+              ) : (
+                <View style={styles.timeSlotGrid}>
+                  {estimateTimesResponse?.times?.map((slot) => (
+                    <TouchableOpacity
+                      key={slot.time}
                       style={[
-                        styles.timeSlotText,
-                        estimateTimeSlot?.id === slot.id && styles.timeSlotTextSelected,
-                        !slot.available && styles.timeSlotTextDisabled,
+                        styles.timeSlot,
+                        estimateTimeSlot?.time === slot.time && styles.timeSlotSelected,
+                        !slot.available && styles.timeSlotDisabled,
                       ]}
+                      onPress={() => slot.available && setValue('estimateTimeSlot', slot)}
+                      disabled={!slot.available}
                     >
-                      {slot.time}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+                      <Text
+                        style={[
+                          styles.timeSlotText,
+                          estimateTimeSlot?.time === slot.time && styles.timeSlotTextSelected,
+                          !slot.available && styles.timeSlotTextDisabled,
+                        ]}
+                      >
+                        {slot.time}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
             </View>
           )}
         </Card>
@@ -138,30 +155,42 @@ export function DateTimeSelectionStep() {
           {constructionDate && requiresTimeSelection && (
             <View style={styles.timeSlotSection}>
               <Text style={styles.timeSlotLabel}>시간 선택</Text>
-              <View style={styles.timeSlotGrid}>
-                {constructionTimeSlots.map((slot) => (
-                  <TouchableOpacity
-                    key={slot.id}
-                    style={[
-                      styles.timeSlot,
-                      constructionTimeSlot?.id === slot.id && styles.timeSlotSelected,
-                      !slot.available && styles.timeSlotDisabled,
-                    ]}
-                    onPress={() => slot.available && setValue('constructionTimeSlot', slot)}
-                    disabled={!slot.available}
-                  >
-                    <Text
+              {isLoadingConstructionTimes ? (
+                <View style={styles.timeSlotGrid}>
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <Skeleton key={i} width={72} height={44} />
+                  ))}
+                </View>
+              ) : constructionTimesResponse?.isAvailable === false ? (
+                <View style={styles.unavailableNotice}>
+                  <Text style={styles.unavailableText}>예약이 불가능한 날짜입니다.</Text>
+                </View>
+              ) : (
+                <View style={styles.timeSlotGrid}>
+                  {constructionTimesResponse?.times?.map((slot) => (
+                    <TouchableOpacity
+                      key={slot.time}
                       style={[
-                        styles.timeSlotText,
-                        constructionTimeSlot?.id === slot.id && styles.timeSlotTextSelected,
-                        !slot.available && styles.timeSlotTextDisabled,
+                        styles.timeSlot,
+                        constructionTimeSlot?.time === slot.time && styles.timeSlotSelected,
+                        !slot.available && styles.timeSlotDisabled,
                       ]}
+                      onPress={() => slot.available && setValue('constructionTimeSlot', slot)}
+                      disabled={!slot.available}
                     >
-                      {slot.time}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+                      <Text
+                        style={[
+                          styles.timeSlotText,
+                          constructionTimeSlot?.time === slot.time && styles.timeSlotTextSelected,
+                          !slot.available && styles.timeSlotTextDisabled,
+                        ]}
+                      >
+                        {slot.time}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
             </View>
           )}
 
@@ -185,7 +214,6 @@ export function DateTimeSelectionStep() {
       <CalendarBottomSheet
         visible={isEstimateCalendarVisible}
         selectedDate={parseStringToDate(estimateDate)}
-        disabledDates={disabledDates}
         title="견적 희망 날짜 선택"
         confirmButtonText="날짜 선택"
         onConfirm={handleEstimateDateConfirm}
@@ -196,7 +224,6 @@ export function DateTimeSelectionStep() {
       <CalendarBottomSheet
         visible={isConstructionCalendarVisible}
         selectedDate={parseStringToDate(constructionDate)}
-        disabledDates={disabledDates}
         title="시공 희망 날짜 선택"
         confirmButtonText="날짜 선택"
         onConfirm={handleConstructionDateConfirm}
@@ -283,6 +310,17 @@ const styles = StyleSheet.create({
   },
   timeSlotTextDisabled: {
     color: colors.grey400,
+  },
+  unavailableNotice: {
+    backgroundColor: colors.grey100,
+    borderRadius: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+  },
+  unavailableText: {
+    fontSize: 14,
+    color: colors.grey500,
   },
   allDayNotice: {
     flexDirection: 'row',

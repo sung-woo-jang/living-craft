@@ -1,7 +1,7 @@
 import { colors } from '@toss/tds-colors';
-import { IconButton } from '@toss/tds-react-native';
+import { IconButton, Skeleton } from '@toss/tds-react-native';
 import { useCallback, useEffect, useRef } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 import type { CityData, RegionData } from '../types';
@@ -78,8 +78,11 @@ export function CitySelectBottomSheet({
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.blue500} />
-            <Text style={styles.loadingText}>구/군 정보를 불러오는 중...</Text>
+            {Array.from({ length: 6 }).map((_, index) => (
+              <View key={index} style={styles.skeletonItem}>
+                <Skeleton width="50%" height={16} borderRadius={4} />
+              </View>
+            ))}
           </View>
         ) : cities.length === 0 ? (
           <View style={styles.emptyContainer}>
@@ -154,13 +157,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   loadingContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-    gap: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
   },
-  loadingText: {
-    fontSize: 14,
-    color: colors.grey600,
+  skeletonItem: {
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.grey200,
   },
   emptyContainer: {
     paddingVertical: 60,

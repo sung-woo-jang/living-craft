@@ -1,15 +1,7 @@
 import { colors } from '@toss/tds-colors';
-import { TextField } from '@toss/tds-react-native';
+import { Skeleton, TextField } from '@toss/tds-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Keyboard, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 import { searchAddress } from '../api';
@@ -113,8 +105,15 @@ export function AddressSearchDrawer({ isOpen, regionPrefix, onClose, onSelect }:
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
         {isSearching ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.blue500} />
-            <Text style={styles.loadingText}>주소를 검색하는 중...</Text>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <View key={index} style={styles.skeletonItem}>
+                <Skeleton width="85%" height={16} borderRadius={4} />
+                <View style={{ height: 6 }} />
+                <Skeleton width="30%" height={13} borderRadius={4} />
+                <View style={{ height: 4 }} />
+                <Skeleton width="70%" height={14} borderRadius={4} />
+              </View>
+            ))}
           </View>
         ) : hasSearched && searchResults.length === 0 ? (
           <View style={styles.emptyContainer}>
@@ -185,13 +184,14 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   loadingContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-    gap: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    gap: 16,
   },
-  loadingText: {
-    fontSize: 14,
-    color: colors.grey600,
+  skeletonItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.grey200,
   },
   emptyContainer: {
     paddingVertical: 60,

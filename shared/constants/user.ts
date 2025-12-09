@@ -1,4 +1,4 @@
-// 사용자 및 메뉴 관련 Mock 데이터
+// 사용자 및 메뉴 관련 상수
 // pages/my/index.tsx에서 사용
 
 export interface MenuItem {
@@ -9,31 +9,17 @@ export interface MenuItem {
   badge?: number;
 }
 
-export interface User {
-  name: string;
-  email: string;
-  phone: string;
-}
-
 export const MENU_ITEMS: MenuItem[] = [
   {
     iconName: 'icon-calendar-3-blue',
     title: '내 예약',
     subtitle: '예약 내역을 확인하세요',
     path: '/my/reservations',
-    badge: 2,
   },
   {
     iconName: 'icon-chat-bubble-dots-skyblue',
     title: '내 리뷰',
     subtitle: '작성한 리뷰를 확인하세요',
     path: '/my/reviews',
-    badge: 3,
   },
 ];
-
-export const MOCK_USER: User = {
-  name: '홍길동',
-  email: 'hong@example.com',
-  phone: '010-1234-5678',
-};

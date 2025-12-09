@@ -3,9 +3,9 @@ import { Service } from '@shared/api/types';
 import { useServices } from '@shared/hooks/useServices';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { Asset } from '@toss/tds-react-native';
+import { Asset, Skeleton } from '@toss/tds-react-native';
 import { useReservationStore } from '@widgets/reservation';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // 네비게이션 훅 사용을 위한 임시 라우트
 const TempRoute = createRoute('/_layout' as any, { component: () => null });
@@ -34,8 +34,18 @@ export const HomeServicesSection = () => {
         <View style={styles.header}>
           <Text style={styles.title}>한 번에 인테리어 준비 끝내기</Text>
         </View>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.blue500} />
+        <View style={styles.serviceList}>
+          {Array.from({ length: 2 }).map((_, index) => (
+            <View key={index} style={[styles.serviceRow, index < 1 && styles.serviceRowBorder]}>
+              <Skeleton width={48} height={48} borderRadius={24} />
+              <View style={styles.serviceInfo}>
+                <Skeleton width="60%" height={17} borderRadius={4} />
+                <View style={{ height: 4 }} />
+                <Skeleton width="80%" height={14} borderRadius={4} />
+              </View>
+              <Skeleton width={76} height={38} borderRadius={8} />
+            </View>
+          ))}
         </View>
       </Card>
     );
@@ -63,8 +73,12 @@ export const HomeServicesSection = () => {
       <View style={styles.serviceList}>
         {services.map((service, index) => (
           <View key={service.id} style={[styles.serviceRow, index < services.length - 1 && styles.serviceRowBorder]}>
-            <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor }]}>
-              <Asset.Icon name={service.iconName} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
+            <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor || colors.grey100 }]}>
+              {service.icon?.name ? (
+                <Asset.Icon name={service.icon.name} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
+              ) : (
+                <Text style={styles.icon}>🏠</Text>
+              )}
             </View>
 
             <View style={styles.serviceInfo}>
@@ -92,11 +106,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.grey900,
-  },
-  loadingContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   emptyContainer: {
     paddingVertical: 60,

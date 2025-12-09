@@ -2,8 +2,8 @@ import { createRoute, Image } from '@granite-js/react-native';
 import { usePortfolios } from '@shared/hooks/usePortfolios';
 import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { Badge } from '@toss/tds-react-native';
-import { ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Badge, Skeleton } from '@toss/tds-react-native';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -34,8 +34,20 @@ export const HomePortfolioSection = () => {
         <View style={styles.header}>
           <Text style={styles.title}>작업 사례</Text>
         </View>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.blue500} />
+        <View style={styles.skeletonCard}>
+          <Skeleton width="100%" height={180} borderRadius={0} />
+          <View style={styles.cardContent}>
+            <Skeleton width={60} height={20} borderRadius={4} />
+            <View style={{ height: 8 }} />
+            <Skeleton width="70%" height={17} borderRadius={4} />
+            <View style={{ height: 6 }} />
+            <Skeleton width="90%" height={14} borderRadius={4} />
+          </View>
+        </View>
+        <View style={styles.skeletonIndicator}>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} width={8} height={8} borderRadius={4} style={{ marginHorizontal: 4 }} />
+          ))}
         </View>
       </Card>
     );
@@ -114,10 +126,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.grey900,
   },
-  loadingContainer: {
-    paddingVertical: 100,
-    alignItems: 'center',
+  skeletonCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.grey100,
+  },
+  skeletonIndicator: {
+    flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 16,
   },
   emptyContainer: {
     paddingVertical: 100,

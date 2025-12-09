@@ -1,9 +1,9 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
-import { MOCK_REVIEWS } from '@shared/constants';
+import { useReviews } from '@shared/hooks/useReviews';
 import { EmptyState } from '@shared/ui/empty-state';
 import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
-import { Asset } from '@toss/tds-react-native';
+import { Asset, Skeleton } from '@toss/tds-react-native';
 import { useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -20,15 +20,15 @@ const FILTER_OPTIONS: FilterOption[] = [
 
 /**
  * 리뷰 목록 페이지
- *
- * 필요한 API 연결:
- * 1. GET /api/reviews - 리뷰 목록 조회 (필터링 지원)
  */
 function Page() {
   const navigation = useNavigation();
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const filteredReviews = MOCK_REVIEWS.filter((review) => {
+  const { data: reviewsResponse, isLoading } = useReviews();
+
+  const allReviews = reviewsResponse?.data || [];
+  const filteredReviews = allReviews.filter((review) => {
     if (activeFilter === 'all') return true;
     return review.rating === parseInt(activeFilter);
   });
@@ -36,6 +36,38 @@ function Page() {
   const handleServicePress = (serviceId: number) => {
     navigation.navigate('/portfolio/:id', { id: String(serviceId) });
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>고객 리뷰</Text>
+          <Text style={styles.subtitle}>실제 이용 고객님들의 솔직한 후기</Text>
+        </View>
+        <View style={styles.list}>
+          {Array.from({ length: 4 }).map((_, index) => (
+            <View key={index} style={styles.reviewCard}>
+              <Skeleton width="40%" height={15} borderRadius={4} />
+              <View style={{ height: 8 }} />
+              <View style={{ flexDirection: 'row', gap: 4, marginBottom: 12 }}>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} width={24} height={24} borderRadius={4} />
+                ))}
+              </View>
+              <Skeleton width="100%" height={15} borderRadius={4} />
+              <View style={{ height: 6 }} />
+              <Skeleton width="80%" height={15} borderRadius={4} />
+              <View style={{ height: 12 }} />
+              <View style={[styles.footer, { borderTopWidth: 0 }]}>
+                <Skeleton width={60} height={14} borderRadius={4} />
+                <Skeleton width={80} height={13} borderRadius={4} />
+              </View>
+            </View>
+          ))}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -60,12 +92,12 @@ function Page() {
       ) : (
         <FlatList
           data={filteredReviews}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
             <View style={styles.reviewCard}>
               {/* 서비스 정보 */}
-              <TouchableOpacity onPress={() => handleServicePress(item.serviceId)}>
-                <Text style={styles.serviceName}>{item.serviceName}</Text>
+              <TouchableOpacity onPress={() => handleServicePress(item.service.id)}>
+                <Text style={styles.serviceName}>{item.service.title}</Text>
               </TouchableOpacity>
 
               {/* 평점 */}
@@ -86,8 +118,8 @@ function Page() {
 
               {/* 작성자 및 날짜 */}
               <View style={styles.footer}>
-                <Text style={styles.userName}>{item.userName}</Text>
-                <Text style={styles.date}>{item.date}</Text>
+                <Text style={styles.userName}>{item.customer.name}</Text>
+                <Text style={styles.date}>{new Date(item.createdAt).toLocaleDateString('ko-KR')}</Text>
               </View>
             </View>
           )}

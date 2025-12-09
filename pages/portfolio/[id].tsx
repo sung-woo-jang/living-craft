@@ -1,7 +1,9 @@
 import { createRoute, Image, useNavigation } from '@granite-js/react-native';
-import { HOME_SERVICES, isFilmPortfolio, isGlassCleaningPortfolio, PORTFOLIO_DETAILS } from '@shared/constants';
+import { usePortfolio } from '@shared/hooks/usePortfolios';
+import { useServices } from '@shared/hooks/useServices';
 import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
+import { Skeleton } from '@toss/tds-react-native';
 import { useReservationStore } from '@widgets/reservation';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -22,32 +24,69 @@ function Page() {
   const navigation = useNavigation();
   const updateFormData = useReservationStore(['updateFormData']).updateFormData;
 
-  const portfolio = PORTFOLIO_DETAILS[params?.id || '1'];
+  const portfolioId = Number(params?.id) || 1;
+  const { data: portfolio, isLoading: isLoadingPortfolio } = usePortfolio(portfolioId);
+  const { data: services } = useServices();
 
   const handleInquiryPress = () => {
-    // portfolio가 없으면 early return
-    if (!portfolio) return;
+    if (!portfolio || !services) return;
 
-    // 현재 포트폴리오의 category로 판단 (portfolio 객체를 직접 전달)
-    if (isFilmPortfolio(portfolio)) {
-      // 인테리어 필름 서비스를 미리 선택
-      const filmService = HOME_SERVICES.find((s) => s.id === 'film');
-      if (filmService) {
-        updateFormData({ service: filmService as any });
-      }
-    }
-    // 유리청소 category 확인
-    else if (isGlassCleaningPortfolio(portfolio)) {
-      // 유리청소 서비스를 미리 선택
-      const glassCleaningService = HOME_SERVICES.find((s) => s.id === 'glass-cleaning');
-      if (glassCleaningService) {
-        updateFormData({ service: glassCleaningService as any });
-      }
+    // 포트폴리오 카테고리에 맞는 서비스 찾기
+    const matchingService = services.find((s) => s.title === portfolio.category || portfolio.category.includes(s.title));
+    if (matchingService) {
+      updateFormData({ service: matchingService });
     }
 
     // 예약 페이지로 이동
     navigation.navigate('/reservation/service' as any);
   };
+
+  if (isLoadingPortfolio) {
+    return (
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          {/* 기본 정보 Skeleton */}
+          <Card>
+            <View style={styles.sectionHeader}>
+              <Skeleton width={80} height={24} borderRadius={6} />
+              <View style={{ height: 12 }} />
+              <Skeleton width="70%" height={22} borderRadius={4} />
+            </View>
+            <View style={styles.metaList}>
+              <View style={styles.metaRow}>
+                <Skeleton width={60} height={14} borderRadius={4} />
+                <Skeleton width={100} height={14} borderRadius={4} />
+              </View>
+              <View style={styles.metaRow}>
+                <Skeleton width={60} height={14} borderRadius={4} />
+                <Skeleton width={80} height={14} borderRadius={4} />
+              </View>
+            </View>
+          </Card>
+
+          {/* 프로젝트 소개 Skeleton */}
+          <Card>
+            <View style={styles.sectionHeader}>
+              <Skeleton width={100} height={18} borderRadius={4} />
+            </View>
+            <View style={{ paddingHorizontal: 8, paddingBottom: 8, gap: 8 }}>
+              <Skeleton width="100%" height={15} borderRadius={4} />
+              <Skeleton width="90%" height={15} borderRadius={4} />
+              <Skeleton width="70%" height={15} borderRadius={4} />
+            </View>
+          </Card>
+
+          {/* 이미지 Skeleton */}
+          <Card>
+            <View style={styles.sectionHeader}>
+              <Skeleton width={80} height={18} borderRadius={4} />
+            </View>
+            <Skeleton width="100%" height={200} borderRadius={12} style={{ marginHorizontal: 8 }} />
+          </Card>
+        </ScrollView>
+      </View>
+    );
+  }
 
   if (!portfolio) {
     return (

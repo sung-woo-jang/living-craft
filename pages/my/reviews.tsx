@@ -2,8 +2,8 @@ import { createRoute, useNavigation } from '@granite-js/react-native';
 import { useMyReviews } from '@shared/hooks/useUsers';
 import { EmptyState } from '@shared/ui/empty-state';
 import { colors } from '@toss/tds-colors';
-import { Asset } from '@toss/tds-react-native';
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Asset, Skeleton } from '@toss/tds-react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/my/reviews', {
   component: Page,
@@ -24,9 +24,23 @@ function Page() {
           <Text style={styles.title}>내 리뷰</Text>
           <Text style={styles.subtitle}>작성한 리뷰를 확인하세요</Text>
         </View>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.blue500} />
-          <Text style={styles.loadingText}>리뷰를 불러오는 중...</Text>
+        <View style={styles.list}>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <View key={index} style={styles.reviewCard}>
+              <Skeleton width="40%" height={16} borderRadius={4} />
+              <View style={{ height: 8 }} />
+              <View style={{ flexDirection: 'row', gap: 4, marginBottom: 12 }}>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} width={24} height={24} borderRadius={4} />
+                ))}
+              </View>
+              <Skeleton width="100%" height={15} borderRadius={4} />
+              <View style={{ height: 6 }} />
+              <Skeleton width="70%" height={15} borderRadius={4} />
+              <View style={{ height: 12 }} />
+              <Skeleton width={80} height={13} borderRadius={4} />
+            </View>
+          ))}
         </View>
       </View>
     );
@@ -120,16 +134,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: colors.grey600,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 16,
-  },
-  loadingText: {
-    fontSize: 15,
     color: colors.grey600,
   },
   list: {

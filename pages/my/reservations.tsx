@@ -4,8 +4,9 @@ import { useMyReservations } from '@shared/hooks/useReservations';
 import { EmptyState } from '@shared/ui/empty-state';
 import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
+import { Skeleton } from '@toss/tds-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/my/reservations', {
   component: Page,
@@ -48,9 +49,30 @@ function Page() {
           <Text style={styles.title}>내 예약</Text>
           <Text style={styles.subtitle}>예약 내역을 확인하세요</Text>
         </View>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.blue500} />
-          <Text style={styles.loadingText}>예약 목록을 불러오는 중...</Text>
+        <View style={styles.list}>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <View key={index} style={styles.reservationCard}>
+              <View style={styles.cardHeader}>
+                <Skeleton width={50} height={22} borderRadius={12} />
+                <Skeleton width={80} height={13} borderRadius={4} />
+              </View>
+              <Skeleton width="60%" height={18} borderRadius={4} />
+              <View style={{ height: 12 }} />
+              <View style={styles.cardDetails}>
+                <View style={styles.detailRow}>
+                  <Skeleton width={80} height={14} borderRadius={4} />
+                  <Skeleton width={100} height={14} borderRadius={4} />
+                </View>
+                <View style={styles.detailRow}>
+                  <Skeleton width={60} height={14} borderRadius={4} />
+                  <Skeleton width={80} height={14} borderRadius={4} />
+                </View>
+              </View>
+              <View style={[styles.cardActions, { borderTopWidth: 0 }]}>
+                <Skeleton width="100%" height={38} borderRadius={8} />
+              </View>
+            </View>
+          ))}
         </View>
       </View>
     );
@@ -162,16 +184,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: colors.grey600,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 16,
-  },
-  loadingText: {
-    fontSize: 15,
     color: colors.grey600,
   },
   list: {

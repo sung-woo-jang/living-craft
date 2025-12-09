@@ -32,11 +32,10 @@ function Page() {
     isRegionBottomSheetOpen,
     isCityBottomSheetOpen,
     cities,
-    serviceableRegions,
     // 주소 검색 상태
     isAddressSearchDrawerOpen,
     // 액션
-    loadServiceableRegions,
+    loadServices,
     setIsRegionBottomSheetOpen,
     setIsCityBottomSheetOpen,
     setCities,
@@ -55,9 +54,8 @@ function Page() {
     'isRegionBottomSheetOpen',
     'isCityBottomSheetOpen',
     'cities',
-    'serviceableRegions',
     'isAddressSearchDrawerOpen',
-    'loadServiceableRegions',
+    'loadServices',
     'setIsRegionBottomSheetOpen',
     'setIsCityBottomSheetOpen',
     'setCities',
@@ -74,7 +72,7 @@ function Page() {
   const { methods, canProceedToNext } = useReservationForm();
 
   // 서비스 변경 감지를 위한 이전 서비스 ID 추적
-  const prevServiceIdRef = useRef<string | null>(null);
+  const prevServiceIdRef = useRef<number | null>(null);
 
   // 상세 주소 로컬 상태 (inline 입력용)
   const [detailAddress, setDetailAddress] = useState('');
@@ -95,7 +93,7 @@ function Page() {
   const filteredRegions = useMemo(() => {
     if (!currentService) return [];
     return getFilteredRegionsForService(currentService.id);
-  }, [currentService, getFilteredRegionsForService, serviceableRegions]);
+  }, [currentService, getFilteredRegionsForService]);
 
   // 서비스가 선택되었는지 여부
   const hasSelectedService = currentService !== null;
@@ -107,9 +105,9 @@ function Page() {
     return `${addressSelection.region.name} ${addressSelection.city.name}`;
   }, [addressSelection]);
 
-  // 마운트 시 서비스 가능 지역 로드 + 폼 데이터 복원
+  // 마운트 시 서비스 목록 로드 + 폼 데이터 복원
   useEffect(() => {
-    loadServiceableRegions();
+    loadServices();
     methods.reset(formData);
   }, []);
 
@@ -126,7 +124,12 @@ function Page() {
     if (isCityBottomSheetOpen && addressSelection.region && filteredRegions.length > 0) {
       const selectedRegion = filteredRegions.find((r) => r.id === addressSelection.region?.id);
       if (selectedRegion) {
-        setCities(selectedRegion.cities);
+        // ServiceableCity[]를 CityData[]로 변환 (regionId 추가)
+        const citiesWithRegion = selectedRegion.cities.map((city) => ({
+          ...city,
+          regionId: selectedRegion.id,
+        }));
+        setCities(citiesWithRegion);
       }
     }
   }, [isCityBottomSheetOpen, addressSelection.region, filteredRegions]);
@@ -166,9 +169,9 @@ function Page() {
       // 폼 데이터 업데이트
       methods.setValue('customerInfo.address', address.roadAddress);
 
-      // 견적 비용 조회
+      // 견적 비용 조회 (지역/도시 기반)
       if (currentService) {
-        checkEstimateFee(address.roadAddress, currentService.id);
+        checkEstimateFee();
       }
     },
     [closeAddressSearchDrawer, methods, currentService, checkEstimateFee]
@@ -260,7 +263,6 @@ function Page() {
   const serviceableRegionsList = filteredRegions.map((r) => ({
     id: r.id,
     name: r.name,
-    code: r.code,
   }));
 
   return (

@@ -1,8 +1,8 @@
 import { useReviews } from '@shared/hooks/useReviews';
 import { Card, Carousel } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { Asset } from '@toss/tds-react-native';
-import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Asset, Skeleton } from '@toss/tds-react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -35,8 +35,28 @@ export const HomeReviewsSection = () => {
         <View style={styles.header}>
           <Text style={styles.title}>입주민이 알려주는 이야기</Text>
         </View>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.blue500} />
+        <View style={styles.skeletonCard}>
+          <View style={styles.cardHeader}>
+            <Skeleton width={48} height={48} borderRadius={24} />
+            <View style={styles.authorInfo}>
+              <Skeleton width="50%" height={17} borderRadius={4} />
+              <View style={{ height: 4 }} />
+              <Skeleton width="30%" height={13} borderRadius={4} />
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 4, marginBottom: 12 }}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} width={24} height={24} borderRadius={4} />
+            ))}
+          </View>
+          <Skeleton width="100%" height={15} borderRadius={4} />
+          <View style={{ height: 6 }} />
+          <Skeleton width="80%" height={15} borderRadius={4} />
+        </View>
+        <View style={styles.skeletonIndicator}>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} width={8} height={8} borderRadius={4} style={{ marginHorizontal: 4 }} />
+          ))}
         </View>
       </Card>
     );
@@ -104,10 +124,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.grey900,
   },
-  loadingContainer: {
-    paddingVertical: 80,
-    alignItems: 'center',
+  skeletonCard: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 16,
+  },
+  skeletonIndicator: {
+    flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 16,
   },
   emptyContainer: {
     paddingVertical: 80,
