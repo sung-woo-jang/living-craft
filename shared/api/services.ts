@@ -3,7 +3,13 @@
  */
 
 import apiClient from './client';
-import type { AvailableTimesRequest, AvailableTimesResponse, Service } from './types';
+import type {
+  AvailableTimesRequest,
+  AvailableTimesResponse,
+  AvailableDatesRequest,
+  AvailableDatesResponse,
+  Service,
+} from './types';
 
 /**
  * 서비스 목록 조회
@@ -24,5 +30,15 @@ export async function getServices(): Promise<Service[]> {
  */
 export async function getAvailableTimes(params: AvailableTimesRequest): Promise<AvailableTimesResponse> {
   const response = await apiClient.post<AvailableTimesResponse>('/services/available-times', params);
+  return response.data;
+}
+
+/**
+ * 월별 예약 가능 날짜 조회
+ * - 해당 월의 예약 불가능한 날짜 목록 반환
+ * - 캘린더에서 disabled 처리할 날짜 표시에 사용
+ */
+export async function getAvailableDates(params: AvailableDatesRequest): Promise<AvailableDatesResponse> {
+  const response = await apiClient.post<AvailableDatesResponse>('/services/available-dates', params);
   return response.data;
 }

@@ -90,8 +90,12 @@ export function isDateDisabled(
   // 최대 날짜 체크
   if (maxDate && date > maxDate) return true;
 
-  // 비활성화된 날짜 체크
-  if (disabledDates?.some((d) => d.getTime() === date.getTime())) {
+  // 비활성화된 날짜 체크 (시간대 무시하고 날짜만 비교)
+  if (disabledDates?.some((d) => {
+    return d.getFullYear() === date.getFullYear() &&
+           d.getMonth() === date.getMonth() &&
+           d.getDate() === date.getDate();
+  })) {
     return true;
   }
 

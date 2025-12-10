@@ -1,9 +1,10 @@
-import { useAvailableTimes } from '@shared/hooks/useServices';
+import { useAvailableDates, useAvailableTimes } from '@shared/hooks/useServices';
 import { Card } from '@shared/ui';
 import { CalendarBottomSheet } from '@shared/ui/calendar-bottom-sheet';
 import { formatDateToString, parseStringToDate } from '@shared/ui/calendar-bottom-sheet/utils';
 import { colors } from '@toss/tds-colors';
 import { Skeleton } from '@toss/tds-react-native';
+import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -37,6 +38,61 @@ export function DateTimeSelectionStep() {
   // 시공 날짜/시간
   const constructionDate = watch('constructionDate');
   const constructionTimeSlot = watch('constructionTimeSlot');
+
+  // 캘린더에서 현재 보고 있는 월 상태
+  const [estimateCalendarMonth, setEstimateCalendarMonth] = useState(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() + 1 };
+  });
+  const [constructionCalendarMonth, setConstructionCalendarMonth] = useState(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() + 1 };
+  });
+
+  // 월별 예약 가능 날짜 조회 (캘린더에서 불가 날짜 표시용)
+  const { data: estimateDatesData } = useAvailableDates(
+    selectedService?.id ?? 0,
+    estimateCalendarMonth.year,
+    estimateCalendarMonth.month,
+    'estimate',
+    !!selectedService?.id && isEstimateCalendarVisible
+  );
+
+  const { data: constructionDatesData } = useAvailableDates(
+    selectedService?.id ?? 0,
+    constructionCalendarMonth.year,
+    constructionCalendarMonth.month,
+    'construction',
+    !!selectedService?.id && isConstructionCalendarVisible
+  );
+
+  // 불가 날짜를 Date[] 형식으로 변환 (캘린더 컴포넌트용)
+  // 주의: new Date("YYYY-MM-DD")는 UTC 기준으로 파싱되어 시간대 문제 발생
+  //       parseStringToDate를 사용하면 로컬 시간대 기준으로 파싱됨
+  const estimateDisabledDates = useMemo(() => {
+    if (!estimateDatesData?.unavailableDates) return [];
+    return estimateDatesData.unavailableDates
+      .map((d) => parseStringToDate(d.date))
+      .filter((d): d is Date => d !== null);
+  }, [estimateDatesData]);
+
+  const constructionDisabledDates = useMemo(() => {
+    if (!constructionDatesData?.unavailableDates) return [];
+    return constructionDatesData.unavailableDates
+      .map((d) => parseStringToDate(d.date))
+      .filter((d): d is Date => d !== null);
+  }, [constructionDatesData]);
+
+  // 예약 가능 최대 날짜 (로컬 시간대 기준으로 파싱)
+  const estimateMaxDate = useMemo(() => {
+    if (!estimateDatesData?.maxDate) return undefined;
+    return parseStringToDate(estimateDatesData.maxDate) ?? undefined;
+  }, [estimateDatesData]);
+
+  const constructionMaxDate = useMemo(() => {
+    if (!constructionDatesData?.maxDate) return undefined;
+    return parseStringToDate(constructionDatesData.maxDate) ?? undefined;
+  }, [constructionDatesData]);
 
   // API로 예약 가능 시간 조회
   const { data: estimateTimesResponse, isLoading: isLoadingEstimateTimes } = useAvailableTimes(
@@ -104,7 +160,9 @@ export function DateTimeSelectionStep() {
                 </View>
               ) : estimateTimesResponse?.isAvailable === false ? (
                 <View style={styles.unavailableNotice}>
-                  <Text style={styles.unavailableText}>예약이 불가능한 날짜입니다.</Text>
+                  <Text style={styles.unavailableText}>
+                    {estimateTimesResponse?.reason || '예약이 불가능한 날짜입니다.'}
+                  </Text>
                 </View>
               ) : (
                 <View style={styles.timeSlotGrid}>
@@ -163,7 +221,9 @@ export function DateTimeSelectionStep() {
                 </View>
               ) : constructionTimesResponse?.isAvailable === false ? (
                 <View style={styles.unavailableNotice}>
-                  <Text style={styles.unavailableText}>예약이 불가능한 날짜입니다.</Text>
+                  <Text style={styles.unavailableText}>
+                    {constructionTimesResponse?.reason || '예약이 불가능한 날짜입니다.'}
+                  </Text>
                 </View>
               ) : (
                 <View style={styles.timeSlotGrid}>
@@ -214,20 +274,28 @@ export function DateTimeSelectionStep() {
       <CalendarBottomSheet
         visible={isEstimateCalendarVisible}
         selectedDate={parseStringToDate(estimateDate)}
+        minDate={new Date()} // 오늘 이후만 선택 가능
+        maxDate={estimateMaxDate}
+        disabledDates={estimateDisabledDates}
         title="견적 희망 날짜 선택"
         confirmButtonText="날짜 선택"
         onConfirm={handleEstimateDateConfirm}
         onClose={closeEstimateCalendar}
+        onMonthChange={(year, month) => setEstimateCalendarMonth({ year, month })}
       />
 
       {/* 시공 캘린더 */}
       <CalendarBottomSheet
         visible={isConstructionCalendarVisible}
         selectedDate={parseStringToDate(constructionDate)}
+        minDate={new Date()} // 오늘 이후만 선택 가능
+        maxDate={constructionMaxDate}
+        disabledDates={constructionDisabledDates}
         title="시공 희망 날짜 선택"
         confirmButtonText="날짜 선택"
         onConfirm={handleConstructionDateConfirm}
         onClose={closeConstructionCalendar}
+        onMonthChange={(year, month) => setConstructionCalendarMonth({ year, month })}
       />
     </>
   );

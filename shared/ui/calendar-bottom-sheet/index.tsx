@@ -1,5 +1,5 @@
 import { colors } from '@toss/tds-colors';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { CalendarGrid } from './calendar-grid';
@@ -16,6 +16,13 @@ interface CalendarBottomSheetProps {
   confirmButtonText?: string;
   onConfirm: (date: Date) => void;
   onClose: () => void;
+  /**
+   * 캘린더 월이 변경될 때 호출되는 콜백
+   * - 월별 예약 가능 날짜 조회에 사용
+   * @param year 연도
+   * @param month 월 (1-12)
+   */
+  onMonthChange?: (year: number, month: number) => void;
 }
 
 export function CalendarBottomSheet({
@@ -28,6 +35,7 @@ export function CalendarBottomSheet({
   confirmButtonText = '확인',
   onConfirm,
   onClose,
+  onMonthChange,
 }: CalendarBottomSheetProps) {
   const today = new Date();
   const [currentYear, setCurrentYear] = useState(initialSelectedDate?.getFullYear() ?? today.getFullYear());
@@ -36,22 +44,47 @@ export function CalendarBottomSheet({
 
   const calendarDays = generateCalendarGrid(currentYear, currentMonth + 1);
 
-  const handlePrevMonth = () => {
-    if (currentMonth === 0) {
-      setCurrentYear(currentYear - 1);
-      setCurrentMonth(11);
-    } else {
-      setCurrentMonth(currentMonth - 1);
+  // 초기 렌더링 및 visible 변경 시 현재 월 정보 전달
+  useEffect(() => {
+    if (visible && onMonthChange) {
+      onMonthChange(currentYear, currentMonth + 1);
     }
+  }, [visible]);
+
+  const handlePrevMonth = () => {
+    let newYear = currentYear;
+    let newMonth = currentMonth;
+
+    if (currentMonth === 0) {
+      newYear = currentYear - 1;
+      newMonth = 11;
+      setCurrentYear(newYear);
+      setCurrentMonth(newMonth);
+    } else {
+      newMonth = currentMonth - 1;
+      setCurrentMonth(newMonth);
+    }
+
+    // 월 변경 콜백 호출 (month는 1-12 형식으로 전달)
+    onMonthChange?.(newYear, newMonth + 1);
   };
 
   const handleNextMonth = () => {
+    let newYear = currentYear;
+    let newMonth = currentMonth;
+
     if (currentMonth === 11) {
-      setCurrentYear(currentYear + 1);
-      setCurrentMonth(0);
+      newYear = currentYear + 1;
+      newMonth = 0;
+      setCurrentYear(newYear);
+      setCurrentMonth(newMonth);
     } else {
-      setCurrentMonth(currentMonth + 1);
+      newMonth = currentMonth + 1;
+      setCurrentMonth(newMonth);
     }
+
+    // 월 변경 콜백 호출 (month는 1-12 형식으로 전달)
+    onMonthChange?.(newYear, newMonth + 1);
   };
 
   const handleSelectDate = (date: Date) => {

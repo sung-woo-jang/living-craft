@@ -236,6 +236,35 @@ export interface AvailableTimesResponse {
   isAvailable: boolean; // 전체 예약 가능 여부 (휴무일이면 false)
   times: TimeSlotDto[];
   defaultTime: string; // 하루 종일 작업 시 기본 시작 시간
+  reason?: string; // 예약 불가 사유 (isAvailable이 false일 때만 반환)
+}
+
+/**
+ * 월별 예약 가능 날짜 조회 요청
+ */
+export interface AvailableDatesRequest {
+  serviceId: number;
+  year: number;
+  month: number; // 1-12
+  type: TimeType;
+}
+
+/**
+ * 예약 불가능한 날짜 정보
+ */
+export interface UnavailableDate {
+  date: string; // YYYY-MM-DD
+  reason: string;
+}
+
+/**
+ * 월별 예약 가능 날짜 조회 응답
+ */
+export interface AvailableDatesResponse {
+  year: number;
+  month: number;
+  unavailableDates: UnavailableDate[];
+  maxDate: string; // 예약 가능 최대 날짜
 }
 
 // ========================================

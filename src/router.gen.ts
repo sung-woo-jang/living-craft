@@ -20,10 +20,10 @@ declare module '@granite-js/react-native' {
     '/': ReturnType<typeof _IndexRoute.useParams>;
     '/portfolio': ReturnType<typeof _PortfolioIndexRoute.useParams>;
     '/portfolio/:id': ReturnType<typeof _PortfolioIdRoute.useParams>;
-    '/reservation/service': ReturnType<typeof _ReservationServiceRoute.useParams>;
-    '/reservation/datetime': ReturnType<typeof _ReservationDatetimeRoute.useParams>;
-    '/reservation/customer': ReturnType<typeof _ReservationCustomerRoute.useParams>;
-    '/reservation/confirmation': ReturnType<typeof _ReservationConfirmationRoute.useParams>;
+    '/reservation/service': ReturnType<typeof _ReservationServiceRoute.useParams>; // 서비스
+    '/reservation/datetime': ReturnType<typeof _ReservationDatetimeRoute.useParams>; // 날짜/시간
+    '/reservation/customer': ReturnType<typeof _ReservationCustomerRoute.useParams>; // 정보입력
+    '/reservation/confirmation': ReturnType<typeof _ReservationConfirmationRoute.useParams>; // 확인
     '/reviews': ReturnType<typeof _ReviewsIndexRoute.useParams>;
     '/reviews/write/:reservationId': ReturnType<typeof _ReviewsWriteReservationIdRoute.useParams>;
     '/unauthorized': ReturnType<typeof _UnauthorizedRoute.useParams>;
