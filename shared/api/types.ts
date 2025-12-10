@@ -198,11 +198,11 @@ export interface Service {
   iconBgColor: string;
   duration: string;
   requiresTimeSelection: boolean;
-  isActive: boolean;
-  sortOrder: number;
-  serviceRegions?: ServiceRegion[];
-  createdAt: string;
-  updatedAt: string;
+  isActive?: boolean;
+  sortOrder?: number;
+  serviceableRegions?: ServiceRegion[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**

@@ -11,7 +11,12 @@ import type { AvailableTimesRequest, AvailableTimesResponse, Service } from './t
  */
 export async function getServices(): Promise<Service[]> {
   const response = await apiClient.get<Service[]>('/services');
-  return response.data;
+
+  // Backend 응답의 id가 string이므로 number로 변환
+  return response.data.map((service) => ({
+    ...service,
+    id: typeof service.id === 'string' ? parseInt(service.id, 10) : service.id,
+  }));
 }
 
 /**

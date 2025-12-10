@@ -1,8 +1,9 @@
+import { getServices } from '@shared/api/services';
 import { Service } from '@shared/api/types';
 import { StoreWithShallow, useStoreWithShallow } from '@shared/model';
 import { createWithEqualityFn } from 'zustand/traditional';
 
-import { checkEstimateFeeByRegion, getServices, getServiceableRegionsForService } from '../api';
+import { checkEstimateFeeByRegion, getServiceableRegionsForService } from '../api';
 import {
   AddressEstimateInfo,
   AddressSearchResult,
@@ -91,7 +92,7 @@ interface ReservationUIActions {
   getFilteredRegionsForService: (serviceId: number) => ServiceableRegion[];
 
   // 견적 비용 액션
-  checkEstimateFee: () => Promise<void>;
+  checkEstimateFee: () => void;
   resetEstimateFeeInfo: () => void;
 
   // 리셋
@@ -231,8 +232,8 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
   },
 
   // 견적 비용 액션
-  checkEstimateFee: async () => {
-    const { formData, addressSelection } = get();
+  checkEstimateFee: () => {
+    const { formData, addressSelection, services } = get();
     const { service } = formData;
     const { region, city } = addressSelection;
 
@@ -241,19 +242,8 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
       return;
     }
 
-    set({ isCheckingEstimateFee: true });
-    try {
-      const estimateInfo = await checkEstimateFeeByRegion(service.id, region.id, city.id);
-      set({
-        addressEstimateInfo: estimateInfo,
-        isCheckingEstimateFee: false,
-      });
-    } catch {
-      set({
-        addressEstimateInfo: null,
-        isCheckingEstimateFee: false,
-      });
-    }
+    const estimateInfo = checkEstimateFeeByRegion(services, service.id, region.id, city.id);
+    set({ addressEstimateInfo: estimateInfo });
   },
 
   resetEstimateFeeInfo: () => {
