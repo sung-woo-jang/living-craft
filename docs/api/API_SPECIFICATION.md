@@ -404,7 +404,28 @@ interface PortfolioDetail {
 
 ## 4. 예약 API
 
-### 4.1 예약 생성
+> **중요 변경사항**: 고객은 견적 문의만 예약합니다. 시공 일정은 견적 방문 후 관리자가 백오피스에서 지정합니다.
+
+### 예약 상태 (5단계)
+
+| 상태 | 설명 |
+|------|------|
+| `pending` | 견적 대기 - 고객이 견적 문의 예약 생성 |
+| `estimate_confirmed` | 견적 확정 - 관리자가 견적 방문 확인 |
+| `construction_scheduled` | 시공 예정 - 관리자가 시공 일정 지정 |
+| `completed` | 완료 |
+| `cancelled` | 취소 |
+
+```typescript
+type ReservationStatus =
+  | 'pending'                   // 견적 대기
+  | 'estimate_confirmed'        // 견적 확정
+  | 'construction_scheduled'    // 시공 예정
+  | 'completed'                 // 완료
+  | 'cancelled';                // 취소
+```
+
+### 4.1 예약 생성 (견적 문의)
 
 `[/reservation/confirmation]`
 
@@ -419,10 +440,8 @@ POST /api/reservations
 ```typescript
 interface CreateReservationRequest {
   serviceId: string;
-  estimateDate: string;          // YYYY-MM-DD
-  estimateTime: string;          // HH:mm
-  constructionDate: string;      // YYYY-MM-DD
-  constructionTime: string | null; // HH:mm 또는 하루 종일 작업이면 null
+  estimateDate: string;          // YYYY-MM-DD (견적 희망 날짜)
+  estimateTime: string;          // HH:mm (견적 희망 시간)
   address: string;               // 도로명 주소
   detailAddress: string;
   customerName: string;
@@ -438,8 +457,6 @@ interface CreateReservationRequest {
   "serviceId": "film",
   "estimateDate": "2024-01-15",
   "estimateTime": "14:00",
-  "constructionDate": "2024-01-20",
-  "constructionTime": null,
   "address": "서울특별시 강남구 테헤란로 123",
   "detailAddress": "2층 201호",
   "customerName": "홍길동",
@@ -455,8 +472,6 @@ interface CreateReservationRequest {
 **Response**
 
 ```typescript
-type ReservationStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
-
 interface CreateReservationData {
   id: string;
   reservationNumber: string;
@@ -496,18 +511,18 @@ interface ReservationDetail {
     id: string;
     title: string;
   };
-  estimateDate: string;        // YYYY-MM-DD
-  estimateTime: string;        // HH:mm
-  constructionDate: string;    // YYYY-MM-DD
-  constructionTime: string | null;
+  estimateDate: string;              // YYYY-MM-DD
+  estimateTime: string;              // HH:mm
+  constructionDate: string | null;   // YYYY-MM-DD (관리자가 지정 전이면 null)
+  constructionTime: string | null;   // HH:mm 또는 null
   address: string;
   detailAddress: string;
   customerName: string;
   customerPhone: string;
-  status: ReservationStatus;   // 'pending' | 'confirmed' | 'completed' | 'cancelled'
+  status: ReservationStatus;
   canCancel: boolean;
   canReview: boolean;
-  createdAt: string;           // ISO 8601
+  createdAt: string;                 // ISO 8601
 }
 ```
 
@@ -520,13 +535,13 @@ interface ReservationDetail {
   "service": { "id": "film", "title": "인테리어 필름" },
   "estimateDate": "2024-01-15",
   "estimateTime": "14:00",
-  "constructionDate": "2024-01-20",
+  "constructionDate": null,
   "constructionTime": null,
   "address": "서울특별시 강남구 테헤란로 123",
   "detailAddress": "2층 201호",
   "customerName": "홍길동",
   "customerPhone": "010-1234-5678",
-  "status": "confirmed",
+  "status": "pending",
   "canCancel": true,
   "canReview": false,
   "createdAt": "2024-01-15T10:30:00Z"
@@ -716,9 +731,9 @@ interface MyReservationListItem {
   serviceName: string;
   estimateDate: string;        // YYYY-MM-DD
   estimateTime: string;        // HH:mm
-  constructionDate: string;    // YYYY-MM-DD
+  constructionDate: string | null;    // YYYY-MM-DD (시공 일정 미지정 시 null)
   constructionTime: string | null;
-  status: ReservationStatus;   // 'pending' | 'confirmed' | 'completed' | 'cancelled'
+  status: ReservationStatus;   // 'pending' | 'estimate_confirmed' | 'construction_scheduled' | 'completed' | 'cancelled'
   canCancel: boolean;
   canReview: boolean;
 }
@@ -736,9 +751,9 @@ interface MyReservationListItem {
     "serviceName": "인테리어 필름",
     "estimateDate": "2024-01-15",
     "estimateTime": "14:00",
-    "constructionDate": "2024-01-20",
+    "constructionDate": null,
     "constructionTime": null,
-    "status": "confirmed",
+    "status": "pending",
     "canCancel": true,
     "canReview": false
   }
@@ -985,10 +1000,10 @@ interface AdminReservationListItem {
   serviceName: string;
   estimateDate: string;        // YYYY-MM-DD
   estimateTime: string;        // HH:mm
-  constructionDate: string;    // YYYY-MM-DD
+  constructionDate: string | null;    // YYYY-MM-DD (시공 일정 미지정 시 null)
   constructionTime: string | null;
   address: string;
-  status: ReservationStatus;   // 'pending' | 'confirmed' | 'completed' | 'cancelled'
+  status: ReservationStatus;   // 'pending' | 'estimate_confirmed' | 'construction_scheduled' | 'completed' | 'cancelled'
   createdAt: string;           // ISO 8601
 }
 
@@ -1011,10 +1026,10 @@ interface AdminReservationListData {
       "serviceName": "인테리어 필름",
       "estimateDate": "2024-01-15",
       "estimateTime": "14:00",
-      "constructionDate": "2024-01-20",
+      "constructionDate": null,
       "constructionTime": null,
       "address": "서울특별시 강남구 테헤란로 123",
-      "status": "confirmed",
+      "status": "pending",
       "createdAt": "2024-01-15T10:30:00Z"
     }
   ],
@@ -1032,18 +1047,60 @@ POST /api/admin/reservations/:id/status
 
 ```typescript
 interface UpdateReservationStatusRequest {
-  status: 'confirmed' | 'completed' | 'cancelled';
+  status: 'estimate_confirmed' | 'completed' | 'cancelled';
 }
 ```
 
 ```json
-// Example
+// Example - 견적 확정
 {
-  "status": "confirmed"
+  "status": "estimate_confirmed"
 }
 ```
 
 **Response**: 없음 (SuccessResponse의 message로 결과 반환)
+
+**상태 변경 규칙:**
+- `pending` → `estimate_confirmed`: 견적 방문 확정
+- `construction_scheduled` → `completed`: 시공 완료
+- 모든 상태 → `cancelled`: 예약 취소 (단, `completed` 제외)
+
+#### 시공 일정 지정
+
+```
+POST /api/admin/reservations/:id/schedule-construction
+```
+
+견적 확정(`estimate_confirmed`) 상태의 예약에 대해 시공 일정을 지정합니다.
+
+**Request Body**
+
+```typescript
+interface ScheduleConstructionRequest {
+  constructionDate: string;       // YYYY-MM-DD (필수)
+  constructionTime?: string | null;  // HH:mm (선택, 하루 종일이면 null)
+}
+```
+
+```json
+// Example - 특정 시간 지정
+{
+  "constructionDate": "2024-01-20",
+  "constructionTime": "10:00"
+}
+
+// Example - 하루 종일 작업
+{
+  "constructionDate": "2024-01-20",
+  "constructionTime": null
+}
+```
+
+**Response**: 없음 (SuccessResponse의 message로 "시공 일정이 지정되었습니다." 반환)
+
+**주의사항:**
+- `estimate_confirmed` 상태에서만 호출 가능
+- 호출 성공 시 자동으로 `construction_scheduled` 상태로 변경됨
 
 #### 예약 취소 (관리자)
 

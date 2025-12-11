@@ -14,14 +14,17 @@ export interface CustomerInfo {
   photos: ImageState[];
 }
 
+/**
+ * 예약 폼 데이터
+ *
+ * 고객은 견적 문의 날짜/시간만 선택합니다.
+ * 시공 일정은 견적 방문 후 관리자가 백오피스에서 지정합니다.
+ */
 export interface ReservationFormData {
   service: Service | null;
   // 견적 희망 날짜/시간
   estimateDate: string;
   estimateTimeSlot: TimeSlotDto | null;
-  // 시공 희망 날짜/시간
-  constructionDate: string;
-  constructionTimeSlot: TimeSlotDto | null;
   customerInfo: CustomerInfo;
   agreedToTerms: boolean;
 }
@@ -97,8 +100,6 @@ export const DEFAULT_FORM_VALUES: ReservationFormData = {
   service: null,
   estimateDate: '',
   estimateTimeSlot: null,
-  constructionDate: '',
-  constructionTimeSlot: null,
   customerInfo: {
     name: '',
     phone: '',

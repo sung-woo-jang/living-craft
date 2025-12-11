@@ -23,8 +23,6 @@ interface ReservationUIState {
   isLoading: boolean;
   // 견적 캘린더
   isEstimateCalendarVisible: boolean;
-  // 시공 캘린더
-  isConstructionCalendarVisible: boolean;
 
   // 주소 검색 상태
   addressSearchQuery: string;
@@ -61,9 +59,6 @@ interface ReservationUIActions {
   // 견적 캘린더
   openEstimateCalendar: () => void;
   closeEstimateCalendar: () => void;
-  // 시공 캘린더
-  openConstructionCalendar: () => void;
-  closeConstructionCalendar: () => void;
 
   // 주소 검색 상태
   setAddressSearchQuery: (query: string) => void;
@@ -105,7 +100,6 @@ const initialState: ReservationUIState = {
   formData: DEFAULT_FORM_VALUES,
   isLoading: false,
   isEstimateCalendarVisible: false,
-  isConstructionCalendarVisible: false,
   addressSearchQuery: '',
   addressSearchResults: [],
   isAddressSearching: false,
@@ -140,10 +134,6 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
   // 견적 캘린더
   openEstimateCalendar: () => set({ isEstimateCalendarVisible: true }),
   closeEstimateCalendar: () => set({ isEstimateCalendarVisible: false }),
-
-  // 시공 캘린더
-  openConstructionCalendar: () => set({ isConstructionCalendarVisible: true }),
-  closeConstructionCalendar: () => set({ isConstructionCalendarVisible: false }),
 
   // 주소 검색 상태
   setAddressSearchQuery: (query) => set({ addressSearchQuery: query }),

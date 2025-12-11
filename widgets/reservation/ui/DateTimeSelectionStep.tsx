@@ -11,6 +11,13 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { useReservationStore } from '../store';
 import { ReservationFormData } from '../types';
 
+/**
+ * 날짜/시간 선택 단계
+ *
+ * 고객은 견적 문의 날짜/시간만 선택합니다.
+ * 시공 일정은 견적 방문 후 관리자가 백오피스에서 지정합니다.
+ */
+
 export function DateTimeSelectionStep() {
   const { watch, setValue } = useFormContext<ReservationFormData>();
   const {
@@ -18,33 +25,19 @@ export function DateTimeSelectionStep() {
     isEstimateCalendarVisible,
     openEstimateCalendar,
     closeEstimateCalendar,
-    // 시공 캘린더
-    isConstructionCalendarVisible,
-    openConstructionCalendar,
-    closeConstructionCalendar,
   } = useReservationStore([
     'isEstimateCalendarVisible',
     'openEstimateCalendar',
     'closeEstimateCalendar',
-    'isConstructionCalendarVisible',
-    'openConstructionCalendar',
-    'closeConstructionCalendar',
   ]);
 
   const selectedService = watch('service');
   // 견적 날짜/시간
   const estimateDate = watch('estimateDate');
   const estimateTimeSlot = watch('estimateTimeSlot');
-  // 시공 날짜/시간
-  const constructionDate = watch('constructionDate');
-  const constructionTimeSlot = watch('constructionTimeSlot');
 
   // 캘린더에서 현재 보고 있는 월 상태
   const [estimateCalendarMonth, setEstimateCalendarMonth] = useState(() => {
-    const now = new Date();
-    return { year: now.getFullYear(), month: now.getMonth() + 1 };
-  });
-  const [constructionCalendarMonth, setConstructionCalendarMonth] = useState(() => {
     const now = new Date();
     return { year: now.getFullYear(), month: now.getMonth() + 1 };
   });
@@ -58,14 +51,6 @@ export function DateTimeSelectionStep() {
     !!selectedService?.id && isEstimateCalendarVisible
   );
 
-  const { data: constructionDatesData } = useAvailableDates(
-    selectedService?.id ?? 0,
-    constructionCalendarMonth.year,
-    constructionCalendarMonth.month,
-    'construction',
-    !!selectedService?.id && isConstructionCalendarVisible
-  );
-
   // 불가 날짜를 Date[] 형식으로 변환 (캘린더 컴포넌트용)
   // 주의: new Date("YYYY-MM-DD")는 UTC 기준으로 파싱되어 시간대 문제 발생
   //       parseStringToDate를 사용하면 로컬 시간대 기준으로 파싱됨
@@ -76,23 +61,11 @@ export function DateTimeSelectionStep() {
       .filter((d): d is Date => d !== null);
   }, [estimateDatesData]);
 
-  const constructionDisabledDates = useMemo(() => {
-    if (!constructionDatesData?.unavailableDates) return [];
-    return constructionDatesData.unavailableDates
-      .map((d) => parseStringToDate(d.date))
-      .filter((d): d is Date => d !== null);
-  }, [constructionDatesData]);
-
   // 예약 가능 최대 날짜 (로컬 시간대 기준으로 파싱)
   const estimateMaxDate = useMemo(() => {
     if (!estimateDatesData?.maxDate) return undefined;
     return parseStringToDate(estimateDatesData.maxDate) ?? undefined;
   }, [estimateDatesData]);
-
-  const constructionMaxDate = useMemo(() => {
-    if (!constructionDatesData?.maxDate) return undefined;
-    return parseStringToDate(constructionDatesData.maxDate) ?? undefined;
-  }, [constructionDatesData]);
 
   // API로 예약 가능 시간 조회
   const { data: estimateTimesResponse, isLoading: isLoadingEstimateTimes } = useAvailableTimes(
@@ -102,33 +75,12 @@ export function DateTimeSelectionStep() {
     !!selectedService?.id && !!estimateDate
   );
 
-  const { data: constructionTimesResponse, isLoading: isLoadingConstructionTimes } = useAvailableTimes(
-    selectedService?.id ?? 0,
-    constructionDate,
-    'construction',
-    !!selectedService?.id && !!constructionDate
-  );
-
-  // 시공 시간 선택이 필요한지 확인 (기본값: true)
-  const requiresTimeSelection = selectedService?.requiresTimeSelection !== false;
-
-  // 견적 일정이 완료되었는지 확인 (날짜 + 시간 선택 완료)
-  const isEstimateComplete = estimateDate !== '' && estimateTimeSlot !== null;
-
   // 견적 날짜 선택 핸들러
   const handleEstimateDateConfirm = (date: Date) => {
     const dateString = formatDateToString(date);
     setValue('estimateDate', dateString);
     setValue('estimateTimeSlot', null);
     closeEstimateCalendar();
-  };
-
-  // 시공 날짜 선택 핸들러
-  const handleConstructionDateConfirm = (date: Date) => {
-    const dateString = formatDateToString(date);
-    setValue('constructionDate', dateString);
-    setValue('constructionTimeSlot', null);
-    closeConstructionCalendar();
   };
 
   return (
@@ -194,79 +146,20 @@ export function DateTimeSelectionStep() {
           )}
         </Card>
 
-        {/* 시공 희망 날짜/시간 섹션 (견적 일정 선택 완료 후 표시) */}
-        {isEstimateComplete && (
-        <Card>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>시공 희망 날짜/시간</Text>
-            <Text style={styles.sectionSubtitle}>시공을 받고 싶은 날짜와 시간을 선택해주세요</Text>
-          </View>
-
-          {/* 시공 날짜 선택 */}
-          <TouchableOpacity style={styles.dateInputButton} onPress={openConstructionCalendar}>
-            <Text style={constructionDate ? styles.dateInputTextSelected : styles.dateInputText}>
-              {constructionDate || '날짜를 선택해주세요'}
-            </Text>
-          </TouchableOpacity>
-
-          {/* 시공 시간 선택 (requiresTimeSelection이 true인 경우에만) */}
-          {constructionDate && requiresTimeSelection && (
-            <View style={styles.timeSlotSection}>
-              <Text style={styles.timeSlotLabel}>시간 선택</Text>
-              {isLoadingConstructionTimes ? (
-                <View style={styles.timeSlotGrid}>
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <Skeleton key={i} width={72} height={44} />
-                  ))}
-                </View>
-              ) : constructionTimesResponse?.isAvailable === false ? (
-                <View style={styles.unavailableNotice}>
-                  <Text style={styles.unavailableText}>
-                    {constructionTimesResponse?.reason || '예약이 불가능한 날짜입니다.'}
-                  </Text>
-                </View>
-              ) : (
-                <View style={styles.timeSlotGrid}>
-                  {constructionTimesResponse?.times?.map((slot) => (
-                    <TouchableOpacity
-                      key={slot.time}
-                      style={[
-                        styles.timeSlot,
-                        constructionTimeSlot?.time === slot.time && styles.timeSlotSelected,
-                        !slot.available && styles.timeSlotDisabled,
-                      ]}
-                      onPress={() => slot.available && setValue('constructionTimeSlot', slot)}
-                      disabled={!slot.available}
-                    >
-                      <Text
-                        style={[
-                          styles.timeSlotText,
-                          constructionTimeSlot?.time === slot.time && styles.timeSlotTextSelected,
-                          !slot.available && styles.timeSlotTextDisabled,
-                        ]}
-                      >
-                        {slot.time}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-            </View>
-          )}
-
-          {/* 하루 종일 작업 안내 (requiresTimeSelection이 false인 경우) */}
-          {constructionDate && !requiresTimeSelection && (
-            <View style={styles.allDayNotice}>
-              <Text style={styles.allDayIcon}>📅</Text>
-              <View style={styles.allDayTextContainer}>
-                <Text style={styles.allDayTitle}>하루 종일 작업</Text>
-                <Text style={styles.allDayDescription}>
-                  기본 오전 9시에 시공 예정입니다.{'\n'}세부 시간은 견적 방문 시 조정 가능합니다.
+        {/* 시공 일정 안내 */}
+        {estimateTimeSlot && (
+          <Card>
+            <View style={styles.constructionNotice}>
+              <Text style={styles.constructionNoticeIcon}>📋</Text>
+              <View style={styles.constructionNoticeTextContainer}>
+                <Text style={styles.constructionNoticeTitle}>시공 일정 안내</Text>
+                <Text style={styles.constructionNoticeDescription}>
+                  시공 일정은 견적 방문 후 상담을 통해 확정됩니다.{'\n'}
+                  견적 방문 시 작업 범위와 일정을 함께 조율해 드립니다.
                 </Text>
               </View>
             </View>
-          )}
-        </Card>
+          </Card>
         )}
       </ScrollView>
 
@@ -282,20 +175,6 @@ export function DateTimeSelectionStep() {
         onConfirm={handleEstimateDateConfirm}
         onClose={closeEstimateCalendar}
         onMonthChange={(year, month) => setEstimateCalendarMonth({ year, month })}
-      />
-
-      {/* 시공 캘린더 */}
-      <CalendarBottomSheet
-        visible={isConstructionCalendarVisible}
-        selectedDate={parseStringToDate(constructionDate)}
-        minDate={new Date()} // 오늘 이후만 선택 가능
-        maxDate={constructionMaxDate}
-        disabledDates={constructionDisabledDates}
-        title="시공 희망 날짜 선택"
-        confirmButtonText="날짜 선택"
-        onConfirm={handleConstructionDateConfirm}
-        onClose={closeConstructionCalendar}
-        onMonthChange={(year, month) => setConstructionCalendarMonth({ year, month })}
       />
     </>
   );
@@ -390,7 +269,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.grey500,
   },
-  allDayNotice: {
+  constructionNotice: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
@@ -398,22 +277,22 @@ const styles = StyleSheet.create({
     gap: 12,
     backgroundColor: colors.blue50,
     marginHorizontal: 8,
-    marginBottom: 8,
+    marginVertical: 8,
     borderRadius: 8,
   },
-  allDayIcon: {
+  constructionNoticeIcon: {
     fontSize: 32,
   },
-  allDayTextContainer: {
+  constructionNoticeTextContainer: {
     flex: 1,
   },
-  allDayTitle: {
+  constructionNoticeTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: colors.grey900,
     marginBottom: 4,
   },
-  allDayDescription: {
+  constructionNoticeDescription: {
     fontSize: 14,
     color: colors.grey600,
     lineHeight: 20,
