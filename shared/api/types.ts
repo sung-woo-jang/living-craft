@@ -284,12 +284,14 @@ export enum ReservationStatus {
 /**
  * 예약 생성 요청
  */
+/**
+ * 예약 생성 요청
+ * 고객은 견적 문의만 생성합니다. 시공 일정은 관리자가 나중에 지정합니다.
+ */
 export interface CreateReservationRequest {
-  serviceId: number;
+  serviceId: string;
   estimateDate: string; // YYYY-MM-DD
   estimateTime: string; // HH:mm
-  constructionDate: string; // YYYY-MM-DD
-  constructionTime?: string | null; // HH:mm or null (하루 종일)
   address: string;
   detailAddress: string;
   customerName: string;

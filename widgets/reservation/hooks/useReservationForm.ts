@@ -44,7 +44,6 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
    */
   const canProceedToNext = (step: StepKey): boolean => {
     const values = watchedValues;
-    const requiresTimeSelection = values.service?.requiresTimeSelection !== false;
 
     switch (step) {
       case 'service':
@@ -52,12 +51,7 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
         return values.service !== null && values.customerInfo.address.trim() !== '';
       case 'datetime': {
         // 견적 날짜 + 시간 필수
-        const hasEstimateData = values.estimateDate !== '' && values.estimateTimeSlot !== null;
-        // 시공 날짜 필수 + 시간은 requiresTimeSelection에 따라 결정
-        const hasConstructionData = requiresTimeSelection
-          ? values.constructionDate !== '' && values.constructionTimeSlot !== null
-          : values.constructionDate !== '';
-        return hasEstimateData && hasConstructionData;
+        return values.estimateDate !== '' && values.estimateTimeSlot !== null;
       }
       case 'customer':
         // 이름, 연락처 필수 (주소는 service 단계에서 이미 입력됨)
@@ -74,7 +68,6 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
    */
   const validateStep = (step: StepKey): boolean => {
     const values = getValues();
-    const requiresTimeSelection = values.service?.requiresTimeSelection !== false;
 
     switch (step) {
       case 'service':
@@ -82,12 +75,7 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
         return values.service !== null && values.customerInfo.address.trim() !== '';
       case 'datetime': {
         // 견적 날짜 + 시간 필수
-        const hasEstimateStep = values.estimateDate !== '' && values.estimateTimeSlot !== null;
-        // 시공 날짜 필수 + 시간은 requiresTimeSelection에 따라 결정
-        const hasConstructionStep = requiresTimeSelection
-          ? values.constructionDate !== '' && values.constructionTimeSlot !== null
-          : values.constructionDate !== '';
-        return hasEstimateStep && hasConstructionStep;
+        return values.estimateDate !== '' && values.estimateTimeSlot !== null;
       }
       case 'customer':
         // 이름, 연락처 필수 (주소는 service 단계에서 이미 입력됨)
@@ -117,17 +105,12 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
       if (!values.estimateDate || !values.estimateTimeSlot?.time) {
         throw new Error('견적 날짜와 시간을 선택해주세요.');
       }
-      if (!values.constructionDate) {
-        throw new Error('시공 날짜를 선택해주세요.');
-      }
 
       // API 명세서 형식에 맞게 데이터 평탄화
       const reservationData = {
-        serviceId: values.service.id,
+        serviceId: values.service.id.toString(),
         estimateDate: values.estimateDate,
         estimateTime: values.estimateTimeSlot.time,
-        constructionDate: values.constructionDate,
-        constructionTime: values.constructionTimeSlot?.time ?? null,
         address: values.customerInfo.address,
         detailAddress: values.customerInfo.detailAddress,
         customerName: values.customerInfo.name,

@@ -12,14 +12,8 @@ export function ConfirmationStep() {
   // 견적 날짜/시간
   const estimateDate = watch('estimateDate');
   const estimateTimeSlot = watch('estimateTimeSlot');
-  // 시공 날짜/시간
-  const constructionDate = watch('constructionDate');
-  const constructionTimeSlot = watch('constructionTimeSlot');
   const customerInfo = watch('customerInfo');
   const agreedToTerms = watch('agreedToTerms');
-
-  // 시간 선택이 필요한 서비스인지 확인 (기본값: true)
-  const requiresTimeSelection = selectedService?.requiresTimeSelection !== false;
 
   return (
     <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
@@ -43,18 +37,6 @@ export function ConfirmationStep() {
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>견적 희망 시간</Text>
             <Text style={styles.summaryValue}>{estimateTimeSlot?.time}</Text>
-          </View>
-
-          {/* 시공 희망 일정 */}
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>시공 희망 날짜</Text>
-            <Text style={styles.summaryValue}>{constructionDate}</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>시공 희망 시간</Text>
-            <Text style={styles.summaryValue}>
-              {requiresTimeSelection ? constructionTimeSlot?.time : '하루 종일'}
-            </Text>
           </View>
 
           {/* 고객 정보 */}

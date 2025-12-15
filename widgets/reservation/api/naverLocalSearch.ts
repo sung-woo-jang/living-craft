@@ -1,7 +1,7 @@
+import { NAVER_CLIENT_ID, NAVER_CLIENT_SECRET } from '@env';
+
 import { AddressSearchResult, NaverLocalSearchItem } from '../types';
 
-const NAVER_CLIENT_ID = 'TlVTw_nfik1JB5syT8b2';
-const NAVER_CLIENT_SECRET = 'mVN0TjH7lD';
 const NAVER_LOCAL_SEARCH_URL = 'https://openapi.naver.com/v1/search/local.json';
 
 interface NaverLocalSearchResponse {

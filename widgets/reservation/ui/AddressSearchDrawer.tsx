@@ -1,10 +1,11 @@
 import { colors } from '@toss/tds-colors';
 import { Skeleton, TextField } from '@toss/tds-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { searchAddress } from '../api/kakaoLocalSearch';
 import { Keyboard, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
-import { searchAddress } from '../api';
 import type { AddressSearchResult } from '../types';
 
 interface RBSheetRef {
@@ -127,9 +128,7 @@ export function AddressSearchDrawer({ isOpen, regionPrefix, onClose, onSelect }:
                 <Text style={styles.addressTitle} numberOfLines={1}>
                   {item.roadAddress}
                 </Text>
-                {item.zipCode && (
-                  <Text style={styles.addressZipCode}>[{item.zipCode}]</Text>
-                )}
+                {item.zipCode && <Text style={styles.addressZipCode}>[{item.zipCode}]</Text>}
                 <Text style={styles.addressJibun} numberOfLines={1}>
                   {item.jibunAddress}
                 </Text>

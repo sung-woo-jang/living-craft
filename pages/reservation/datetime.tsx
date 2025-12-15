@@ -21,16 +21,11 @@ function Page() {
     // 견적 캘린더
     isEstimateCalendarVisible,
     closeEstimateCalendar,
-    // 시공 캘린더
-    isConstructionCalendarVisible,
-    closeConstructionCalendar,
   } = useReservationStore([
     'formData',
     'updateFormData',
     'isEstimateCalendarVisible',
     'closeEstimateCalendar',
-    'isConstructionCalendarVisible',
-    'closeConstructionCalendar',
   ]);
 
   const { methods, canProceedToNext, validateStep } = useReservationForm();
@@ -59,23 +54,15 @@ function Page() {
 
   // 캘린더 열림 상태에서 뒤로가기 처리
   useEffect(() => {
-    // 둘 중 하나라도 열려있으면 뒤로가기 이벤트 등록
-    const isAnyCalendarVisible = isEstimateCalendarVisible || isConstructionCalendarVisible;
-
-    if (isAnyCalendarVisible) {
+    if (isEstimateCalendarVisible) {
       const handleBackPress = () => {
-        if (isEstimateCalendarVisible) {
-          closeEstimateCalendar();
-        }
-        if (isConstructionCalendarVisible) {
-          closeConstructionCalendar();
-        }
+        closeEstimateCalendar();
       };
       backEvent.addEventListener(handleBackPress);
       return () => backEvent.removeEventListener(handleBackPress);
     }
     return () => {};
-  }, [isEstimateCalendarVisible, isConstructionCalendarVisible, closeEstimateCalendar, closeConstructionCalendar, backEvent]);
+  }, [isEstimateCalendarVisible, closeEstimateCalendar, backEvent]);
 
   const handlePrevious = () => {
     navigation.navigate('/reservation/service' as never);

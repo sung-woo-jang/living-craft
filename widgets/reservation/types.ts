@@ -46,6 +46,26 @@ export interface NaverLocalSearchItem {
   mapy: string;
 }
 
+// 카카오 키워드 검색 API 응답 타입
+export interface KakaoDocument {
+  place_name: string; // 장소명
+  address_name: string; // 지번 주소
+  road_address_name: string; // 도로명 주소
+  x: string; // 경도
+  y: string; // 위도
+  category_name: string; // 카테고리
+  phone: string; // 전화번호
+}
+
+export interface KakaoKeywordSearchResponse {
+  documents: KakaoDocument[];
+  meta: {
+    total_count: number;
+    pageable_count: number;
+    is_end: boolean;
+  };
+}
+
 // 주소 검색 결과 아이템 (UI용)
 export interface AddressSearchResult {
   roadAddress: string; // 도로명 주소
