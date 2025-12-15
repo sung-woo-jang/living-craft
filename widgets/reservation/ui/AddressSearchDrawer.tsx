@@ -1,8 +1,7 @@
 import { colors } from '@toss/tds-colors';
 import { Skeleton, TextField } from '@toss/tds-react-native';
+import { searchAddress } from '@widgets/reservation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-import { searchAddress } from '../api/kakaoLocalSearch';
 import { Keyboard, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
