@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - 항상 한국말을 할 것
 - 존댓말을 사용할 것
-- AskUserQuestion 도구로 선택형 질문을 적극 활용할것
+- AskUserQuestion 도구로 선택형 질문을 적극 활용할 것
+- **Apps-in-Toss MCP 서버를 적극 활용할 것**
+  - Apps-in-Toss SDK, API, 기능 관련 질문이나 작업 시 MCP를 통해 최신 문서와 예제를 참조
+  - appLogin, 인앱 광고, 딥링크 등 Apps-in-Toss 기능 구현 시 MCP 활용
+  - TDS 컴포넌트 사용 시 MCP를 통해 정확한 사용법 확인
 
 ## 개발 환경
 
