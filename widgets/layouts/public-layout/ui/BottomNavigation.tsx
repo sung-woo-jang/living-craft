@@ -21,16 +21,14 @@ export const BottomNavigation: React.FC = () => {
   // React Navigation의 현재 라우트 추적
   const currentRouteName = useNavigationState((state) => state?.routes[state.index]?.name);
 
-  // 현재 경로의 탭바 설정
-  const config = ROUTE_TAB_CONFIG[currentRouteName ?? '/'] ?? { isFloat: true, isVisible: true };
-  const { isFloat, isVisible } = config;
+  // 현재 경로의 탭바 설정 (Apps-in-Toss 가이드라인: 항상 플로팅 형태)
+  const config = ROUTE_TAB_CONFIG[currentRouteName ?? '/'] ?? { isVisible: true };
+  const { isVisible } = config;
 
   // 애니메이션 스타일
   const springStyle = useSpring({
     translateY: isVisible ? 0 : 100, // 숨김 시 아래로 100px 이동
     opacity: isVisible ? 1 : 0,
-    marginHorizontal: isFloat ? 12 : 0,
-    borderRadius: isFloat ? 30 : 0,
     config: { tension: 280, friction: 60 },
   });
 
@@ -47,14 +45,12 @@ export const BottomNavigation: React.FC = () => {
     <animated.View
       style={[
         styles.bottomNav,
-        isFloat ? styles.bottomNavFloat : styles.bottomNavFixed,
-        isFloat && shadowStyle,
+        styles.bottomNavFloat,
+        shadowStyle,
         {
-          ...(isFloat && { bottom: Math.max(insets.bottom, 8) }),
+          bottom: Math.max(insets.bottom, 8),
           transform: [{ translateY: springStyle.translateY }],
           opacity: springStyle.opacity,
-          marginHorizontal: springStyle.marginHorizontal,
-          borderRadius: springStyle.borderRadius,
         },
       ]}
     >
@@ -86,18 +82,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     paddingTop: 9,
     paddingBottom: 8,
-    // position, shadow, borderRadius는 동적으로 적용
   },
   bottomNavFloat: {
-    // 플로팅 모드 스타일
+    // Apps-in-Toss 가이드라인: 항상 플로팅 형태 사용
     position: 'absolute',
     left: 0,
     right: 0,
-  },
-  bottomNavFixed: {
-    // 고정 모드 스타일 (일반 레이아웃 플로우)
-    borderTopWidth: 1,
-    borderTopColor: colors.grey200,
+    marginHorizontal: 12,
+    borderRadius: 30,
   },
   navItem: {
     flex: 1,

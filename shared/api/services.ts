@@ -4,10 +4,10 @@
 
 import apiClient from './client';
 import type {
-  AvailableTimesRequest,
-  AvailableTimesResponse,
   AvailableDatesRequest,
   AvailableDatesResponse,
+  AvailableTimesRequest,
+  AvailableTimesResponse,
   Service,
 } from './types';
 

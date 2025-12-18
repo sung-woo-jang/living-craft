@@ -1,10 +1,10 @@
 import { colors } from '@toss/tds-colors';
 import { Skeleton, TextField } from '@toss/tds-react-native';
-import { searchAddress } from '@widgets/reservation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Keyboard, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
+import { searchAddress } from '../api';
 import type { AddressSearchResult } from '../types';
 
 interface RBSheetRef {
