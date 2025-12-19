@@ -1,4 +1,4 @@
-import { createRoute } from '@granite-js/react-native';
+import { createRoute, useNavigation } from '@granite-js/react-native';
 import { useLogin } from '@shared/hooks/useAuth';
 import { Button, Text } from '@toss/tds-react-native';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
@@ -8,32 +8,35 @@ export const Route = createRoute('/unauthorized', {
 });
 
 function Page() {
-  const { isPending } = useLogin();
+  const navigation = useNavigation();
+  const { mutate: login, isPending } = useLogin();
 
   /**
-   * 토스 로그인 처리
+   * 토스 로그인 처리 (Mock)
    */
   const handleTossLogin = async () => {
     try {
-      // Apps-in-Toss appLogin() 호출
-      // TODO: Apps-in-Toss SDK 연동
-      // const { authorizationCode } = await appLogin();
+      // Mock authorizationCode 생성
+      const mockAuthorizationCode = 'mock-auth-code-' + Date.now();
 
-      // 임시: 개발 중에는 콘솔 로그만 출력
-      console.log('Toss login button pressed');
+      console.log('[Mock Login] 로그인 시작:', mockAuthorizationCode);
 
-      // 로그인 API 호출
-      // login(
-      //   { authorizationCode, referrer: 'DEFAULT' },
-      //   {
-      //     onSuccess: () => {
-      //       // 홈으로 리다이렉트
-      //       router.push('/');
-      //     },
-      //   }
-      // );
+      // 로그인 API 호출 (MSW가 가로채서 Mock 응답 반환)
+      login(
+        { authorizationCode: mockAuthorizationCode, referrer: 'DEFAULT' },
+        {
+          onSuccess: () => {
+            console.log('[Mock Login] 로그인 성공, 홈으로 이동');
+            // 홈으로 리다이렉트
+            navigation.navigate('/');
+          },
+          onError: (error) => {
+            console.error('[Mock Login] 로그인 실패:', error);
+          },
+        }
+      );
     } catch (error) {
-      console.error('Toss login failed:', error);
+      console.error('[Mock Login] 예외 발생:', error);
     }
   };
 
