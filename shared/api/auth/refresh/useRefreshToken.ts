@@ -2,14 +2,13 @@
  * 토큰 갱신 Mutation 훅
  */
 
+import { MOCK_REFRESH_RESPONSE, mockDelay } from '@shared/mocks';
 import { useMutation } from '@tanstack/react-query';
 
-import { MOCK_REFRESH_RESPONSE, mockDelay } from '@shared/mocks';
-
+import { useAuthStore } from '../../../store/authStore';
 import { axiosInstance } from '../../axios';
 import { AUTH_API } from '../../endpoints';
 import type { RefreshTokenResponse } from '../../types';
-import { useAuthStore } from '../../../store/authStore';
 
 /**
  * 토큰 갱신 API 함수

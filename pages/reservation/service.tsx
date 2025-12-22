@@ -1,4 +1,6 @@
+import { useRoute } from '@granite-js/native/@react-navigation/native';
 import { createRoute } from '@granite-js/react-native';
+import { useServices } from '@shared/hooks';
 import { Card } from '@shared/ui';
 import { ProgressStep, ProgressStepper } from '@shared/ui/progress-stepper';
 import { colors } from '@toss/tds-colors';
@@ -71,8 +73,19 @@ function Page() {
 
   const { methods, canProceedToNext } = useReservationForm({ initialData: formData });
 
+  // 서비스 목록 조회 (params 기반 서비스 선택에 필요)
+  const { data: services } = useServices();
+
+  // React Navigation route에서 params 가져오기 (프로모션 배너 등에서 전달)
+  const route = useRoute();
+  const routeParams = route.params as { serviceId?: string } | undefined;
+  const serviceIdParam = routeParams?.serviceId ? parseInt(routeParams.serviceId, 10) : null;
+
   // 서비스 변경 감지를 위한 이전 서비스 ID 추적
   const prevServiceIdRef = useRef<number | null>(null);
+
+  // params 기반 서비스 선택이 이미 처리되었는지 추적
+  const paramsProcessedRef = useRef(false);
 
   // 상세 주소 로컬 상태 (inline 입력용)
   const [detailAddress, setDetailAddress] = useState('');
@@ -114,6 +127,31 @@ function Page() {
       methods.setValue('service', formData.service);
     }
   }, []);
+
+  // Query params 기반 서비스 자동 선택
+  // - Store에 서비스가 없고 serviceIdParam이 있으면 해당 서비스 선택
+  // - 프로모션 배너 등에서 ?serviceId=1 형태로 전달받은 경우
+  useEffect(() => {
+    // Store에 이미 서비스가 있으면 Store 값 우선 (HomeServicesSection에서 온 경우)
+    if (formData.service) {
+      return;
+    }
+
+    // params 처리가 이미 완료되었으면 스킵
+    if (paramsProcessedRef.current) {
+      return;
+    }
+
+    // serviceIdParam이 있고 서비스 목록이 로드되었으면 해당 서비스 선택
+    if (serviceIdParam && services && services.length > 0) {
+      const targetService = services.find((s) => s.id === serviceIdParam);
+      if (targetService) {
+        methods.setValue('service', targetService);
+        updateFormData({ service: targetService });
+        paramsProcessedRef.current = true;
+      }
+    }
+  }, [serviceIdParam, services, formData.service, methods, updateFormData]);
 
   // 폼 값 변경 시 store에 저장
   useEffect(() => {

@@ -3,8 +3,8 @@
  */
 
 // Queries
-export { useReservation, useMyReservations } from './use-reservations-query';
+export { useMyReservations,useReservation } from './use-reservations-query';
 
 // Mutations
-export { useCreateReservation } from './create-reservation';
 export { useCancelReservation } from './cancel-reservation';
+export { useCreateReservation } from './create-reservation';

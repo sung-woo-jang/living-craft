@@ -4,7 +4,7 @@
 
 export {
   getServices,
-  useServices,
-  useAvailableTimes,
   useAvailableDates,
+  useAvailableTimes,
+  useServices,
 } from './use-services-query';

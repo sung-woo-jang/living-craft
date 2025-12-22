@@ -39,7 +39,14 @@ export const HomePromoCarouselSection = () => {
         console.error('외부 링크 열기 실패:', error);
       }
     } else if (item.linkType === 'internal') {
-      navigation.navigate(item.linkUrl as any);
+      // linkUrl에서 경로와 쿼리 스트링 분리
+      // 예: '/reservation/service?serviceId=1' -> path: '/reservation/service', params: { serviceId: '1' }
+      const [path, queryString] = item.linkUrl.split('?');
+      const params = queryString
+        ? Object.fromEntries(new URLSearchParams(queryString))
+        : undefined;
+
+      navigation.navigate(path as any, params);
     }
   };
 

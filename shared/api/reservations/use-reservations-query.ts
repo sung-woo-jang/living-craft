@@ -2,9 +2,8 @@
  * 예약 관련 Query 훅
  */
 
-import { useQuery } from '@tanstack/react-query';
-
 import { MOCK_RESERVATIONS, mockDelay } from '@shared/mocks';
+import { useQuery } from '@tanstack/react-query';
 
 import { generateQueryKeysFromUrl } from '../../hooks/query-keys';
 import { axiosInstance } from '../axios';

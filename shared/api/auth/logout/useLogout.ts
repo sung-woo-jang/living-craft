@@ -2,14 +2,13 @@
  * 로그아웃 Mutation 훅
  */
 
-import { useMutation } from '@tanstack/react-query';
-
 import { mockDelay } from '@shared/mocks';
 import { showSuccessToast } from '@shared/utils/toast';
+import { useMutation } from '@tanstack/react-query';
 
+import { useAuthStore } from '../../../store/authStore';
 import { axiosInstance } from '../../axios';
 import { AUTH_API } from '../../endpoints';
-import { useAuthStore } from '../../../store/authStore';
 
 /**
  * 로그아웃 API 함수
