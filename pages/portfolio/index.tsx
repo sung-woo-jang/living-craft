@@ -1,8 +1,9 @@
-import { createRoute, Image } from '@granite-js/react-native';
+import { createRoute } from '@granite-js/react-native';
 import { usePortfolios, useRefresh } from '@shared/hooks';
 import { SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { PortfolioListItem } from '@widgets/portfolio/list-item';
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export const Route = createRoute('/portfolio', {
   component: Page,
@@ -56,34 +57,12 @@ function Page() {
 
           <SectionCard.Content>
             {portfolios.map((portfolio, index) => (
-              <TouchableOpacity
+              <PortfolioListItem
                 key={portfolio.id}
-                style={[styles.portfolioRow, index < portfolios.length - 1 && styles.portfolioRowBorder]}
-                onPress={() => handlePortfolioPress(portfolio.id)}
-              >
-                <Image
-                  source={{ uri: portfolio.images[0] || undefined }}
-                  style={styles.thumbnail}
-                  onError={() => {
-                    console.warn(`Failed to load portfolio thumbnail: ${portfolio.id}`);
-                  }}
-                />
-
-                <View style={styles.portfolioInfo}>
-                  <View style={styles.categoryBadge}>
-                    <Text style={styles.categoryText}>{portfolio.category}</Text>
-                  </View>
-                  <Text style={styles.portfolioTitle}>{portfolio.projectName}</Text>
-                  <Text style={styles.portfolioDescription} numberOfLines={2}>
-                    {portfolio.description}
-                  </Text>
-                  {portfolio.duration ? <Text style={styles.portfolioDuration}>{portfolio.duration}</Text> : null}
-                </View>
-
-                <View style={styles.arrowIcon}>
-                  <Text style={styles.arrowText}>›</Text>
-                </View>
-              </TouchableOpacity>
+                portfolio={portfolio}
+                onPress={handlePortfolioPress}
+                showBorder={index < portfolios.length - 1}
+              />
             ))}
           </SectionCard.Content>
         </SectionCard>
@@ -113,66 +92,5 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 15,
     color: colors.grey600,
-  },
-
-  // Portfolio Row
-  portfolioRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 8,
-  },
-  portfolioRowBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.grey100,
-  },
-  thumbnail: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
-    backgroundColor: colors.grey200,
-    marginRight: 16,
-  },
-  portfolioInfo: {
-    flex: 1,
-  },
-  categoryBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.blue50,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    marginBottom: 6,
-  },
-  categoryText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.blue600,
-  },
-  portfolioTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.grey900,
-    marginBottom: 4,
-  },
-  portfolioDescription: {
-    fontSize: 13,
-    color: colors.grey600,
-    lineHeight: 18,
-    marginBottom: 4,
-  },
-  portfolioDuration: {
-    fontSize: 12,
-    color: colors.grey400,
-  },
-  arrowIcon: {
-    width: 24,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  arrowText: {
-    fontSize: 20,
-    color: colors.grey400,
   },
 });
