@@ -69,7 +69,7 @@ function Page() {
     'closeAddressSearchDrawer',
   ]);
 
-  const { methods, canProceedToNext } = useReservationForm();
+  const { methods, canProceedToNext } = useReservationForm({ initialData: formData });
 
   // 서비스 변경 감지를 위한 이전 서비스 ID 추적
   const prevServiceIdRef = useRef<number | null>(null);
@@ -105,10 +105,14 @@ function Page() {
     return `${addressSelection.region.name} ${addressSelection.city.name}`;
   }, [addressSelection]);
 
-  // 마운트 시 서비스 목록 로드 + 폼 데이터 복원
+  // 마운트 시 서비스 목록 로드 + 외부에서 전달된 서비스 초기값 적용
   useEffect(() => {
     loadServices();
-    methods.reset(formData);
+
+    // 타이밍 문제 해결: Store에서 service가 있으면 RHF에 명시적으로 설정
+    if (formData.service) {
+      methods.setValue('service', formData.service);
+    }
   }, []);
 
   // 폼 값 변경 시 store에 저장

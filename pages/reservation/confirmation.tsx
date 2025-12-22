@@ -23,6 +23,7 @@ function Page() {
   ]);
 
   const { methods, canProceedToNext, validateStep, handleSubmit } = useReservationForm({
+    initialData: formData,
     onSubmitSuccess: () => {
       // 예약 완료 후 상태 초기화
       resetStore();
@@ -31,11 +32,6 @@ function Page() {
       navigation.navigate('/' as never);
     },
   });
-
-  // 마운트 시 store에서 폼 데이터 복원
-  useEffect(() => {
-    methods.reset(formData);
-  }, []);
 
   // 폼 값 변경 시 store에 저장
   useEffect(() => {

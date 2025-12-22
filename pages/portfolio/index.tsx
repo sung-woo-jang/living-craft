@@ -90,7 +90,7 @@ function Page() {
                 <Text style={styles.portfolioDescription} numberOfLines={2}>
                   {portfolio.description}
                 </Text>
-                <Text style={styles.portfolioDuration}>{portfolio.duration}</Text>
+                {portfolio.duration ? <Text style={styles.portfolioDuration}>{portfolio.duration}</Text> : null}
               </View>
 
               <View style={styles.arrowIcon}>

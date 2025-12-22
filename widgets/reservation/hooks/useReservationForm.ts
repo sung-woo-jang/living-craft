@@ -6,6 +6,7 @@ import { useReservationStore } from '../store';
 import { DEFAULT_FORM_VALUES, ReservationFormData, StepKey } from '../types';
 
 interface UseReservationFormOptions {
+  initialData?: Partial<ReservationFormData>;
   onSubmitSuccess?: () => void;
 }
 
@@ -24,7 +25,10 @@ interface UseReservationFormReturn {
 export function useReservationForm(options?: UseReservationFormOptions): UseReservationFormReturn {
   // react-hook-form
   const methods = useForm<ReservationFormData>({
-    defaultValues: DEFAULT_FORM_VALUES,
+    defaultValues: {
+      ...DEFAULT_FORM_VALUES,
+      ...options?.initialData,
+    },
     mode: 'onChange',
   });
 

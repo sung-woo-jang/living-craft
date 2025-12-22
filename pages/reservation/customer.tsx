@@ -16,12 +16,7 @@ function Page() {
 
   const { formData, updateFormData, isLoading } = useReservationStore(['formData', 'updateFormData', 'isLoading']);
 
-  const { methods, canProceedToNext, validateStep } = useReservationForm();
-
-  // 마운트 시 store에서 폼 데이터 복원
-  useEffect(() => {
-    methods.reset(formData);
-  }, []);
+  const { methods, canProceedToNext, validateStep } = useReservationForm({ initialData: formData });
 
   // 폼 값 변경 시 store에 저장
   useEffect(() => {

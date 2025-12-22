@@ -339,6 +339,44 @@ export interface ReservationListParams extends PaginationParams {
 // ========================================
 
 /**
+ * 백엔드 포트폴리오 목록 아이템 DTO
+ * GET /api/portfolios 응답의 items 배열 요소
+ */
+export interface PortfolioListItemDto {
+  id: string;
+  category: string;
+  projectName: string;
+  description: string;
+  thumbnailImage: string;
+  tags?: string[];
+}
+
+/**
+ * 백엔드 포트폴리오 목록 응답 DTO
+ * GET /api/portfolios 응답의 data 필드
+ */
+export interface PortfolioListResponseDto {
+  items: PortfolioListItemDto[];
+  total: number;
+}
+
+/**
+ * 백엔드 포트폴리오 상세 DTO
+ * GET /api/portfolios/:id 응답의 data 필드
+ */
+export interface PortfolioDetailDto {
+  id: string;
+  category: string;
+  projectName: string;
+  client?: string;
+  duration: string;
+  detailedDescription: string;
+  images: string[];
+  tags?: string[];
+  relatedServiceId: string;
+}
+
+/**
  * 포트폴리오 정보
  */
 export interface Portfolio {
