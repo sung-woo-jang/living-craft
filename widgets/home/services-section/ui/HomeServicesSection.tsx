@@ -1,7 +1,7 @@
 import { createRoute } from '@granite-js/react-native';
 import { Service } from '@shared/api/types';
 import { useServices } from '@shared/hooks/useServices';
-import { Card } from '@shared/ui';
+import { SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset, Skeleton } from '@toss/tds-react-native';
 import { useReservationStore } from '@widgets/reservation';
@@ -19,6 +19,7 @@ export const HomeServicesSection = () => {
   const updateFormData = useReservationStore(['updateFormData']).updateFormData;
 
   const { data: services, isLoading } = useServices();
+  const isEmpty = !services || services.length === 0;
 
   const handleQuotePress = (service: Service) => {
     // 클릭한 서비스를 미리 선택
@@ -28,12 +29,9 @@ export const HomeServicesSection = () => {
     navigation.navigate('/reservation/service' as any);
   };
 
-  if (isLoading) {
-    return (
-      <Card>
-        <View style={styles.header}>
-          <Text style={styles.title}>한 번에 인테리어 준비 끝내기</Text>
-        </View>
+  return (
+    <SectionCard title="한 번에 인테리어 준비 끝내기">
+      <SectionCard.Loading isLoading={isLoading}>
         <View style={styles.serviceList}>
           {Array.from({ length: 2 }).map((_, index) => (
             <View key={index} style={[styles.serviceRow, index < 1 && styles.serviceRowBorder]}>
@@ -47,75 +45,39 @@ export const HomeServicesSection = () => {
             </View>
           ))}
         </View>
-      </Card>
-    );
-  }
+      </SectionCard.Loading>
 
-  if (!services || services.length === 0) {
-    return (
-      <Card>
-        <View style={styles.header}>
-          <Text style={styles.title}>한 번에 인테리어 준비 끝내기</Text>
-        </View>
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>등록된 서비스가 없습니다.</Text>
-        </View>
-      </Card>
-    );
-  }
+      <SectionCard.Empty isEmpty={isEmpty} message="등록된 서비스가 없습니다." />
 
-  return (
-    <Card>
-      <View style={styles.header}>
-        <Text style={styles.title}>한 번에 인테리어 준비 끝내기</Text>
-      </View>
+      <SectionCard.Content>
+        <View style={styles.serviceList}>
+          {services?.map((service, index) => (
+            <View key={service.id} style={[styles.serviceRow, index < services.length - 1 && styles.serviceRowBorder]}>
+              <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor || colors.grey100 }]}>
+                {service.icon?.name ? (
+                  <Asset.Icon name={service.icon.name} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
+                ) : (
+                  <Text style={styles.icon}>🏠</Text>
+                )}
+              </View>
 
-      <View style={styles.serviceList}>
-        {services.map((service, index) => (
-          <View key={service.id} style={[styles.serviceRow, index < services.length - 1 && styles.serviceRowBorder]}>
-            <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor || colors.grey100 }]}>
-              {service.icon?.name ? (
-                <Asset.Icon name={service.icon.name} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
-              ) : (
-                <Text style={styles.icon}>🏠</Text>
-              )}
+              <View style={styles.serviceInfo}>
+                <Text style={styles.serviceTitle}>{service.title}</Text>
+                <Text style={styles.serviceDescription}>{service.description}</Text>
+              </View>
+
+              <TouchableOpacity style={styles.quoteButton} onPress={() => handleQuotePress(service)}>
+                <Text style={styles.quoteButtonText}>견적 받기</Text>
+              </TouchableOpacity>
             </View>
-
-            <View style={styles.serviceInfo}>
-              <Text style={styles.serviceTitle}>{service.title}</Text>
-              <Text style={styles.serviceDescription}>{service.description}</Text>
-            </View>
-
-            <TouchableOpacity style={styles.quoteButton} onPress={() => handleQuotePress(service)}>
-              <Text style={styles.quoteButtonText}>견적 받기</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
-    </Card>
+          ))}
+        </View>
+      </SectionCard.Content>
+    </SectionCard>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.grey900,
-  },
-  emptyContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyText: {
-    fontSize: 15,
-    color: colors.grey600,
-  },
   serviceList: {
     paddingHorizontal: 4,
   },

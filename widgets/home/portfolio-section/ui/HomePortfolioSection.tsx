@@ -1,6 +1,6 @@
 import { createRoute, Image } from '@granite-js/react-native';
 import { usePortfolios } from '@shared/hooks/usePortfolios';
-import { Card, Carousel } from '@shared/ui';
+import { Carousel, SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Badge, Skeleton } from '@toss/tds-react-native';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -20,6 +20,9 @@ export const HomePortfolioSection = () => {
   // 홈 페이지에서는 최신 5개만 표시
   const { data: portfoliosResponse, isLoading } = usePortfolios({ limit: 5, page: 1 });
 
+  const portfolios = portfoliosResponse?.data || [];
+  const isEmpty = portfolios.length === 0;
+
   const handlePortfolioPress = (portfolioId: number) => {
     navigation.navigate('/portfolio/:id' as any, { id: String(portfolioId) });
   };
@@ -28,12 +31,9 @@ export const HomePortfolioSection = () => {
     navigation.navigate('/portfolio' as any);
   };
 
-  if (isLoading) {
-    return (
-      <Card>
-        <View style={styles.header}>
-          <Text style={styles.title}>작업 사례</Text>
-        </View>
+  return (
+    <SectionCard title="작업 사례">
+      <SectionCard.Loading isLoading={isLoading}>
         <View style={styles.skeletonCard}>
           <Skeleton width="100%" height={180} borderRadius={0} />
           <View style={styles.cardContent}>
@@ -49,83 +49,54 @@ export const HomePortfolioSection = () => {
             <Skeleton key={i} width={8} height={8} borderRadius={4} style={{ marginHorizontal: 4 }} />
           ))}
         </View>
-      </Card>
-    );
-  }
+      </SectionCard.Loading>
 
-  const portfolios = portfoliosResponse?.data || [];
+      <SectionCard.Empty isEmpty={isEmpty} message="등록된 작업 사례가 없습니다." />
 
-  if (portfolios.length === 0) {
-    return (
-      <Card>
-        <View style={styles.header}>
-          <Text style={styles.title}>작업 사례</Text>
-        </View>
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>등록된 작업 사례가 없습니다.</Text>
-        </View>
-      </Card>
-    );
-  }
-
-  return (
-    <Card>
-      <View style={styles.header}>
-        <Text style={styles.title}>작업 사례</Text>
-      </View>
-
-      <Carousel
-        data={portfolios}
-        renderItem={(item) => (
-          <TouchableOpacity onPress={() => handlePortfolioPress(item.id)}>
-            <View style={styles.carouselItem}>
-              <Image
-                source={{ uri: item.images[0] || undefined }}
-                style={styles.image}
-                onError={() => {
-                  console.warn(`Failed to load home portfolio image: ${item.id}`);
-                }}
-              />
-              <View style={styles.cardContent}>
-                <Badge type="blue" size="small" badgeStyle="weak">
-                  {item.category}
-                </Badge>
-                <Text style={styles.cardTitle}>{item.projectName}</Text>
-                <Text style={styles.description}>{item.description}</Text>
+      <SectionCard.Content>
+        <Carousel
+          data={portfolios}
+          renderItem={(item) => (
+            <TouchableOpacity onPress={() => handlePortfolioPress(item.id)}>
+              <View style={styles.carouselItem}>
+                <Image
+                  source={{ uri: item.images[0] || undefined }}
+                  style={styles.image}
+                  onError={() => {
+                    console.warn(`Failed to load home portfolio image: ${item.id}`);
+                  }}
+                />
+                <View style={styles.cardContent}>
+                  <Badge type="blue" size="small" badgeStyle="weak">
+                    {item.category}
+                  </Badge>
+                  <Text style={styles.cardTitle}>{item.projectName}</Text>
+                  <Text style={styles.description}>{item.description}</Text>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        )}
-        itemWidth={SCREEN_WIDTH - 40}
-        itemHeight={320}
-        gap={16}
-        showIndicator={true}
-        dotColor={colors.blue500}
-        inactiveDotColor={colors.grey300}
-        autoPlay={true}
-        autoPlayInterval={4000}
-      />
+            </TouchableOpacity>
+          )}
+          itemWidth={SCREEN_WIDTH - 40}
+          itemHeight={320}
+          gap={16}
+          showIndicator={true}
+          dotColor={colors.blue500}
+          inactiveDotColor={colors.grey300}
+          autoPlay={true}
+          autoPlayInterval={4000}
+        />
 
-      <TouchableOpacity onPress={handleViewAllPress} style={styles.viewAllButton}>
-        <View style={styles.viewAllButtonInner}>
-          <Text style={styles.viewAllText}>모든 작업 사례 보기</Text>
-        </View>
-      </TouchableOpacity>
-    </Card>
+        <TouchableOpacity onPress={handleViewAllPress} style={styles.viewAllButton}>
+          <View style={styles.viewAllButtonInner}>
+            <Text style={styles.viewAllText}>모든 작업 사례 보기</Text>
+          </View>
+        </TouchableOpacity>
+      </SectionCard.Content>
+    </SectionCard>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.grey900,
-  },
   skeletonCard: {
     borderRadius: 16,
     overflow: 'hidden',
@@ -136,15 +107,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 16,
-  },
-  emptyContainer: {
-    paddingVertical: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyText: {
-    fontSize: 15,
-    color: colors.grey600,
   },
   carouselItem: {
     backgroundColor: colors.white,

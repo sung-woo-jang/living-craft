@@ -1,4 +1,5 @@
 import { useNavigationState } from '@react-navigation/native';
+import { ROUTE_TAB_CONFIG, TAB_BAR_HEIGHT } from '@shared/constants';
 import { colors } from '@toss/tds-colors';
 import { useReservationStore } from '@widgets/reservation';
 import React, { useEffect } from 'react';
@@ -26,6 +27,10 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   // 현재 라우트 감지
   const currentRouteName = useNavigationState(state => state?.routes[state.index]?.name);
 
+  // 탭바 표시 여부 확인 (Apps-in-Toss 가이드: 플로팅 형태)
+  const config = ROUTE_TAB_CONFIG[currentRouteName ?? '/'] ?? { isVisible: true };
+  const shouldShowTabBar = config.isVisible;
+
   // 예약 플로우 이탈 시 상태 초기화
   useEffect(() => {
     const isInReservationFlow = RESERVATION_ROUTES.some(route => currentRouteName === route);
@@ -41,7 +46,9 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
       <View style={[styles.header, { paddingTop: insets.top }]} />
 
       {/* Main Content */}
-      <View style={styles.mainContent}>{children}</View>
+      <View style={[styles.mainContent, shouldShowTabBar && { paddingBottom: TAB_BAR_HEIGHT }]}>
+        {children}
+      </View>
 
       {/* Bottom Navigation */}
       <BottomNavigation />
@@ -60,7 +67,7 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     backgroundColor: colors.greyBackground,
-    // 플로팅 탭바가 콘텐츠 위에 오버레이되도록 여백 제거
-    // 각 페이지의 ScrollView/FlatList에서 contentContainerStyle로 하단 여백 처리
+    // 탭바가 보이는 페이지는 TAB_BAR_HEIGHT만큼 하단 여백 자동 적용
+    // shouldShowTabBar 조건부 로직으로 처리
   },
 });

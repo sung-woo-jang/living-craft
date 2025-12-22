@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingVertical: 10,
-    paddingBottom: 100,
+    // 하단 여백은 PublicLayout에서 자동 처리
   },
 
   // Section Header

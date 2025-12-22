@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100, // 플로팅 탭바를 위한 하단 여백
+    // 하단 여백은 PublicLayout에서 자동 처리
   },
   profileSection: {
     backgroundColor: 'white',

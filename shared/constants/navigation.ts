@@ -29,3 +29,22 @@ export const ROUTE_TAB_CONFIG: Record<string, TabBarConfig> = {
   '/reviews': { isVisible: true }, // 리뷰
   '/my': { isVisible: true }, // 마이페이지
 };
+
+/**
+ * 플로팅 탭바 높이 상수
+ * Apps-in-Toss 가이드라인: 플로팅 형태의 탭바 사용 시 콘텐츠 하단 여백
+ *
+ * 탭바 내부 높이 계산:
+ * - paddingTop: 9px
+ * - paddingBottom: 8px
+ * - navItem paddingVertical: 16px (8px × 2)
+ * - 아이콘: 24px
+ * - 텍스트 lineHeight: 16.5px
+ * - 아이콘-텍스트 간격: 1px
+ * = 총 내부 높이: ~74.5px
+ *
+ * + Safe Area Insets bottom: 최소 8px (기기마다 다름)
+ * + 여유 공간: 15.5px
+ * = 안전한 여백: 100px
+ */
+export const TAB_BAR_HEIGHT = 130;
