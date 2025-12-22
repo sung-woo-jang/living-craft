@@ -1,4 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
+
 import { HomePage } from './ui/index/Index';
 
 export const Route = createRoute('/', {

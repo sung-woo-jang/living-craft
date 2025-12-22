@@ -1,4 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
+
 import { ConfirmationPage } from './ui/confirmation';
 
 export const Route = createRoute('/reservation/confirmation', {

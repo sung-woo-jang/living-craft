@@ -1,4 +1,5 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
+
 import { DetailPage } from './ui/detail';
 
 export const Route = createRoute('/portfolio/:id', {

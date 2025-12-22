@@ -1,4 +1,5 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
+
 import { NotFoundPage } from './ui/not-found';
 
 export const Route = createRoute('/_404', {
