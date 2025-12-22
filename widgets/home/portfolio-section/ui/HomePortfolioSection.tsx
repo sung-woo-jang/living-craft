@@ -1,9 +1,11 @@
-import { createRoute, Image } from '@granite-js/react-native';
+import { createRoute } from '@granite-js/react-native';
 import { usePortfolios } from '@shared/hooks';
 import { Carousel, SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { Badge, Skeleton } from '@toss/tds-react-native';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import { PortfolioCard } from './PortfolioCard';
+import { PortfolioCardSkeleton } from './PortfolioCardSkeleton';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -34,21 +36,7 @@ export const HomePortfolioSection = () => {
   return (
     <SectionCard title="작업 사례">
       <SectionCard.Loading isLoading={isLoading}>
-        <View style={styles.skeletonCard}>
-          <Skeleton width="100%" height={180} borderRadius={0} />
-          <View style={styles.cardContent}>
-            <Skeleton width={60} height={20} borderRadius={4} />
-            <View style={{ height: 8 }} />
-            <Skeleton width="70%" height={17} borderRadius={4} />
-            <View style={{ height: 6 }} />
-            <Skeleton width="90%" height={14} borderRadius={4} />
-          </View>
-        </View>
-        <View style={styles.skeletonIndicator}>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} width={8} height={8} borderRadius={4} style={{ marginHorizontal: 4 }} />
-          ))}
-        </View>
+        <PortfolioCardSkeleton />
       </SectionCard.Loading>
 
       <SectionCard.Empty isEmpty={isEmpty} message="등록된 작업 사례가 없습니다." />
@@ -56,26 +44,7 @@ export const HomePortfolioSection = () => {
       <SectionCard.Content>
         <Carousel
           data={portfolios}
-          renderItem={(item) => (
-            <TouchableOpacity onPress={() => handlePortfolioPress(item.id)}>
-              <View style={styles.carouselItem}>
-                <Image
-                  source={{ uri: item.images[0] || undefined }}
-                  style={styles.image}
-                  onError={() => {
-                    console.warn(`Failed to load home portfolio image: ${item.id}`);
-                  }}
-                />
-                <View style={styles.cardContent}>
-                  <Badge type="blue" size="small" badgeStyle="weak">
-                    {item.category}
-                  </Badge>
-                  <Text style={styles.cardTitle}>{item.projectName}</Text>
-                  <Text style={styles.description}>{item.description}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          )}
+          renderItem={(item) => <PortfolioCard portfolio={item} onPress={handlePortfolioPress} />}
           itemWidth={SCREEN_WIDTH - 40}
           itemHeight={320}
           gap={16}
@@ -97,50 +66,6 @@ export const HomePortfolioSection = () => {
 };
 
 const styles = StyleSheet.create({
-  skeletonCard: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: colors.grey100,
-  },
-  skeletonIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 16,
-  },
-  carouselItem: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: colors.grey100,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  image: {
-    width: '100%',
-    height: 180,
-    backgroundColor: colors.grey100,
-  },
-  cardContent: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-  },
-  cardTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: colors.grey900,
-    marginTop: 8,
-    marginBottom: 6,
-  },
-  description: {
-    fontSize: 14,
-    color: colors.grey500,
-    lineHeight: 20,
-  },
   viewAllButton: {
     marginTop: 32,
     alignItems: 'center',
