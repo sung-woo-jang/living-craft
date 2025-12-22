@@ -490,7 +490,7 @@ export type PromotionLinkType = 'external' | 'internal';
  * 프로모션 배너 정보 (공개 API용)
  */
 export interface Promotion {
-  id: string;
+  id: number;
   title: string;
   subtitle: string | null;
   iconUrl: string | null;

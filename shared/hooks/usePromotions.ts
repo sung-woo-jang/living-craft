@@ -25,7 +25,7 @@ export function useIncrementPromotionClick() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => promotionsApi.incrementPromotionClick(id),
+    mutationFn: (id: number) => promotionsApi.incrementPromotionClick(id),
     onSuccess: () => {
       // 클릭 후 목록 갱신 (옵션, 통계 반영 시)
       queryClient.invalidateQueries({ queryKey: ['promotions'] });
