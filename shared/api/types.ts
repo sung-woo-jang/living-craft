@@ -476,3 +476,32 @@ export interface FileUploadResponse {
 export interface MultipleImageUploadResponse {
   urls: string[];
 }
+
+// ========================================
+// 프로모션 배너 관련 타입
+// ========================================
+
+/**
+ * 프로모션 링크 타입
+ */
+export type PromotionLinkType = 'external' | 'internal';
+
+/**
+ * 프로모션 배너 정보 (공개 API용)
+ */
+export interface Promotion {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  iconUrl: string | null;
+  linkUrl: string | null;
+  linkType: PromotionLinkType;
+}
+
+/**
+ * 프로모션 배너 목록 응답 DTO
+ */
+export interface PromotionListResponseDto {
+  items: Promotion[];
+  total: number;
+}

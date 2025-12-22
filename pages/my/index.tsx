@@ -2,6 +2,7 @@ import { createRoute, useNavigation } from '@granite-js/react-native';
 import { MENU_ITEMS } from '@shared/constants';
 import { useLogout } from '@shared/hooks/useAuth';
 import { useMe } from '@shared/hooks/useUsers';
+import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset, Button, Skeleton } from '@toss/tds-react-native';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -38,16 +39,18 @@ function Page() {
       <View style={styles.container}>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* 프로필 섹션 Skeleton */}
-          <View style={styles.profileSection}>
-            <Skeleton width={80} height={80} borderRadius={40} />
-            <View style={{ height: 16 }} />
-            <Skeleton width={100} height={22} borderRadius={4} />
-            <View style={{ height: 6 }} />
-            <Skeleton width={160} height={14} borderRadius={4} />
-          </View>
+          <Card>
+            <View style={styles.profileContent}>
+              <Skeleton width={80} height={80} borderRadius={40} />
+              <View style={{ height: 16 }} />
+              <Skeleton width={100} height={22} borderRadius={4} />
+              <View style={{ height: 6 }} />
+              <Skeleton width={160} height={14} borderRadius={4} />
+            </View>
+          </Card>
 
           {/* 메뉴 리스트 Skeleton */}
-          <View style={styles.menuSection}>
+          <Card>
             {Array.from({ length: 2 }).map((_, index) => (
               <View key={index} style={styles.menuItem}>
                 <View style={styles.menuItemLeft}>
@@ -60,7 +63,7 @@ function Page() {
                 </View>
               </View>
             ))}
-          </View>
+          </Card>
         </ScrollView>
       </View>
     );
@@ -87,16 +90,18 @@ function Page() {
         showsVerticalScrollIndicator={false}
       >
         {/* 프로필 섹션 */}
-        <View style={styles.profileSection}>
-          <View style={styles.profileAvatar}>
-            <Text style={styles.profileAvatarText}>{user.name[0]}</Text>
+        <Card>
+          <View style={styles.profileContent}>
+            <View style={styles.profileAvatar}>
+              <Text style={styles.profileAvatarText}>{user.name[0]}</Text>
+            </View>
+            <Text style={styles.profileName}>{user.name}</Text>
+            <Text style={styles.profileEmail}>{user.email}</Text>
           </View>
-          <Text style={styles.profileName}>{user.name}</Text>
-          <Text style={styles.profileEmail}>{user.email}</Text>
-        </View>
+        </Card>
 
         {/* 메뉴 리스트 */}
-        <View style={styles.menuSection}>
+        <Card>
           {MENU_ITEMS.map((item, index) => (
             <TouchableOpacity key={index} style={styles.menuItem} onPress={() => navigation.navigate(item.path as any)}>
               <View style={styles.menuItemLeft}>
@@ -116,7 +121,7 @@ function Page() {
               </View>
             </TouchableOpacity>
           ))}
-        </View>
+        </Card>
 
         {/* 로그아웃 버튼 */}
         <View style={styles.logoutSection}>
@@ -138,15 +143,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    gap: 10,
+    paddingVertical: 10,
     // 하단 여백은 PublicLayout에서 자동 처리
   },
-  profileSection: {
-    backgroundColor: 'white',
+  profileContent: {
     paddingVertical: 40,
     paddingHorizontal: 20,
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.grey200,
   },
   profileAvatar: {
     width: 80,
@@ -171,10 +175,6 @@ const styles = StyleSheet.create({
   profileEmail: {
     fontSize: 14,
     color: colors.grey600,
-  },
-  menuSection: {
-    backgroundColor: 'white',
-    paddingVertical: 8,
   },
   menuItem: {
     flexDirection: 'row',

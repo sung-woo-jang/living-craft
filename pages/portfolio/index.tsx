@@ -1,6 +1,6 @@
 import { createRoute, Image } from '@granite-js/react-native';
 import { usePortfolios } from '@shared/hooks/usePortfolios';
-import { Card } from '@shared/ui';
+import { SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -32,28 +32,7 @@ function Page() {
   }
 
   const portfolios = portfoliosResponse?.data || [];
-
-  if (portfolios.length === 0) {
-    return (
-      <View style={styles.container}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <Card>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>작업 사례</Text>
-              <Text style={styles.sectionSubtitle}>다양한 작업 사례를 확인해보세요</Text>
-            </View>
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>등록된 포트폴리오가 없습니다.</Text>
-            </View>
-          </Card>
-        </ScrollView>
-      </View>
-    );
-  }
+  const isEmpty = portfolios.length === 0;
 
   return (
     <View style={styles.container}>
@@ -62,43 +41,42 @@ function Page() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Card>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>작업 사례</Text>
-            <Text style={styles.sectionSubtitle}>다양한 작업 사례를 확인해보세요</Text>
-          </View>
+        <SectionCard title="작업 사례" subtitle="다양한 작업 사례를 확인해보세요">
+          <SectionCard.Empty isEmpty={isEmpty} message="등록된 포트폴리오가 없습니다." />
 
-          {portfolios.map((portfolio, index) => (
-            <TouchableOpacity
-              key={portfolio.id}
-              style={[styles.portfolioRow, index < portfolios.length - 1 && styles.portfolioRowBorder]}
-              onPress={() => handlePortfolioPress(portfolio.id)}
-            >
-              <Image
-                source={{ uri: portfolio.images[0] || undefined }}
-                style={styles.thumbnail}
-                onError={() => {
-                  console.warn(`Failed to load portfolio thumbnail: ${portfolio.id}`);
-                }}
-              />
+          <SectionCard.Content>
+            {portfolios.map((portfolio, index) => (
+              <TouchableOpacity
+                key={portfolio.id}
+                style={[styles.portfolioRow, index < portfolios.length - 1 && styles.portfolioRowBorder]}
+                onPress={() => handlePortfolioPress(portfolio.id)}
+              >
+                <Image
+                  source={{ uri: portfolio.images[0] || undefined }}
+                  style={styles.thumbnail}
+                  onError={() => {
+                    console.warn(`Failed to load portfolio thumbnail: ${portfolio.id}`);
+                  }}
+                />
 
-              <View style={styles.portfolioInfo}>
-                <View style={styles.categoryBadge}>
-                  <Text style={styles.categoryText}>{portfolio.category}</Text>
+                <View style={styles.portfolioInfo}>
+                  <View style={styles.categoryBadge}>
+                    <Text style={styles.categoryText}>{portfolio.category}</Text>
+                  </View>
+                  <Text style={styles.portfolioTitle}>{portfolio.projectName}</Text>
+                  <Text style={styles.portfolioDescription} numberOfLines={2}>
+                    {portfolio.description}
+                  </Text>
+                  {portfolio.duration ? <Text style={styles.portfolioDuration}>{portfolio.duration}</Text> : null}
                 </View>
-                <Text style={styles.portfolioTitle}>{portfolio.projectName}</Text>
-                <Text style={styles.portfolioDescription} numberOfLines={2}>
-                  {portfolio.description}
-                </Text>
-                {portfolio.duration ? <Text style={styles.portfolioDuration}>{portfolio.duration}</Text> : null}
-              </View>
 
-              <View style={styles.arrowIcon}>
-                <Text style={styles.arrowText}>›</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </Card>
+                <View style={styles.arrowIcon}>
+                  <Text style={styles.arrowText}>›</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </SectionCard.Content>
+        </SectionCard>
       </ScrollView>
     </View>
   );
@@ -124,32 +102,6 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 15,
-    color: colors.grey600,
-  },
-  emptyContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyText: {
-    fontSize: 15,
-    color: colors.grey600,
-  },
-
-  // Section Header
-  sectionHeader: {
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.grey900,
-    marginBottom: 4,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
     color: colors.grey600,
   },
 

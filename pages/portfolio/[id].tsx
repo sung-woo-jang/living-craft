@@ -1,7 +1,7 @@
 import { createRoute, Image, useNavigation } from '@granite-js/react-native';
 import { usePortfolio } from '@shared/hooks/usePortfolios';
 import { useServices } from '@shared/hooks/useServices';
-import { Card, Carousel } from '@shared/ui';
+import { Card, Carousel, SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Skeleton } from '@toss/tds-react-native';
 import { useReservationStore } from '@widgets/reservation';
@@ -129,12 +129,11 @@ function Page() {
         </Card>
 
         {/* 프로젝트 소개 카드 */}
-        <Card>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>프로젝트 소개</Text>
-          </View>
-          <Text style={styles.description}>{portfolio.detailedDescription}</Text>
-        </Card>
+        <SectionCard title="프로젝트 소개">
+          <SectionCard.Content>
+            <Text style={styles.description}>{portfolio.detailedDescription}</Text>
+          </SectionCard.Content>
+        </SectionCard>
 
         {/* 작업 이미지 카드 */}
         <Card>
@@ -164,18 +163,17 @@ function Page() {
         </Card>
 
         {/* 태그 카드 */}
-        <Card>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>관련 태그</Text>
-          </View>
-          <View style={styles.tagsContainer}>
-            {portfolio.tags.map((tag: string, index: number) => (
-              <View key={index} style={styles.tag}>
-                <Text style={styles.tagText}>#{tag}</Text>
-              </View>
-            ))}
-          </View>
-        </Card>
+        <SectionCard title="관련 태그">
+          <SectionCard.Content>
+            <View style={styles.tagsContainer}>
+              {portfolio.tags.map((tag: string, index: number) => (
+                <View key={index} style={styles.tag}>
+                  <Text style={styles.tagText}>#{tag}</Text>
+                </View>
+              ))}
+            </View>
+          </SectionCard.Content>
+        </SectionCard>
 
         {/* 문의 버튼 카드 */}
         <Card>

@@ -1,5 +1,5 @@
 import { useServices } from '@shared/hooks/useServices';
-import { Card } from '@shared/ui';
+import { SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset, Skeleton } from '@toss/tds-react-native';
 import { useFormContext } from 'react-hook-form';
@@ -12,15 +12,13 @@ export function ServiceSelectionStep() {
   const selectedService = watch('service');
 
   const { data: services, isLoading } = useServices();
+  const isEmpty = !services || services.length === 0;
 
-  if (isLoading) {
-    return (
-      <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
-        <Card>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>서비스 선택</Text>
-            <Text style={styles.sectionSubtitle}>원하시는 서비스를 선택해주세요</Text>
-          </View>
+  return (
+    <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
+      <SectionCard title="서비스 선택" subtitle="원하시는 서비스를 선택해주세요">
+
+        <SectionCard.Loading isLoading={isLoading}>
           <View style={styles.loadingContainer}>
             {Array.from({ length: 2 }).map((_, index) => (
               <View key={index} style={[styles.serviceRow, index < 1 && styles.serviceRowBorder]}>
@@ -34,60 +32,38 @@ export function ServiceSelectionStep() {
               </View>
             ))}
           </View>
-        </Card>
-      </ScrollView>
-    );
-  }
+        </SectionCard.Loading>
 
-  if (!services || services.length === 0) {
-    return (
-      <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
-        <Card>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>서비스 선택</Text>
-            <Text style={styles.sectionSubtitle}>원하시는 서비스를 선택해주세요</Text>
-          </View>
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>등록된 서비스가 없습니다.</Text>
-          </View>
-        </Card>
-      </ScrollView>
-    );
-  }
+        <SectionCard.Empty isEmpty={isEmpty} message="등록된 서비스가 없습니다." />
 
-  return (
-    <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
-      <Card>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>서비스 선택</Text>
-          <Text style={styles.sectionSubtitle}>원하시는 서비스를 선택해주세요</Text>
-        </View>
+        <SectionCard.Content>
+          {services?.map((service, index) => (
+            <TouchableOpacity
+              key={service.id}
+              style={[
+                styles.serviceRow,
+                selectedService?.id === service.id && styles.serviceRowSelected,
+                index < services.length - 1 && styles.serviceRowBorder,
+              ]}
+              onPress={() => setValue('service', service)}
+            >
+              <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor }]}>
+                <Asset.Icon name={service.icon?.name} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
+              </View>
 
-        {services.map((service, index) => (
-          <TouchableOpacity
-            key={service.id}
-            style={[
-              styles.serviceRow,
-              selectedService?.id === service.id && styles.serviceRowSelected,
-              index < services.length - 1 && styles.serviceRowBorder,
-            ]}
-            onPress={() => setValue('service', service)}
-          >
-            <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor }]}>
-              <Asset.Icon name={service.icon?.name} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
-            </View>
+              <View style={styles.serviceInfo}>
+                <Text style={styles.serviceTitle}>{service.title}</Text>
+                <Text style={styles.serviceDescription}>{service.description}</Text>
+              </View>
 
-            <View style={styles.serviceInfo}>
-              <Text style={styles.serviceTitle}>{service.title}</Text>
-              <Text style={styles.serviceDescription}>{service.description}</Text>
-            </View>
+              <View style={[styles.checkIcon, selectedService?.id === service.id && styles.checkIconSelected]}>
+                {selectedService?.id === service.id && <Text style={styles.checkMark}>✓</Text>}
+              </View>
+            </TouchableOpacity>
+          ))}
+        </SectionCard.Content>
 
-            <View style={[styles.checkIcon, selectedService?.id === service.id && styles.checkIconSelected]}>
-              {selectedService?.id === service.id && <Text style={styles.checkMark}>✓</Text>}
-            </View>
-          </TouchableOpacity>
-        ))}
-      </Card>
+      </SectionCard>
     </ScrollView>
   );
 }
@@ -99,32 +75,8 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingVertical: 10,
   },
-  sectionHeader: {
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.grey900,
-    marginBottom: 4,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: colors.grey600,
-  },
   loadingContainer: {
     paddingBottom: 8,
-  },
-  emptyContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyText: {
-    fontSize: 15,
-    color: colors.grey600,
   },
   serviceRow: {
     flexDirection: 'row',

@@ -10,6 +10,10 @@ interface SectionCardProps {
    */
   title: string;
   /**
+   * 섹션 부제목 (선택사항)
+   */
+  subtitle?: string;
+  /**
    * 섹션 본문 내용
    */
   children: React.ReactNode;
@@ -65,11 +69,12 @@ interface ContentProps {
  * </SectionCard>
  * ```
  */
-export const SectionCard = ({ title, children }: SectionCardProps) => {
+export const SectionCard = ({ title, subtitle, children }: SectionCardProps) => {
   return (
     <Card>
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
+        {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
       </View>
       {children}
     </Card>
@@ -116,6 +121,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.grey900,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: colors.grey600,
+    marginTop: 4,
   },
   emptyContainer: {
     paddingVertical: 60,
