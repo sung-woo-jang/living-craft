@@ -1,5 +1,5 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
-import { useLogin } from '@shared/hooks/useAuth';
+import { useLogin } from '@shared/hooks';
 import { Button, Text } from '@toss/tds-react-native';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 

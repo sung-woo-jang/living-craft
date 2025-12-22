@@ -1,5 +1,5 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
-import { useReviews } from '@shared/hooks/useReviews';
+import { useRefresh, useReviews } from '@shared/hooks';
 import { EmptyState } from '@shared/ui/empty-state';
 import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
@@ -25,7 +25,9 @@ function Page() {
   const navigation = useNavigation();
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const { data: reviewsResponse, isLoading } = useReviews();
+  const reviewsQuery = useReviews();
+  const { data: reviewsResponse, isLoading } = reviewsQuery;
+  const { refreshing, onRefresh } = useRefresh(reviewsQuery);
 
   const allReviews = reviewsResponse?.data || [];
   const filteredReviews = allReviews.filter((review) => {
@@ -125,6 +127,8 @@ function Page() {
           )}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
         />
       )}
     </View>

@@ -1,7 +1,7 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
 import { MENU_ITEMS } from '@shared/constants';
-import { useLogout } from '@shared/hooks/useAuth';
-import { useMe } from '@shared/hooks/useUsers';
+import { useLogout } from '@shared/hooks';
+import { useMe } from '@shared/hooks';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset, Button, Skeleton } from '@toss/tds-react-native';

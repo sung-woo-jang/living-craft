@@ -1,4 +1,4 @@
-import { useReviews } from '@shared/hooks/useReviews';
+import { useReviews } from '@shared/hooks';
 import { Carousel, SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset, Skeleton } from '@toss/tds-react-native';

@@ -1,8 +1,8 @@
 import { createRoute, Image } from '@granite-js/react-native';
-import { usePortfolios } from '@shared/hooks/usePortfolios';
+import { usePortfolios, useRefresh } from '@shared/hooks';
 import { SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/portfolio', {
   component: Page,
@@ -14,7 +14,9 @@ export const Route = createRoute('/portfolio', {
 function Page() {
   const navigation = Route.useNavigation();
 
-  const { data: portfoliosResponse, isLoading } = usePortfolios();
+  const portfoliosQuery = usePortfolios();
+  const { data: portfoliosResponse, isLoading } = portfoliosQuery;
+  const { refreshing, onRefresh } = useRefresh(portfoliosQuery);
 
   const handlePortfolioPress = (portfolioId: number) => {
     navigation.navigate('/portfolio/:id' as any, { id: String(portfolioId) });
@@ -40,6 +42,14 @@ function Page() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.blue500}
+            colors={[colors.blue500]}
+          />
+        }
       >
         <SectionCard title="작업 사례" subtitle="다양한 작업 사례를 확인해보세요">
           <SectionCard.Empty isEmpty={isEmpty} message="등록된 포트폴리오가 없습니다." />

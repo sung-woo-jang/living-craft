@@ -1,4 +1,4 @@
-import { useCreateReservation } from '@shared/hooks/useReservations';
+import { useCreateReservation } from '@shared/hooks';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { Alert } from 'react-native';
 

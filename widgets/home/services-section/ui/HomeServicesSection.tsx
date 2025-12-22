@@ -1,6 +1,6 @@
 import { createRoute } from '@granite-js/react-native';
 import { Service } from '@shared/api/types';
-import { useServices } from '@shared/hooks/useServices';
+import { useServices } from '@shared/hooks';
 import { SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset, Skeleton } from '@toss/tds-react-native';

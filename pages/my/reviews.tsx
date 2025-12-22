@@ -1,5 +1,5 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
-import { useMyReviews } from '@shared/hooks/useUsers';
+import { useMyReviews, useRefresh } from '@shared/hooks';
 import { EmptyState } from '@shared/ui/empty-state';
 import { colors } from '@toss/tds-colors';
 import { Asset, Skeleton } from '@toss/tds-react-native';
@@ -15,7 +15,9 @@ export const Route = createRoute('/my/reviews', {
 function Page() {
   const navigation = useNavigation();
 
-  const { data: myReviews, isLoading } = useMyReviews();
+  const myReviewsQuery = useMyReviews();
+  const { data: myReviews, isLoading } = myReviewsQuery;
+  const { refreshing, onRefresh } = useRefresh(myReviewsQuery);
 
   if (isLoading) {
     return (
@@ -108,6 +110,8 @@ function Page() {
         )}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
       />
     </View>
   );

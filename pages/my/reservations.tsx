@@ -1,6 +1,6 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
 import { ReservationStatus } from '@shared/api/types';
-import { useMyReservations } from '@shared/hooks/useReservations';
+import { useMyReservations, useRefresh } from '@shared/hooks';
 import { EmptyState } from '@shared/ui/empty-state';
 import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
@@ -40,7 +40,9 @@ function Page() {
   const navigation = useNavigation();
   const [activeFilter, setActiveFilter] = useState<'all' | ReservationStatus>('all');
 
-  const { data: reservationsResponse, isLoading } = useMyReservations();
+  const reservationsQuery = useMyReservations();
+  const { data: reservationsResponse, isLoading } = reservationsQuery;
+  const { refreshing, onRefresh } = useRefresh(reservationsQuery);
 
   if (isLoading) {
     return (
@@ -157,6 +159,8 @@ function Page() {
           )}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
         />
       )}
     </View>

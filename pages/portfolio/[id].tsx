@@ -1,6 +1,6 @@
 import { createRoute, Image, useNavigation } from '@granite-js/react-native';
-import { usePortfolio } from '@shared/hooks/usePortfolios';
-import { useServices } from '@shared/hooks/useServices';
+import { usePortfolio } from '@shared/hooks';
+import { useServices } from '@shared/hooks';
 import { Card, Carousel, SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Skeleton } from '@toss/tds-react-native';

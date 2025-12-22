@@ -1,5 +1,5 @@
 import { createRoute, Image } from '@granite-js/react-native';
-import { usePortfolios } from '@shared/hooks/usePortfolios';
+import { usePortfolios } from '@shared/hooks';
 import { Carousel, SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Badge, Skeleton } from '@toss/tds-react-native';

@@ -1,4 +1,4 @@
-import { useAvailableDates, useAvailableTimes } from '@shared/hooks/useServices';
+import { useAvailableDates, useAvailableTimes } from '@shared/hooks';
 import { Card } from '@shared/ui';
 import { CalendarBottomSheet } from '@shared/ui/calendar-bottom-sheet';
 import { formatDateToString, parseStringToDate } from '@shared/ui/calendar-bottom-sheet/utils';

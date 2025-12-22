@@ -1,19 +1,42 @@
 /**
- * Living Craft 서비스 훅
+ * 서비스 관련 Query 훅 및 API 함수
  */
 
 import { useQuery } from '@tanstack/react-query';
 
-import * as servicesApi from '../api/services';
-import type { TimeType } from '../api/types';
+import { generateQueryKeysFromUrl } from '../../hooks/query-keys';
+import { axiosInstance } from '../axios';
+import { API } from '../endpoints';
+import type {
+  AvailableDatesRequest,
+  AvailableDatesResponse,
+  AvailableTimesRequest,
+  AvailableTimesResponse,
+  Service,
+  TimeType,
+} from '../types';
+
+/**
+ * 서비스 목록 조회 API 함수
+ * Store 등에서 직접 호출할 때 사용
+ */
+export async function getServices(): Promise<Service[]> {
+  const { data } = await axiosInstance.get<Service[]>(API.SERVICES.LIST);
+
+  // Backend 응답의 id가 string이므로 number로 변환
+  return data.data.map((service) => ({
+    ...service,
+    id: typeof service.id === 'string' ? parseInt(service.id, 10) : service.id,
+  }));
+}
 
 /**
  * 서비스 목록 조회 훅
  */
 export function useServices() {
   return useQuery({
-    queryKey: ['services'],
-    queryFn: servicesApi.getServices,
+    queryKey: generateQueryKeysFromUrl(API.SERVICES.LIST),
+    queryFn: getServices,
     staleTime: 300000, // 5분 (서비스 정보는 자주 바뀌지 않음)
   });
 }
@@ -33,7 +56,14 @@ export function useAvailableTimes(
 ) {
   return useQuery({
     queryKey: ['available-times', serviceId, date, type],
-    queryFn: () => servicesApi.getAvailableTimes({ serviceId, date, type }),
+    queryFn: async () => {
+      const params: AvailableTimesRequest = { serviceId, date, type };
+      const { data } = await axiosInstance.post<AvailableTimesResponse>(
+        API.SERVICES.AVAILABLE_TIMES,
+        params
+      );
+      return data.data;
+    },
     enabled: enabled && serviceId > 0 && !!date,
     staleTime: 60000, // 1분
   });
@@ -58,7 +88,14 @@ export function useAvailableDates(
 ) {
   return useQuery({
     queryKey: ['available-dates', serviceId, year, month, type],
-    queryFn: () => servicesApi.getAvailableDates({ serviceId, year, month, type }),
+    queryFn: async () => {
+      const params: AvailableDatesRequest = { serviceId, year, month, type };
+      const { data } = await axiosInstance.post<AvailableDatesResponse>(
+        API.SERVICES.AVAILABLE_DATES,
+        params
+      );
+      return data.data;
+    },
     enabled: enabled && serviceId > 0 && year > 0 && month > 0,
     staleTime: 60000, // 1분
   });
