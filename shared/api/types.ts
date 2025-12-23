@@ -487,13 +487,24 @@ export interface MultipleImageUploadResponse {
 export type PromotionLinkType = 'external' | 'internal';
 
 /**
+ * 프로모션 아이콘 정보
+ */
+export interface PromotionIcon {
+  id: number;
+  name: string;
+  type: string;
+}
+
+/**
  * 프로모션 배너 정보 (공개 API용)
  */
 export interface Promotion {
   id: number;
   title: string;
   subtitle: string | null;
-  iconUrl: string | null;
+  icon: PromotionIcon;
+  iconBgColor: string;
+  iconColor: string;
   linkUrl: string | null;
   linkType: PromotionLinkType;
 }

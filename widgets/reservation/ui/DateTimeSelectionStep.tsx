@@ -28,15 +28,9 @@ interface DateTimeSelectionStepProps {
 
 export function DateTimeSelectionStep({ withScrollView = true }: DateTimeSelectionStepProps) {
   const { watch, setValue } = useFormContext<ReservationFormData>();
-  const {
-    // 견적 캘린더
-    isEstimateCalendarVisible,
-    openEstimateCalendar,
-    closeEstimateCalendar,
-  } = useReservationStore([
+  const { isEstimateCalendarVisible, update } = useReservationStore([
     'isEstimateCalendarVisible',
-    'openEstimateCalendar',
-    'closeEstimateCalendar',
+    'update',
   ]);
 
   const selectedService = watch('service');
@@ -88,7 +82,7 @@ export function DateTimeSelectionStep({ withScrollView = true }: DateTimeSelecti
     const dateString = formatDateToString(date);
     setValue('estimateDate', dateString);
     setValue('estimateTimeSlot', null);
-    closeEstimateCalendar();
+    update({ isEstimateCalendarVisible: false });
   };
 
   const content = (
@@ -101,7 +95,10 @@ export function DateTimeSelectionStep({ withScrollView = true }: DateTimeSelecti
         </View>
 
         {/* 견적 날짜 선택 */}
-        <TouchableOpacity style={styles.dateInputButton} onPress={openEstimateCalendar}>
+        <TouchableOpacity
+          style={styles.dateInputButton}
+          onPress={() => update({ isEstimateCalendarVisible: true })}
+        >
           <Text style={estimateDate ? styles.dateInputTextSelected : styles.dateInputText}>
             {estimateDate || '날짜를 선택해주세요'}
           </Text>
@@ -191,7 +188,7 @@ export function DateTimeSelectionStep({ withScrollView = true }: DateTimeSelecti
         title="견적 희망 날짜 선택"
         confirmButtonText="날짜 선택"
         onConfirm={handleEstimateDateConfirm}
-        onClose={closeEstimateCalendar}
+        onClose={() => update({ isEstimateCalendarVisible: false })}
         onMonthChange={(year, month) => setEstimateCalendarMonth({ year, month })}
       />
     </>

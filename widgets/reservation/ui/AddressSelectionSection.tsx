@@ -21,23 +21,26 @@ export function AddressSelectionSection({
   onClearAddress,
   onDetailAddressChange,
 }: Props) {
-  const { addressSelection, addressEstimateInfo, setIsRegionBottomSheetOpen, resetRegionSelection } =
-    useReservationStore([
-      'addressSelection',
-      'addressEstimateInfo',
-      'setIsRegionBottomSheetOpen',
-      'resetRegionSelection',
-    ]);
+  const { addressSelection, addressEstimateInfo, update, resetRegionSelection } = useReservationStore([
+    'addressSelection',
+    'addressEstimateInfo',
+    'update',
+    'resetRegionSelection',
+  ]);
 
   const handleOpenRegionSheet = useCallback(() => {
-    setIsRegionBottomSheetOpen(true);
-  }, [setIsRegionBottomSheetOpen]);
+    update({ isRegionBottomSheetOpen: true });
+  }, [update]);
+
+  const handleOpenCitySheet = useCallback(() => {
+    update({ isCityBottomSheetOpen: true });
+  }, [update]);
 
   const handleChangeRegion = useCallback(() => {
     resetRegionSelection();
     onClearAddress();
-    setIsRegionBottomSheetOpen(true);
-  }, [resetRegionSelection, onClearAddress, setIsRegionBottomSheetOpen]);
+    update({ isRegionBottomSheetOpen: true });
+  }, [resetRegionSelection, onClearAddress, update]);
 
   // 선택된 주소에서 시/도 + 구/군 부분 제외하고 표시
   // 예: "인천광역시 남동구 숙골로 456" → "숙골로 456"
@@ -70,12 +73,17 @@ export function AddressSelectionSection({
     );
   }
 
-  // 시/도만 선택된 경우: 구/군 선택 중 메시지 표시
+  // 시/도만 선택된 경우: 구/군 선택 버튼 표시
   if (!addressSelection.city) {
     return (
       <View style={styles.selectRegionContainer}>
         <Text style={styles.selectRegionTitle}>지역 선택</Text>
-        <Text style={styles.selectRegionSubtitle}>{addressSelection.region.name}의 구/군을 선택 중...</Text>
+        <Text style={styles.selectRegionSubtitle}>
+          {addressSelection.region.name}에서 구/군을 선택해주세요
+        </Text>
+        <View style={styles.buttonContainer}>
+          <Button onPress={handleOpenCitySheet}>구/군 선택하기</Button>
+        </View>
       </View>
     );
   }

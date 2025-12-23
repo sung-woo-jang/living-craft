@@ -28,7 +28,6 @@ export enum ContentType {
 const BASE_URL = ENV_API_BASE_URL || 'http://localhost:8000/api';
 
 // 디버깅용 로그
-// eslint-disable-next-line no-undef
 if (__DEV__) {
   console.log('[API Client] Base URL:', BASE_URL);
 }
@@ -112,7 +111,6 @@ const createAxiosInstance = (contentType: string, baseURL: string): TypedAxiosIn
           showErrorToast(errorMessage);
       }
 
-      // eslint-disable-next-line no-undef
       if (__DEV__) {
         console.error('API Error:', {
           statusCode: status,

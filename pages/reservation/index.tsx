@@ -16,12 +16,13 @@ import {
   DateTimeSummary,
   DEFAULT_FORM_VALUES,
   RegionSelectBottomSheet,
+  reservationStoreApi,
   ServiceSelectionStep,
   ServiceSummary,
   useReservationForm,
   useReservationStore,
 } from '@widgets/reservation';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { Alert, BackHandler, LayoutAnimation, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -75,19 +76,16 @@ function Page() {
     cities,
     // 주소 검색 상태
     isAddressSearchDrawerOpen,
+    // 서비스 목록 (지역 필터링용)
+    services: storeServices,
     // 액션
+    update,
     loadServices,
-    setIsRegionBottomSheetOpen,
-    setIsCityBottomSheetOpen,
-    setCities,
     selectRegion,
     selectCity,
-    resetAddressSearch,
     getFilteredRegionsForService,
     checkEstimateFee,
     resetEstimateFeeInfo,
-    openAddressSearchDrawer,
-    closeAddressSearchDrawer,
   } = useReservationStore([
     'formData',
     'updateFormData',
@@ -103,18 +101,14 @@ function Page() {
     'isCityBottomSheetOpen',
     'cities',
     'isAddressSearchDrawerOpen',
+    'services',
+    'update',
     'loadServices',
-    'setIsRegionBottomSheetOpen',
-    'setIsCityBottomSheetOpen',
-    'setCities',
     'selectRegion',
     'selectCity',
-    'resetAddressSearch',
     'getFilteredRegionsForService',
     'checkEstimateFee',
     'resetEstimateFeeInfo',
-    'openAddressSearchDrawer',
-    'closeAddressSearchDrawer',
   ]);
 
   const { methods, canProceedToNext, handleSubmit } = useReservationForm({
@@ -132,9 +126,6 @@ function Page() {
 
   // Props에서 타입 안전하게 params 사용
   const serviceIdParam = params?.serviceId ? parseInt(params.serviceId, 10) : null;
-
-  // 서비스 변경 감지를 위한 이전 서비스 ID 추적
-  const prevServiceIdRef = useRef<number | null>(null);
 
   // params 기반 서비스 선택이 이미 처리되었는지 추적
   const paramsProcessedRef = useRef(false);
@@ -156,9 +147,9 @@ function Page() {
 
   // 선택된 서비스에 따라 필터링된 지역 목록
   const filteredRegions = useMemo(() => {
-    if (!currentService) return [];
+    if (!currentService || !storeServices || storeServices.length === 0) return [];
     return getFilteredRegionsForService(currentService.id);
-  }, [currentService, getFilteredRegionsForService]);
+  }, [currentService, storeServices, getFilteredRegionsForService]);
 
   // 서비스가 선택되었는지 여부
   const hasSelectedService = currentService !== null;
@@ -211,35 +202,54 @@ function Page() {
           ...city,
           regionId: selectedRegion.id,
         }));
-        setCities(citiesWithRegion);
+        update({ cities: citiesWithRegion });
       }
     }
-  }, [isCityBottomSheetOpen, addressSelection.region, filteredRegions]);
+  }, [isCityBottomSheetOpen, addressSelection.region, filteredRegions, update]);
 
-  // 서비스 변경 시 주소 초기화 핸들러
-  const resetAddressState = useCallback(() => {
-    resetAddressSearch();
-    resetEstimateFeeInfo();
-    setLocalSelectedAddress(null);
-    setDetailAddress('');
-    methods.setValue('customerInfo.address', '');
-    methods.setValue('customerInfo.detailAddress', '');
-  }, [resetAddressSearch, resetEstimateFeeInfo, methods]);
+  // 서비스 변경 감지 시 주소 초기화 (Subscribe 패턴)
+  useLayoutEffect(() => {
+    let prevServiceId: number | null = null;
 
-  // 서비스 변경 감지
+    const unsubscribe = reservationStoreApi.subscribe((state) => {
+      const { formData } = state;
+      const selectedService = formData.service;
+
+      // 서비스가 선택되지 않았으면 스킵
+      if (!selectedService) {
+        prevServiceId = null;
+        return;
+      }
+
+      // 서비스가 변경되었을 때 주소 초기화
+      const isServiceChanged = prevServiceId !== null && selectedService.id !== prevServiceId;
+      if (isServiceChanged) {
+        reservationStoreApi.getState().resetAddressSearch();
+        reservationStoreApi.getState().resetEstimateFeeInfo();
+      }
+
+      prevServiceId = selectedService.id;
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  // 서비스 변경 시 로컬 상태 초기화
   useEffect(() => {
-    if (!currentService) {
-      prevServiceIdRef.current = null;
-      return;
-    }
+    if (!currentService) return;
 
-    if (prevServiceIdRef.current !== null && prevServiceIdRef.current !== currentService.id) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- 서비스 변경 시 의도적인 상태 초기화
-      resetAddressState();
-    }
+    // 서비스가 변경되면 로컬 주소 상태 초기화 (다음 렌더링에서 실행)
+    const timeoutId = setTimeout(() => {
+      setLocalSelectedAddress(null);
+      setDetailAddress('');
+      methods.setValue('customerInfo.address', '');
+      methods.setValue('customerInfo.detailAddress', '');
+    }, 0);
 
-    prevServiceIdRef.current = currentService.id;
-  }, [currentService?.id, resetAddressState]);
+    return () => clearTimeout(timeoutId);
+  }, [currentService?.id, methods]);
 
   // 로딩 중 뒤로가기 차단
   useEffect(() => {
@@ -258,14 +268,14 @@ function Page() {
   const handleAddressSelect = useCallback(
     (address: AddressSearchResult) => {
       setLocalSelectedAddress(address);
-      closeAddressSearchDrawer();
+      update({ isAddressSearchDrawerOpen: false });
       methods.setValue('customerInfo.address', address.roadAddress);
 
       if (currentService) {
         checkEstimateFee();
       }
     },
-    [closeAddressSearchDrawer, methods, currentService, checkEstimateFee]
+    [setLocalSelectedAddress, update, methods, currentService, checkEstimateFee]
   );
 
   // 주소 삭제 핸들러
@@ -275,7 +285,7 @@ function Page() {
     methods.setValue('customerInfo.address', '');
     methods.setValue('customerInfo.detailAddress', '');
     resetEstimateFeeInfo();
-  }, [methods, resetEstimateFeeInfo]);
+  }, [setLocalSelectedAddress, setDetailAddress, methods, resetEstimateFeeInfo]);
 
   // 상세 주소 변경 핸들러
   const handleDetailAddressChange = useCallback(
@@ -283,19 +293,21 @@ function Page() {
       setDetailAddress(value);
       methods.setValue('customerInfo.detailAddress', value);
     },
-    [methods]
+    [setDetailAddress, methods]
   );
 
   // 주소 검색 Drawer 열기
   const handleOpenSearchDrawer = useCallback(() => {
-    openAddressSearchDrawer();
-  }, [openAddressSearchDrawer]);
+    update({ isAddressSearchDrawerOpen: true });
+  }, [update]);
 
   // 시/도 선택 시 구/군 BottomSheet 오픈 핸들러
   const handleBackToRegion = useCallback(() => {
-    setIsCityBottomSheetOpen(false);
-    setIsRegionBottomSheetOpen(true);
-  }, [setIsCityBottomSheetOpen, setIsRegionBottomSheetOpen]);
+    update({
+      isCityBottomSheetOpen: false,
+      isRegionBottomSheetOpen: true,
+    });
+  }, [update]);
 
   // 단계 완료 및 자동 스크롤
   const handleCompleteStep = useCallback(
@@ -542,7 +554,7 @@ function Page() {
         regions={serviceableRegionsList}
         isLoading={false}
         onSelect={selectRegion}
-        onClose={() => setIsRegionBottomSheetOpen(false)}
+        onClose={() => update({ isRegionBottomSheetOpen: false })}
       />
 
       {/* 구/군 선택 BottomSheet */}
@@ -552,7 +564,7 @@ function Page() {
         cities={cities}
         isLoading={false}
         onSelect={selectCity}
-        onClose={() => setIsCityBottomSheetOpen(false)}
+        onClose={() => update({ isCityBottomSheetOpen: false })}
         onBackToRegion={handleBackToRegion}
       />
 
@@ -560,7 +572,7 @@ function Page() {
       <AddressSearchDrawer
         isOpen={isAddressSearchDrawerOpen}
         regionPrefix={regionPrefix}
-        onClose={closeAddressSearchDrawer}
+        onClose={() => update({ isAddressSearchDrawerOpen: false })}
         onSelect={handleAddressSelect}
       />
     </FormProvider>

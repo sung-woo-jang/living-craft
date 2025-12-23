@@ -59,6 +59,7 @@ const typescriptConfig = {
       ...globals.browser,
       ...globals.node,
       naver: 'readonly',
+      __DEV__: 'readonly', // React Native 전역 변수
     },
   },
 };

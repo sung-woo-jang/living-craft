@@ -18,7 +18,9 @@ import { ReservationStatus } from '@shared/api/types';
  * Mock 딜레이 (실제 API처럼 약간의 지연 시뮬레이션)
  */
 export const mockDelay = (ms: number = 500): Promise<void> => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 };
 
 /**

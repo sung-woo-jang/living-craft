@@ -1,6 +1,7 @@
 import type { Promotion } from '@shared/api/types';
 import { colors } from '@toss/tds-colors';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Asset } from '@toss/tds-react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface PromoItemProps {
   /** 프로모션 데이터 */
@@ -20,9 +21,22 @@ export const PromoItem = ({ promotion, onPress }: PromoItemProps) => {
       onPress={() => onPress(promotion)}
       activeOpacity={promotion.linkUrl ? 0.7 : 1}
     >
-      {promotion.iconUrl && (
-        <Image source={{ uri: promotion.iconUrl }} style={styles.icon} />
-      )}
+      <View
+        style={[
+          styles.iconContainer,
+          { backgroundColor: promotion.iconBgColor },
+        ]}
+      >
+        {promotion.icon?.name ? (
+          <Asset.Icon
+            name={promotion.icon.name}
+            color={promotion.iconColor}
+            frameShape={Asset.frameShape.CleanW24}
+          />
+        ) : (
+          <Text style={styles.iconFallback}>📢</Text>
+        )}
+      </View>
       <View style={styles.textContainer}>
         <Text style={styles.title}>{promotion.title}</Text>
         {promotion.subtitle && (
@@ -43,11 +57,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey50,
     borderRadius: 12,
   },
-  icon: {
+  iconContainer: {
     width: 56,
     height: 56,
     borderRadius: 8,
     marginRight: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconFallback: {
+    fontSize: 24,
   },
   textContainer: {
     flex: 1,

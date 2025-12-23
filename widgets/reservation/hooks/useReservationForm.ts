@@ -38,7 +38,7 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
   const watchedValues = watch();
 
   // zustand store
-  const { setIsLoading } = useReservationStore(['setIsLoading']);
+  const { update } = useReservationStore(['update']);
 
   // TanStack Query mutation
   const { mutateAsync: createReservation } = useCreateReservation();
@@ -97,7 +97,7 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
       return;
     }
 
-    setIsLoading(true);
+    update({ isLoading: true });
 
     try {
       const values = getValues();
@@ -136,7 +136,7 @@ export function useReservationForm(options?: UseReservationFormOptions): UseRese
       const message = error instanceof Error ? error.message : '예약 처리 중 오류가 발생했습니다.';
       Alert.alert('오류', message);
     } finally {
-      setIsLoading(false);
+      update({ isLoading: false });
     }
   };
 
