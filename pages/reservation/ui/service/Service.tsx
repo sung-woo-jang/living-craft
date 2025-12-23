@@ -1,4 +1,3 @@
-import { useRoute } from '@granite-js/native/@react-navigation/native';
 import { useServices } from '@shared/hooks';
 import { Card } from '@shared/ui';
 import { ProgressStep, ProgressStepper } from '@shared/ui/progress-stepper';
@@ -18,11 +17,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import type { ServicePageParams } from '../../service';
+
 interface ServicePageProps {
   navigation: any;
+  params: ServicePageParams;
 }
 
-export function ServicePage({ navigation }: ServicePageProps) {
+export function ServicePage({ navigation, params }: ServicePageProps) {
   const {
     formData,
     updateFormData,
@@ -73,10 +75,8 @@ export function ServicePage({ navigation }: ServicePageProps) {
   // 서비스 목록 조회 (params 기반 서비스 선택에 필요)
   const { data: services } = useServices();
 
-  // React Navigation route에서 params 가져오기 (프로모션 배너 등에서 전달)
-  const route = useRoute();
-  const routeParams = route.params as { serviceId?: string } | undefined;
-  const serviceIdParam = routeParams?.serviceId ? parseInt(routeParams.serviceId, 10) : null;
+  // Props에서 타입 안전하게 params 사용 (프로모션 배너, 딥링크 등에서 전달)
+  const serviceIdParam = params.serviceId ? parseInt(params.serviceId, 10) : null;
 
   // 서비스 변경 감지를 위한 이전 서비스 ID 추적
   const prevServiceIdRef = useRef<number | null>(null);
