@@ -5,7 +5,15 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 
 import { ReservationFormData } from '../types';
 
-export function ConfirmationStep() {
+interface ConfirmationStepProps {
+  /**
+   * ScrollView로 감쌀지 여부 (기존 페이지 호환용)
+   * @default true
+   */
+  withScrollView?: boolean;
+}
+
+export function ConfirmationStep({ withScrollView = true }: ConfirmationStepProps) {
   const { watch, setValue } = useFormContext<ReservationFormData>();
 
   const selectedService = watch('service');
@@ -15,8 +23,8 @@ export function ConfirmationStep() {
   const customerInfo = watch('customerInfo');
   const agreedToTerms = watch('agreedToTerms');
 
-  return (
-    <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
+  const content = (
+    <>
       <Card>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>예약 확인</Text>
@@ -65,13 +73,26 @@ export function ConfirmationStep() {
           <Text style={styles.termsText}>이용약관 및 개인정보처리방침에 동의합니다</Text>
         </TouchableOpacity>
       </Card>
-    </ScrollView>
+    </>
   );
+
+  if (withScrollView) {
+    return (
+      <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
+        {content}
+      </ScrollView>
+    );
+  }
+
+  return <View style={styles.stepContentNoScroll}>{content}</View>;
 }
 
 const styles = StyleSheet.create({
   stepContent: {
     flex: 1,
+  },
+  stepContentNoScroll: {
+    paddingVertical: 10,
   },
   scrollContent: {
     paddingVertical: 10,

@@ -11,6 +11,14 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { useReservationStore } from '../store';
 import { ReservationFormData } from '../types';
 
+interface DateTimeSelectionStepProps {
+  /**
+   * ScrollView로 감쌀지 여부 (기존 페이지 호환용)
+   * @default true
+   */
+  withScrollView?: boolean;
+}
+
 /**
  * 날짜/시간 선택 단계
  *
@@ -18,7 +26,7 @@ import { ReservationFormData } from '../types';
  * 시공 일정은 견적 방문 후 관리자가 백오피스에서 지정합니다.
  */
 
-export function DateTimeSelectionStep() {
+export function DateTimeSelectionStep({ withScrollView = true }: DateTimeSelectionStepProps) {
   const { watch, setValue } = useFormContext<ReservationFormData>();
   const {
     // 견적 캘린더
@@ -83,85 +91,95 @@ export function DateTimeSelectionStep() {
     closeEstimateCalendar();
   };
 
-  return (
+  const content = (
     <>
-      <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
-        {/* 견적 희망 날짜/시간 섹션 */}
-        <Card>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>견적 희망 날짜/시간</Text>
-            <Text style={styles.sectionSubtitle}>견적을 받고 싶은 날짜와 시간을 선택해주세요</Text>
-          </View>
+      {/* 견적 희망 날짜/시간 섹션 */}
+      <Card>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>견적 희망 날짜/시간</Text>
+          <Text style={styles.sectionSubtitle}>견적을 받고 싶은 날짜와 시간을 선택해주세요</Text>
+        </View>
 
-          {/* 견적 날짜 선택 */}
-          <TouchableOpacity style={styles.dateInputButton} onPress={openEstimateCalendar}>
-            <Text style={estimateDate ? styles.dateInputTextSelected : styles.dateInputText}>
-              {estimateDate || '날짜를 선택해주세요'}
-            </Text>
-          </TouchableOpacity>
+        {/* 견적 날짜 선택 */}
+        <TouchableOpacity style={styles.dateInputButton} onPress={openEstimateCalendar}>
+          <Text style={estimateDate ? styles.dateInputTextSelected : styles.dateInputText}>
+            {estimateDate || '날짜를 선택해주세요'}
+          </Text>
+        </TouchableOpacity>
 
-          {/* 견적 시간 선택 */}
-          {estimateDate && (
-            <View style={styles.timeSlotSection}>
-              <Text style={styles.timeSlotLabel}>시간 선택</Text>
-              {isLoadingEstimateTimes ? (
-                <View style={styles.timeSlotGrid}>
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <Skeleton key={i} width={72} height={44} />
-                  ))}
-                </View>
-              ) : estimateTimesResponse?.isAvailable === false ? (
-                <View style={styles.unavailableNotice}>
-                  <Text style={styles.unavailableText}>
-                    {estimateTimesResponse?.reason || '예약이 불가능한 날짜입니다.'}
-                  </Text>
-                </View>
-              ) : (
-                <View style={styles.timeSlotGrid}>
-                  {estimateTimesResponse?.times?.map((slot) => (
-                    <TouchableOpacity
-                      key={slot.time}
-                      style={[
-                        styles.timeSlot,
-                        estimateTimeSlot?.time === slot.time && styles.timeSlotSelected,
-                        !slot.available && styles.timeSlotDisabled,
-                      ]}
-                      onPress={() => slot.available && setValue('estimateTimeSlot', slot)}
-                      disabled={!slot.available}
-                    >
-                      <Text
-                        style={[
-                          styles.timeSlotText,
-                          estimateTimeSlot?.time === slot.time && styles.timeSlotTextSelected,
-                          !slot.available && styles.timeSlotTextDisabled,
-                        ]}
-                      >
-                        {slot.time}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-            </View>
-          )}
-        </Card>
-
-        {/* 시공 일정 안내 */}
-        {estimateTimeSlot && (
-          <Card>
-            <View style={styles.constructionNotice}>
-              <Text style={styles.constructionNoticeIcon}>📋</Text>
-              <View style={styles.constructionNoticeTextContainer}>
-                <Text style={styles.constructionNoticeTitle}>시공 일정 안내</Text>
-                <Text style={styles.constructionNoticeDescription}>
-                  시공 일정은 견적 방문 후 상담을 통해 확정됩니다.{'\n'}
-                  견적 방문 시 작업 범위와 일정을 함께 조율해 드립니다.
+        {/* 견적 시간 선택 */}
+        {estimateDate && (
+          <View style={styles.timeSlotSection}>
+            <Text style={styles.timeSlotLabel}>시간 선택</Text>
+            {isLoadingEstimateTimes ? (
+              <View style={styles.timeSlotGrid}>
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <Skeleton key={i} width={72} height={44} />
+                ))}
+              </View>
+            ) : estimateTimesResponse?.isAvailable === false ? (
+              <View style={styles.unavailableNotice}>
+                <Text style={styles.unavailableText}>
+                  {estimateTimesResponse?.reason || '예약이 불가능한 날짜입니다.'}
                 </Text>
               </View>
-            </View>
-          </Card>
+            ) : (
+              <View style={styles.timeSlotGrid}>
+                {estimateTimesResponse?.times?.map((slot) => (
+                  <TouchableOpacity
+                    key={slot.time}
+                    style={[
+                      styles.timeSlot,
+                      estimateTimeSlot?.time === slot.time && styles.timeSlotSelected,
+                      !slot.available && styles.timeSlotDisabled,
+                    ]}
+                    onPress={() => slot.available && setValue('estimateTimeSlot', slot)}
+                    disabled={!slot.available}
+                  >
+                    <Text
+                      style={[
+                        styles.timeSlotText,
+                        estimateTimeSlot?.time === slot.time && styles.timeSlotTextSelected,
+                        !slot.available && styles.timeSlotTextDisabled,
+                      ]}
+                    >
+                      {slot.time}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </View>
         )}
-      </ScrollView>
+      </Card>
+
+      {/* 시공 일정 안내 */}
+      {estimateTimeSlot && (
+        <Card>
+          <View style={styles.constructionNotice}>
+            <Text style={styles.constructionNoticeIcon}>📋</Text>
+            <View style={styles.constructionNoticeTextContainer}>
+              <Text style={styles.constructionNoticeTitle}>시공 일정 안내</Text>
+              <Text style={styles.constructionNoticeDescription}>
+                시공 일정은 견적 방문 후 상담을 통해 확정됩니다.{'\n'}
+                견적 방문 시 작업 범위와 일정을 함께 조율해 드립니다.
+              </Text>
+            </View>
+          </View>
+        </Card>
+      )}
+    </>
+  );
+
+  return (
+    <>
+      {withScrollView ? (
+        <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
+          {content}
+        </ScrollView>
+      ) : (
+        <View style={styles.stepContentNoScroll}>{content}</View>
+      )}
 
       {/* 견적 캘린더 */}
       <CalendarBottomSheet
@@ -183,6 +201,9 @@ export function DateTimeSelectionStep() {
 const styles = StyleSheet.create({
   stepContent: {
     flex: 1,
+  },
+  stepContentNoScroll: {
+    paddingVertical: 10,
   },
   scrollContent: {
     paddingVertical: 10,

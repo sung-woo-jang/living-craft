@@ -1,29 +1,36 @@
 import { createRoute } from '@granite-js/react-native';
 import { useServices } from '@shared/hooks';
 import { Card } from '@shared/ui';
-import { ProgressStep, ProgressStepper } from '@shared/ui/progress-stepper';
+import { AccordionStep, StepKey } from '@shared/ui/accordion-step';
 import { colors } from '@toss/tds-colors';
 import { BottomCTA, Button } from '@toss/tds-react-native';
-import type { AddressSearchResult } from '@widgets/reservation';
+import type { AddressSearchResult, ReservationFormData } from '@widgets/reservation';
 import {
   AddressSearchDrawer,
   AddressSelectionSection,
   CitySelectBottomSheet,
+  ConfirmationStep,
+  CustomerInfoStep,
+  CustomerSummary,
+  DateTimeSelectionStep,
+  DateTimeSummary,
+  DEFAULT_FORM_VALUES,
   RegionSelectBottomSheet,
   ServiceSelectionStep,
+  ServiceSummary,
   useReservationForm,
   useReservationStore,
 } from '@widgets/reservation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, BackHandler, LayoutAnimation, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-export interface ServicePageParams {
+export interface ReservationPageParams {
   serviceId?: string;
 }
 
-export const Route = createRoute('/reservation/service', {
-  validateParams: (params): ServicePageParams => {
+export const Route = createRoute<ReservationPageParams>('/reservation', {
+  validateParams: (params): ReservationPageParams => {
     const rawParams = params as Record<string, unknown> | undefined;
     return {
       serviceId:
@@ -37,15 +44,30 @@ export const Route = createRoute('/reservation/service', {
   component: Page,
 });
 
-// Service page component
 function Page() {
   const navigation = Route.useNavigation();
-  const params = Route.useParams();
-  
+  const params = Route.useParams() as ReservationPageParams | undefined;
+
+  // Refs for auto-scroll
+  const scrollViewRef = useRef<ScrollView>(null);
+  const stepRefs = useRef<Record<StepKey, View | null>>({
+    service: null,
+    datetime: null,
+    customer: null,
+    confirmation: null,
+  });
 
   const {
     formData,
     updateFormData,
+    isLoading,
+    reset: resetStore,
+    // Accordion 상태
+    accordionSteps,
+    toggleStepExpanded,
+    completeStep,
+    goToStep,
+    resetAccordionSteps,
     // 지역 선택 상태
     addressSelection,
     isRegionBottomSheetOpen,
@@ -69,6 +91,13 @@ function Page() {
   } = useReservationStore([
     'formData',
     'updateFormData',
+    'isLoading',
+    'reset',
+    'accordionSteps',
+    'toggleStepExpanded',
+    'completeStep',
+    'goToStep',
+    'resetAccordionSteps',
     'addressSelection',
     'isRegionBottomSheetOpen',
     'isCityBottomSheetOpen',
@@ -88,13 +117,21 @@ function Page() {
     'closeAddressSearchDrawer',
   ]);
 
-  const { methods, canProceedToNext } = useReservationForm({ initialData: formData });
+  const { methods, canProceedToNext, handleSubmit } = useReservationForm({
+    initialData: formData,
+    onSubmitSuccess: () => {
+      resetStore();
+      resetAccordionSteps();
+      methods.reset(DEFAULT_FORM_VALUES);
+      navigation.navigate('/' as never);
+    },
+  });
 
-  // 서비스 목록 조회 (params 기반 서비스 선택에 필요)
+  // 서비스 목록 조회
   const { data: services } = useServices();
 
-  // Props에서 타입 안전하게 params 사용 (프로모션 배너, 딥링크 등에서 전달)
-  const serviceIdParam = params.serviceId ? parseInt(params.serviceId, 10) : null;
+  // Props에서 타입 안전하게 params 사용
+  const serviceIdParam = params?.serviceId ? parseInt(params.serviceId, 10) : null;
 
   // 서비스 변경 감지를 위한 이전 서비스 ID 추적
   const prevServiceIdRef = useRef<number | null>(null);
@@ -102,19 +139,19 @@ function Page() {
   // params 기반 서비스 선택이 이미 처리되었는지 추적
   const paramsProcessedRef = useRef(false);
 
-  // 상세 주소 로컬 상태 (inline 입력용)
+  // 상세 주소 로컬 상태
   const [detailAddress, setDetailAddress] = useState('');
 
-  // 로컬에서 관리하는 선택된 주소 (Drawer에서 선택 후 유지)
+  // 로컬에서 관리하는 선택된 주소
   const [localSelectedAddress, setLocalSelectedAddress] = useState<AddressSearchResult | null>(null);
 
   // 현재 주소 값 감시
   const currentAddress = methods.watch('customerInfo.address');
 
-  // 주소가 입력되었는지 확인 (상세 주소는 선택사항)
+  // 주소가 입력되었는지 확인
   const hasCompleteAddress = currentAddress && currentAddress.trim() !== '';
 
-  // React Hook Form에서 직접 watch (즉각적인 반응성)
+  // React Hook Form에서 직접 watch
   const currentService = methods.watch('service');
 
   // 선택된 서비스에 따라 필터링된 지역 목록
@@ -133,31 +170,20 @@ function Page() {
     return `${addressSelection.region.name} ${addressSelection.city.name}`;
   }, [addressSelection]);
 
-  // 마운트 시 서비스 목록 로드 + 외부에서 전달된 서비스 초기값 적용
+  // 마운트 시 서비스 목록 로드
   useEffect(() => {
     loadServices();
 
-    // 타이밍 문제 해결: Store에서 service가 있으면 RHF에 명시적으로 설정
     if (formData.service) {
       methods.setValue('service', formData.service);
     }
   }, []);
 
   // Query params 기반 서비스 자동 선택
-  // - Store에 서비스가 없고 serviceIdParam이 있으면 해당 서비스 선택
-  // - 프로모션 배너 등에서 ?serviceId=1 형태로 전달받은 경우
   useEffect(() => {
-    // Store에 이미 서비스가 있으면 Store 값 우선 (HomeServicesSection에서 온 경우)
-    if (formData.service) {
-      return;
-    }
+    if (formData.service) return;
+    if (paramsProcessedRef.current) return;
 
-    // params 처리가 이미 완료되었으면 스킵
-    if (paramsProcessedRef.current) {
-      return;
-    }
-
-    // serviceIdParam이 있고 서비스 목록이 로드되었으면 해당 서비스 선택
     if (serviceIdParam && services && services.length > 0) {
       const targetService = services.find((s) => s.id === serviceIdParam);
       if (targetService) {
@@ -171,17 +197,16 @@ function Page() {
   // 폼 값 변경 시 store에 저장
   useEffect(() => {
     const subscription = methods.watch((value) => {
-      updateFormData(value as Partial<typeof formData>);
+      updateFormData(value as Partial<ReservationFormData>);
     });
     return () => subscription.unsubscribe();
   }, [methods.watch, updateFormData]);
 
-  // 구/군 BottomSheet 오픈 시 목록 로드 (필터링된 지역에서 가져옴)
+  // 구/군 BottomSheet 오픈 시 목록 로드
   useEffect(() => {
     if (isCityBottomSheetOpen && addressSelection.region && filteredRegions.length > 0) {
       const selectedRegion = filteredRegions.find((r) => r.id === addressSelection.region?.id);
       if (selectedRegion) {
-        // ServiceableCity[]를 CityData[]로 변환 (regionId 추가)
         const citiesWithRegion = selectedRegion.cities.map((city) => ({
           ...city,
           regionId: selectedRegion.id,
@@ -191,7 +216,7 @@ function Page() {
     }
   }, [isCityBottomSheetOpen, addressSelection.region, filteredRegions]);
 
-  // 서비스 변경 시 주소 초기화를 위한 핸들러
+  // 서비스 변경 시 주소 초기화 핸들러
   const resetAddressState = useCallback(() => {
     resetAddressSearch();
     resetEstimateFeeInfo();
@@ -201,14 +226,13 @@ function Page() {
     methods.setValue('customerInfo.detailAddress', '');
   }, [resetAddressSearch, resetEstimateFeeInfo, methods]);
 
-  // 서비스 변경 감지 - 서비스 변경 시 주소 상태 초기화 필요
+  // 서비스 변경 감지
   useEffect(() => {
     if (!currentService) {
       prevServiceIdRef.current = null;
       return;
     }
 
-    // 이전 서비스와 다른 경우에만 초기화 (최초 선택 제외)
     if (prevServiceIdRef.current !== null && prevServiceIdRef.current !== currentService.id) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- 서비스 변경 시 의도적인 상태 초기화
       resetAddressState();
@@ -217,16 +241,26 @@ function Page() {
     prevServiceIdRef.current = currentService.id;
   }, [currentService?.id, resetAddressState]);
 
-  // 주소 선택 핸들러 (Drawer에서 선택 시)
+  // 로딩 중 뒤로가기 차단
+  useEffect(() => {
+    if (isLoading) {
+      const handleBackPress = () => {
+        Alert.alert('처리 중', '예약 처리가 진행 중입니다. 잠시만 기다려주세요.');
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    }
+    return () => {};
+  }, [isLoading]);
+
+  // 주소 선택 핸들러
   const handleAddressSelect = useCallback(
     (address: AddressSearchResult) => {
       setLocalSelectedAddress(address);
       closeAddressSearchDrawer();
-
-      // 폼 데이터 업데이트
       methods.setValue('customerInfo.address', address.roadAddress);
 
-      // 견적 비용 조회 (지역/도시 기반)
       if (currentService) {
         checkEstimateFee();
       }
@@ -257,31 +291,94 @@ function Page() {
     openAddressSearchDrawer();
   }, [openAddressSearchDrawer]);
 
-  // 시/도 선택 시 구/군 BottomSheet 오픈을 위해 뒤로가기 핸들러
+  // 시/도 선택 시 구/군 BottomSheet 오픈 핸들러
   const handleBackToRegion = useCallback(() => {
     setIsCityBottomSheetOpen(false);
     setIsRegionBottomSheetOpen(true);
   }, [setIsCityBottomSheetOpen, setIsRegionBottomSheetOpen]);
 
+  // 단계 완료 및 자동 스크롤
+  const handleCompleteStep = useCallback(
+    (step: StepKey) => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      completeStep(step);
+
+      // 300ms 후 다음 단계로 스크롤
+      const stepOrder: StepKey[] = ['service', 'datetime', 'customer', 'confirmation'];
+      const currentIndex = stepOrder.indexOf(step);
+      const nextStep = stepOrder[currentIndex + 1];
+
+      if (nextStep) {
+        setTimeout(() => {
+          const nextRef = stepRefs.current[nextStep];
+          if (nextRef && scrollViewRef.current) {
+            nextRef.measureLayout(
+              scrollViewRef.current.getInnerViewNode(),
+              (_x, y) => {
+                scrollViewRef.current?.scrollTo({ y: y - 16, animated: true });
+              },
+              () => {}
+            );
+          }
+        }, 300);
+      }
+    },
+    [completeStep]
+  );
+
+  // 단계 토글
+  const handleToggleStep = useCallback(
+    (step: StepKey) => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      toggleStepExpanded(step);
+    },
+    [toggleStepExpanded]
+  );
+
+  // 완료된 단계 수정
+  const handleEditCompletedStep = useCallback(
+    (step: StepKey) => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      goToStep(step);
+
+      setTimeout(() => {
+        const ref = stepRefs.current[step];
+        if (ref && scrollViewRef.current) {
+          ref.measureLayout(
+            scrollViewRef.current.getInnerViewNode(),
+            (_x, y) => {
+              scrollViewRef.current?.scrollTo({ y: y - 16, animated: true });
+            },
+            () => {}
+          );
+        }
+      }, 300);
+    },
+    [goToStep]
+  );
+
+  // 나가기
   const handleExit = () => {
     navigation.navigate('/' as never);
   };
 
-  const handleNext = () => {
-    if (!hasCompleteAddress) {
-      Alert.alert('알림', '주소를 입력해주세요.');
+  // 예약 완료
+  const onSubmit = async () => {
+    if (!canProceedToNext('confirmation')) {
+      Alert.alert('알림', '이용약관에 동의해주세요.');
       return;
     }
-    if (!canProceedToNext('service')) {
-      Alert.alert('알림', '서비스를 선택해주세요.');
-      return;
-    }
-    navigation.navigate('/reservation/datetime' as never);
+    await handleSubmit();
   };
+
+  // 선택된 서비스에 대해 필터링된 지역 목록
+  const serviceableRegionsList = filteredRegions.map((r) => ({
+    id: r.id,
+    name: r.name,
+  }));
 
   // 주소 정보 섹션 렌더링
   const renderAddressSection = () => {
-    // 서비스가 선택되지 않은 경우
     if (!hasSelectedService) {
       return (
         <Card>
@@ -297,7 +394,6 @@ function Page() {
       );
     }
 
-    // 주소 선택 UI
     return (
       <Card>
         <View style={styles.sectionHeader}>
@@ -316,36 +412,113 @@ function Page() {
     );
   };
 
-  // 선택된 서비스에 대해 필터링된 지역 목록
-  const serviceableRegionsList = filteredRegions.map((r) => ({
-    id: r.id,
-    name: r.name,
-  }));
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>예약을 처리하고 있습니다...</Text>
+      </View>
+    );
+  }
 
   return (
     <FormProvider {...methods}>
       <View style={styles.container}>
-        <ProgressStepper activeStepIndex={0}>
-          <ProgressStep title="서비스" />
-          <ProgressStep title="날짜/시간" />
-          <ProgressStep title="정보입력" />
-          <ProgressStep title="확인" />
-        </ProgressStepper>
-
         <ScrollView
+          ref={scrollViewRef}
           style={styles.contentContainer}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           automaticallyAdjustKeyboardInsets
         >
-          <ServiceSelectionStep />
+          {/* Step 1: 서비스 선택 */}
+          <View ref={(ref) => (stepRefs.current.service = ref)}>
+            <AccordionStep
+              stepKey="service"
+              stepNumber={1}
+              title="서비스 선택"
+              status={accordionSteps.service?.status ?? 'active'}
+              isExpanded={accordionSteps.service?.isExpanded ?? true}
+              summaryContent={<ServiceSummary />}
+              onToggle={() =>
+                accordionSteps.service?.status === 'completed'
+                  ? handleEditCompletedStep('service')
+                  : handleToggleStep('service')
+              }
+              onComplete={() => handleCompleteStep('service')}
+              isCompleteDisabled={!canProceedToNext('service') || !hasCompleteAddress}
+            >
+              <ServiceSelectionStep withScrollView={false} />
+              {renderAddressSection()}
+            </AccordionStep>
+          </View>
 
-          {renderAddressSection()}
+          {/* Step 2: 날짜/시간 선택 */}
+          <View ref={(ref) => (stepRefs.current.datetime = ref)}>
+            <AccordionStep
+              stepKey="datetime"
+              stepNumber={2}
+              title="날짜/시간 선택"
+              status={accordionSteps.datetime?.status ?? 'locked'}
+              isExpanded={accordionSteps.datetime?.isExpanded ?? false}
+              summaryContent={<DateTimeSummary />}
+              onToggle={() =>
+                accordionSteps.datetime?.status === 'completed'
+                  ? handleEditCompletedStep('datetime')
+                  : handleToggleStep('datetime')
+              }
+              onComplete={() => handleCompleteStep('datetime')}
+              isCompleteDisabled={!canProceedToNext('datetime')}
+            >
+              <DateTimeSelectionStep withScrollView={false} />
+            </AccordionStep>
+          </View>
+
+          {/* Step 3: 고객 정보 */}
+          <View ref={(ref) => (stepRefs.current.customer = ref)}>
+            <AccordionStep
+              stepKey="customer"
+              stepNumber={3}
+              title="고객 정보"
+              status={accordionSteps.customer?.status ?? 'locked'}
+              isExpanded={accordionSteps.customer?.isExpanded ?? false}
+              summaryContent={<CustomerSummary />}
+              onToggle={() =>
+                accordionSteps.customer?.status === 'completed'
+                  ? handleEditCompletedStep('customer')
+                  : handleToggleStep('customer')
+              }
+              onComplete={() => handleCompleteStep('customer')}
+              isCompleteDisabled={!canProceedToNext('customer')}
+            >
+              <CustomerInfoStep withScrollView={false} />
+            </AccordionStep>
+          </View>
+
+          {/* Step 4: 예약 확인 */}
+          <View ref={(ref) => (stepRefs.current.confirmation = ref)}>
+            <AccordionStep
+              stepKey="confirmation"
+              stepNumber={4}
+              title="예약 확인"
+              status={accordionSteps.confirmation?.status ?? 'locked'}
+              isExpanded={accordionSteps.confirmation?.isExpanded ?? false}
+              onToggle={() => handleToggleStep('confirmation')}
+            >
+              <ConfirmationStep withScrollView={false} />
+            </AccordionStep>
+          </View>
         </ScrollView>
 
         <BottomCTA.Double
           leftButton={
-            <Button type="light" style="weak" display="full" containerStyle={{ borderRadius: 8 }} onPress={handleExit}>
+            <Button
+              type="light"
+              style="weak"
+              display="full"
+              containerStyle={{ borderRadius: 8 }}
+              disabled={isLoading}
+              onPress={handleExit}
+            >
               나가기
             </Button>
           }
@@ -353,10 +526,11 @@ function Page() {
             <Button
               display="full"
               containerStyle={{ borderRadius: 8 }}
-              disabled={!hasCompleteAddress || !canProceedToNext('service')}
-              onPress={handleNext}
+              disabled={!canProceedToNext('confirmation') || isLoading}
+              loading={isLoading}
+              onPress={onSubmit}
             >
-              다음
+              예약 완료
             </Button>
           }
         />
@@ -398,11 +572,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.greyBackground,
   },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.greyBackground,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: colors.grey700,
+  },
   contentContainer: {
     flex: 1,
   },
   scrollContent: {
-    paddingVertical: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    gap: 12,
   },
   sectionHeader: {
     paddingHorizontal: 8,
@@ -419,7 +605,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.grey600,
   },
-  // 빈 상태 스타일
   emptyState: {
     paddingVertical: 40,
     paddingHorizontal: 16,

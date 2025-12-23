@@ -7,11 +7,19 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ReservationFormData } from '../types';
 import { PhotoSection } from './PhotoSection';
 
-export function CustomerInfoStep() {
+interface CustomerInfoStepProps {
+  /**
+   * ScrollView로 감쌀지 여부 (기존 페이지 호환용)
+   * @default true
+   */
+  withScrollView?: boolean;
+}
+
+export function CustomerInfoStep({ withScrollView = true }: CustomerInfoStepProps) {
   const { control } = useFormContext<ReservationFormData>();
 
-  return (
-    <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
+  const content = (
+    <>
       <Card>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>고객 정보</Text>
@@ -76,13 +84,26 @@ export function CustomerInfoStep() {
           )}
         />
       </Card>
-    </ScrollView>
+    </>
   );
+
+  if (withScrollView) {
+    return (
+      <ScrollView style={styles.stepContent} contentContainerStyle={styles.scrollContent}>
+        {content}
+      </ScrollView>
+    );
+  }
+
+  return <View style={styles.stepContentNoScroll}>{content}</View>;
 }
 
 const styles = StyleSheet.create({
   stepContent: {
     flex: 1,
+  },
+  stepContentNoScroll: {
+    paddingVertical: 10,
   },
   scrollContent: {
     paddingVertical: 10,

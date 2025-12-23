@@ -8,3 +8,4 @@ export * from './PhotoSection';
 export * from './RegionSelectBottomSheet';
 export * from './ReservationActions';
 export * from './ServiceSelectionStep';
+export * from './summaries';

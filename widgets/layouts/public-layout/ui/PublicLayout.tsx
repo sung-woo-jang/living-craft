@@ -8,13 +8,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BottomNavigation } from './BottomNavigation';
 
-// 예약 플로우 경로 목록
-const RESERVATION_ROUTES = [
-  '/reservation/service',
-  '/reservation/datetime',
-  '/reservation/customer',
-  '/reservation/confirmation',
-];
+// 예약 플로우 경로 목록 (통합 페이지)
+const RESERVATION_ROUTES = ['/reservation'];
 
 interface PublicLayoutProps {
   children: React.ReactNode;

@@ -26,7 +26,7 @@ export const HomeServicesSection = () => {
     updateFormData({ service });
 
     // 예약 페이지로 이동
-    navigation.navigate('/reservation/service' as any);
+    navigation.navigate('/reservation' as any);
   };
 
   return (

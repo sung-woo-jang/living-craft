@@ -1,6 +1,14 @@
 import { getServices } from '@shared/api/services';
 import { Service } from '@shared/api/types';
 import { StoreWithShallow, useStoreWithShallow } from '@shared/model';
+import {
+  AccordionStepsState,
+  getNextStep,
+  initialAccordionSteps,
+  STEP_ORDER,
+  StepKey,
+  StepStatus,
+} from '@shared/ui/accordion-step';
 import { createWithEqualityFn } from 'zustand/traditional';
 
 import { checkEstimateFeeByRegion, getServiceableRegionsForService } from '../api';
@@ -48,6 +56,9 @@ interface ReservationUIState {
   // 견적 비용 상태
   addressEstimateInfo: AddressEstimateInfo | null;
   isCheckingEstimateFee: boolean;
+
+  // Accordion 상태 (통합 예약 페이지용)
+  accordionSteps: AccordionStepsState;
 }
 
 interface ReservationUIActions {
@@ -90,6 +101,14 @@ interface ReservationUIActions {
   checkEstimateFee: () => void;
   resetEstimateFeeInfo: () => void;
 
+  // Accordion 액션 (통합 예약 페이지용)
+  setStepStatus: (step: StepKey, status: StepStatus) => void;
+  setStepExpanded: (step: StepKey, isExpanded: boolean) => void;
+  toggleStepExpanded: (step: StepKey) => void;
+  completeStep: (step: StepKey) => void;
+  goToStep: (step: StepKey) => void;
+  resetAccordionSteps: () => void;
+
   // 리셋
   reset: () => void;
 }
@@ -117,6 +136,7 @@ const initialState: ReservationUIState = {
   isLoadingServices: false,
   addressEstimateInfo: null,
   isCheckingEstimateFee: false,
+  accordionSteps: initialAccordionSteps,
 };
 
 const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
@@ -241,6 +261,92 @@ const reservationStore = createWithEqualityFn<ReservationStore>((set, get) => ({
       addressEstimateInfo: null,
       isCheckingEstimateFee: false,
     });
+  },
+
+  // Accordion 액션 (통합 예약 페이지용)
+  setStepStatus: (step, status) => {
+    const { accordionSteps } = get();
+    const currentStep = accordionSteps[step];
+    if (!currentStep) return;
+
+    set({
+      accordionSteps: {
+        ...accordionSteps,
+        [step]: { ...currentStep, status },
+      },
+    });
+  },
+
+  setStepExpanded: (step, isExpanded) => {
+    const { accordionSteps } = get();
+    const currentStep = accordionSteps[step];
+    if (!currentStep) return;
+
+    set({
+      accordionSteps: {
+        ...accordionSteps,
+        [step]: { ...currentStep, isExpanded },
+      },
+    });
+  },
+
+  toggleStepExpanded: (step) => {
+    const { accordionSteps } = get();
+    const currentStep = accordionSteps[step];
+    if (!currentStep || currentStep.status === 'locked') return;
+
+    set({
+      accordionSteps: {
+        ...accordionSteps,
+        [step]: { ...currentStep, isExpanded: !currentStep.isExpanded },
+      },
+    });
+  },
+
+  completeStep: (step) => {
+    const { accordionSteps } = get();
+    const nextStep = getNextStep(step);
+
+    // 현재 단계 완료 처리
+    const updatedSteps = { ...accordionSteps };
+    const currentStepState = updatedSteps[step];
+    if (currentStepState) {
+      updatedSteps[step] = { status: 'completed', isExpanded: false };
+    }
+
+    // 다음 단계 활성화
+    if (nextStep) {
+      updatedSteps[nextStep] = { status: 'active', isExpanded: true };
+    }
+
+    set({ accordionSteps: updatedSteps });
+  },
+
+  goToStep: (step) => {
+    const { accordionSteps } = get();
+    const stepIndex = STEP_ORDER.indexOf(step);
+
+    // 모든 단계 상태 업데이트
+    const updatedSteps = { ...accordionSteps };
+
+    STEP_ORDER.forEach((s, index) => {
+      if (index < stepIndex) {
+        // 이전 단계들은 완료 상태로
+        updatedSteps[s] = { status: 'completed', isExpanded: false };
+      } else if (index === stepIndex) {
+        // 목표 단계는 활성화
+        updatedSteps[s] = { status: 'active', isExpanded: true };
+      } else {
+        // 이후 단계들은 잠금 상태로
+        updatedSteps[s] = { status: 'locked', isExpanded: false };
+      }
+    });
+
+    set({ accordionSteps: updatedSteps });
+  },
+
+  resetAccordionSteps: () => {
+    set({ accordionSteps: initialAccordionSteps });
   },
 
   // 리셋

@@ -4,10 +4,7 @@ import { Route as _404Route } from '../pages/_404';
 import { Route as _IndexRoute } from '../pages/';
 import { Route as _PortfolioIndexRoute } from '../pages/portfolio';
 import { Route as _PortfolioIdRoute } from '../pages/portfolio/[id]';
-import { Route as _ReservationServiceRoute } from '../pages/reservation/service';
-import { Route as _ReservationDatetimeRoute } from '../pages/reservation/datetime';
-import { Route as _ReservationCustomerRoute } from '../pages/reservation/customer';
-import { Route as _ReservationConfirmationRoute } from '../pages/reservation/confirmation';
+import { Route as _ReservationIndexRoute } from '../pages/reservation';
 import { Route as _ReviewsIndexRoute } from '../pages/reviews';
 import { Route as _ReviewsWriteReservationIdRoute } from '../pages/reviews/write/[reservationId]';
 import { Route as _UnauthorizedRoute } from '../pages/unauthorized';
@@ -20,10 +17,7 @@ declare module '@granite-js/react-native' {
     '/': ReturnType<typeof _IndexRoute.useParams>;
     '/portfolio': ReturnType<typeof _PortfolioIndexRoute.useParams>;
     '/portfolio/:id': ReturnType<typeof _PortfolioIdRoute.useParams>;
-    '/reservation/service': ReturnType<typeof _ReservationServiceRoute.useParams>; // 서비스
-    '/reservation/datetime': ReturnType<typeof _ReservationDatetimeRoute.useParams>; // 날짜/시간
-    '/reservation/customer': ReturnType<typeof _ReservationCustomerRoute.useParams>; // 정보입력
-    '/reservation/confirmation': ReturnType<typeof _ReservationConfirmationRoute.useParams>; // 확인
+    '/reservation': ReturnType<typeof _ReservationIndexRoute.useParams>;
     '/reviews': ReturnType<typeof _ReviewsIndexRoute.useParams>;
     '/reviews/write/:reservationId': ReturnType<typeof _ReviewsWriteReservationIdRoute.useParams>;
     '/unauthorized': ReturnType<typeof _UnauthorizedRoute.useParams>;
