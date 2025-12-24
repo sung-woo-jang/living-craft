@@ -67,6 +67,10 @@ interface AccordionStepProps {
    * 완료 버튼 텍스트 (기본값: "다음 단계")
    */
   completeButtonText?: string;
+  /**
+   * 완료 버튼 숨김 여부 (자동 전환 사용 시)
+   */
+  hideCompleteButton?: boolean;
 }
 
 /**
@@ -105,10 +109,11 @@ export function AccordionStep({
   onComplete,
   isCompleteDisabled = false,
   completeButtonText = '다음 단계',
+  hideCompleteButton = false,
 }: AccordionStepProps) {
   const isLocked = status === 'locked';
   const showSummary = !isExpanded && status === 'completed' && summaryContent;
-  const showCompleteButton = stepKey !== 'confirmation' && onComplete;
+  const showCompleteButton = stepKey !== 'confirmation' && onComplete && !hideCompleteButton;
 
   const handleToggle = () => {
     if (isLocked) return;

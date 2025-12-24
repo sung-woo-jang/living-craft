@@ -387,6 +387,83 @@ function Page() {
     [completeStep]
   );
 
+  // 자동 전환: 서비스 선택 단계
+  useEffect(() => {
+    const currentStep = accordionSteps.service;
+    if (!currentStep || currentStep.status !== 'active' || !currentStep.isExpanded) {
+      return undefined;
+    }
+
+    if (canProceedToNext('service') && hasCompleteAddress) {
+      const timerId = setTimeout(() => {
+        // 타이머 실행 시점에 조건 재검증
+        if (canProceedToNext('service') && hasCompleteAddress) {
+          handleCompleteStep('service');
+        }
+      }, 1000);
+
+      return () => clearTimeout(timerId);
+    }
+
+    return undefined;
+  }, [
+    canProceedToNext('service'),
+    hasCompleteAddress,
+    accordionSteps.service?.status,
+    accordionSteps.service?.isExpanded,
+    handleCompleteStep,
+  ]);
+
+  // 자동 전환: 날짜/시간 선택 단계
+  useEffect(() => {
+    const currentStep = accordionSteps.datetime;
+    if (!currentStep || currentStep.status !== 'active' || !currentStep.isExpanded) {
+      return undefined;
+    }
+
+    if (canProceedToNext('datetime')) {
+      const timerId = setTimeout(() => {
+        if (canProceedToNext('datetime')) {
+          handleCompleteStep('datetime');
+        }
+      }, 800);
+
+      return () => clearTimeout(timerId);
+    }
+
+    return undefined;
+  }, [
+    canProceedToNext('datetime'),
+    accordionSteps.datetime?.status,
+    accordionSteps.datetime?.isExpanded,
+    handleCompleteStep,
+  ]);
+
+  // 자동 전환: 고객 정보 단계
+  useEffect(() => {
+    const currentStep = accordionSteps.customer;
+    if (!currentStep || currentStep.status !== 'active' || !currentStep.isExpanded) {
+      return undefined;
+    }
+
+    if (canProceedToNext('customer')) {
+      const timerId = setTimeout(() => {
+        if (canProceedToNext('customer')) {
+          handleCompleteStep('customer');
+        }
+      }, 1000);
+
+      return () => clearTimeout(timerId);
+    }
+
+    return undefined;
+  }, [
+    canProceedToNext('customer'),
+    accordionSteps.customer?.status,
+    accordionSteps.customer?.isExpanded,
+    handleCompleteStep,
+  ]);
+
   // 단계 토글
   const handleToggleStep = useCallback(
     (step: StepKey) => {
@@ -507,6 +584,7 @@ function Page() {
               }
               onComplete={() => handleCompleteStep('service')}
               isCompleteDisabled={!canProceedToNext('service') || !hasCompleteAddress}
+              hideCompleteButton
             >
               <ServiceSelectionStep withScrollView={false} />
               {renderAddressSection()}
@@ -529,6 +607,7 @@ function Page() {
               }
               onComplete={() => handleCompleteStep('datetime')}
               isCompleteDisabled={!canProceedToNext('datetime')}
+              hideCompleteButton
             >
               <DateTimeSelectionStep withScrollView={false} />
             </AccordionStep>
@@ -550,6 +629,7 @@ function Page() {
               }
               onComplete={() => handleCompleteStep('customer')}
               isCompleteDisabled={!canProceedToNext('customer')}
+              hideCompleteButton
             >
               <CustomerInfoStep withScrollView={false} />
             </AccordionStep>
