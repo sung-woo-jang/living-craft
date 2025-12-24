@@ -1,6 +1,6 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
 import { MENU_ITEMS } from '@shared/constants';
-import { useLogout, useMe } from '@shared/hooks';
+import { useBottomNavHeight, useLogout, useMe } from '@shared/hooks';
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset, Button, Skeleton } from '@toss/tds-react-native';
@@ -12,6 +12,7 @@ export const Route = createRoute('/my', {
 
 function Page() {
   const navigation = useNavigation();
+  const bottomNavHeight = useBottomNavHeight();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
   const { data: user, isLoading } = useMe();
 
@@ -30,7 +31,11 @@ function Page() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomNavHeight, paddingTop: 10 }]}
+          showsVerticalScrollIndicator={false}
+        >
           {/* 프로필 섹션 Skeleton */}
           <Card>
             <View style={styles.profileContent}>
@@ -79,7 +84,7 @@ function Page() {
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomNavHeight, paddingTop: 10 }]}
         showsVerticalScrollIndicator={false}
       >
         {/* 프로필 섹션 */}

@@ -1,5 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
-import { useMyReviews, useRefresh } from '@shared/hooks';
+import { useBottomNavHeight, useMyReviews, useRefresh } from '@shared/hooks';
 import { EmptyState } from '@shared/ui/empty-state';
 import { colors } from '@toss/tds-colors';
 import { Asset, Skeleton } from '@toss/tds-react-native';
@@ -14,6 +14,7 @@ export const Route = createRoute('/my/reviews', {
  */
 function Page() {
   const navigation = Route.useNavigation();
+  const bottomNavHeight = useBottomNavHeight();
   const myReviewsQuery = useMyReviews();
   const { data: myReviews, isLoading } = myReviewsQuery;
   const { refreshing, onRefresh } = useRefresh(myReviewsQuery);
@@ -80,6 +81,7 @@ function Page() {
       <FlatList
         data={reviews}
         keyExtractor={(item) => String(item.id)}
+        contentContainerStyle={[styles.list, { paddingBottom: bottomNavHeight, paddingTop: 10 }]}
         renderItem={({ item }) => (
           <View style={styles.reviewCard}>
             {/* 서비스 정보 */}
@@ -107,7 +109,6 @@ function Page() {
             <Text style={styles.date}>{new Date(item.createdAt).toLocaleDateString('ko-KR')}</Text>
           </View>
         )}
-        contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
         refreshing={refreshing}
         onRefresh={onRefresh}

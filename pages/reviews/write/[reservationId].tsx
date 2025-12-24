@@ -1,4 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
+import { useBottomNavHeight } from '@shared/hooks';
 import { colors } from '@toss/tds-colors';
 import { Asset, TextField } from '@toss/tds-react-native';
 import { useState } from 'react';
@@ -39,6 +40,7 @@ const MOCK_RESERVATION: Record<string, ReservationInfo> = {
 function Page() {
   const navigation = Route.useNavigation();
   const params = Route.useParams();
+  const bottomNavHeight = useBottomNavHeight();
   const reservation = MOCK_RESERVATION[params?.reservationId || '1'];
 
   const [rating, setRating] = useState(0);
@@ -83,7 +85,11 @@ function Page() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: 10 }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* 헤더 */}
         <View style={styles.header}>
           <Text style={styles.title}>리뷰 작성</Text>

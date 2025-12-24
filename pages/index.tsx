@@ -1,5 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
-import { usePortfolios, usePromotions, useRefresh, useReviews, useServices } from '@shared/hooks';
+import { useBottomNavHeight, usePortfolios, usePromotions, useRefresh, useReviews, useServices } from '@shared/hooks';
 import { colors } from '@toss/tds-colors';
 import { HomePortfolioSection } from '@widgets/home/portfolio-section';
 import { HomePromoCarouselSection } from '@widgets/home/promo-carousel-section';
@@ -21,6 +21,8 @@ export const Route = createRoute('/', {
  * 4. 고객 후기 - 리뷰 캐러셀
  */
 function Page() {
+  const bottomNavHeight = useBottomNavHeight();
+
   // 각 섹션의 쿼리 수집
   const promosQuery = usePromotions();
   const servicesQuery = useServices();
@@ -34,9 +36,14 @@ function Page() {
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomNavHeight, paddingTop: 10 }]}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.blue500} colors={[colors.blue500]} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.blue500}
+            colors={[colors.blue500]}
+          />
         }
       >
         <HomePromoCarouselSection />

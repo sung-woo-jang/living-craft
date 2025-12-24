@@ -1,5 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
-import { useRefresh, useReviews } from '@shared/hooks';
+import { useBottomNavHeight, useRefresh, useReviews } from '@shared/hooks';
 import { EmptyState } from '@shared/ui/empty-state';
 import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
@@ -23,6 +23,7 @@ const FILTER_OPTIONS: FilterOption[] = [
  */
 function Page() {
   const navigation = Route.useNavigation();
+  const bottomNavHeight = useBottomNavHeight();
   const [activeFilter, setActiveFilter] = useState('all');
 
   const reviewsQuery = useReviews();
@@ -95,6 +96,7 @@ function Page() {
         <FlatList
           data={filteredReviews}
           keyExtractor={(item) => String(item.id)}
+          contentContainerStyle={[styles.list, { paddingBottom: bottomNavHeight, paddingTop: 10 }]}
           renderItem={({ item }) => (
             <View style={styles.reviewCard}>
               {/* 서비스 정보 */}
@@ -125,7 +127,6 @@ function Page() {
               </View>
             </View>
           )}
-          contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
           refreshing={refreshing}
           onRefresh={onRefresh}
@@ -160,7 +161,6 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
-    // 하단 여백은 PublicLayout에서 자동 처리
   },
   reviewCard: {
     backgroundColor: 'white',

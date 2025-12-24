@@ -1,6 +1,6 @@
 import { Image } from '@granite-js/react-native';
 import { createRoute } from '@granite-js/react-native';
-import { usePortfolio, useServices } from '@shared/hooks';
+import { useBottomNavHeight, usePortfolio, useServices } from '@shared/hooks';
 import { Card, Carousel, SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Skeleton } from '@toss/tds-react-native';
@@ -22,6 +22,7 @@ const CAROUSEL_ITEM_WIDTH = SCREEN_WIDTH - 40;
 function Page() {
   const navigation = Route.useNavigation();
   const params = Route.useParams();
+  const bottomNavHeight = useBottomNavHeight();
   const updateFormData = useReservationStore(['updateFormData']).updateFormData;
 
   const portfolioId = Number(params?.id) || 1;
@@ -44,7 +45,11 @@ function Page() {
   if (isLoadingPortfolio) {
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomNavHeight, paddingTop: 10 }]}
+          showsVerticalScrollIndicator={false}
+        >
           {/* 기본 정보 Skeleton */}
           <Card>
             <View style={styles.sectionHeader}>
@@ -104,7 +109,7 @@ function Page() {
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomNavHeight, paddingTop: 10 }]}
         showsVerticalScrollIndicator={false}
       >
         {/* 기본 정보 카드 */}
@@ -196,7 +201,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingVertical: 10,
-    // 하단 여백은 PublicLayout에서 자동 처리
   },
 
   // Section Header

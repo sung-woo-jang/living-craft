@@ -1,6 +1,6 @@
 import { createRoute } from '@granite-js/react-native';
 import { ReservationStatus } from '@shared/api/types';
-import { useMyReservations, useRefresh } from '@shared/hooks';
+import { useBottomNavHeight, useMyReservations, useRefresh } from '@shared/hooks';
 import { EmptyState } from '@shared/ui/empty-state';
 import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
@@ -38,6 +38,7 @@ const STATUS_COLORS: Record<ReservationStatus, string> = {
  */
 function Page() {
   const navigation = Route.useNavigation();
+  const bottomNavHeight = useBottomNavHeight();
   const [activeFilter, setActiveFilter] = useState<'all' | ReservationStatus>('all');
 
   const reservationsQuery = useMyReservations();
@@ -113,7 +114,8 @@ function Page() {
         <FlatList
           data={filteredReservations}
           keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
+          contentContainerStyle={[styles.list, { paddingBottom: bottomNavHeight, paddingTop: 10 }]}
+          renderItem={({ item}) => (
             <View style={styles.reservationCard}>
               <View style={styles.cardHeader}>
                 <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[item.status] }]}>
@@ -157,7 +159,6 @@ function Page() {
               </View>
             </View>
           )}
-          contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
           refreshing={refreshing}
           onRefresh={onRefresh}

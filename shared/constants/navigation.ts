@@ -28,20 +28,38 @@ export const ROUTE_TAB_CONFIG: Record<string, TabBarConfig> = {
 };
 
 /**
- * 플로팅 탭바 높이 상수
- * Apps-in-Toss 가이드라인: 플로팅 형태의 탭바 사용 시 콘텐츠 하단 여백
- *
- * 탭바 내부 높이 계산:
+ * BottomNavigation 높이 계산용 상수
+ * Apps-in-Toss 가이드라인: 플로팅 형태의 탭바 사용
+ */
+
+/**
+ * BottomNavigation 내부 컴포넌트의 기본 높이
  * - paddingTop: 9px
  * - paddingBottom: 8px
  * - navItem paddingVertical: 16px (8px × 2)
  * - 아이콘: 24px
  * - 텍스트 lineHeight: 16.5px
  * - 아이콘-텍스트 간격: 1px
- * = 총 내부 높이: ~74.5px
+ * = 총 74.5px
+ */
+export const BOTTOM_NAV_BASE_HEIGHT = 74.5;
+
+/**
+ * BottomNavigation의 최소 하단 여백
+ * Safe Area가 없는 기기를 위한 최소값
+ */
+export const BOTTOM_NAV_MIN_BOTTOM = 8;
+
+/**
+ * BottomNavigation 아래 추가 여유 공간
+ * 스크롤 시 컨텐츠가 내비게이션에 너무 가까이 붙지 않도록
+ */
+export const BOTTOM_NAV_EXTRA_SPACE = 20;
+
+/**
+ * @deprecated 동적 계산을 위해 useBottomNavHeight() 훅을 사용하세요
  *
- * + Safe Area Insets bottom: 최소 8px (기기마다 다름)
- * + 여유 공간: 15.5px
- * = 안전한 여백: 100px
+ * 레거시 고정 높이 값
+ * 이전 버전과의 호환성을 위해 남겨둠
  */
 export const TAB_BAR_HEIGHT = 130;

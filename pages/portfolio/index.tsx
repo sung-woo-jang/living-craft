@@ -1,5 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
-import { usePortfolios, useRefresh } from '@shared/hooks';
+import { useBottomNavHeight, usePortfolios, useRefresh } from '@shared/hooks';
 import { SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { PortfolioListItem } from '@widgets/portfolio/list-item';
@@ -14,6 +14,7 @@ export const Route = createRoute('/portfolio', {
  */
 function Page() {
   const navigation = Route.useNavigation();
+  const bottomNavHeight = useBottomNavHeight();
   const portfoliosQuery = usePortfolios();
   const { data: portfoliosResponse, isLoading } = portfoliosQuery;
   const { refreshing, onRefresh } = useRefresh(portfoliosQuery);
@@ -40,7 +41,7 @@ function Page() {
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomNavHeight, paddingTop: 10 }]}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -80,7 +81,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingVertical: 10,
-    // 하단 여백은 PublicLayout에서 자동 처리
   },
   loadingContainer: {
     flex: 1,
