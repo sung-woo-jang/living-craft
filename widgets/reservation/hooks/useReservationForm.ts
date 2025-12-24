@@ -23,12 +23,18 @@ interface UseReservationFormReturn {
 }
 
 export function useReservationForm(options?: UseReservationFormOptions): UseReservationFormReturn {
+  // immer Proxy를 plain object로 변환
+  const defaultValues: ReservationFormData = {
+    ...DEFAULT_FORM_VALUES,
+    // initialData가 있으면 deep clone하여 plain object로 변환
+    ...(options?.initialData
+      ? JSON.parse(JSON.stringify(options.initialData))
+      : {}),
+  };
+
   // react-hook-form
   const methods = useForm<ReservationFormData>({
-    defaultValues: {
-      ...DEFAULT_FORM_VALUES,
-      ...options?.initialData,
-    },
+    defaultValues,
     mode: 'onChange',
   });
 

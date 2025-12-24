@@ -188,7 +188,9 @@ function Page() {
   // 폼 값 변경 시 store에 저장
   useEffect(() => {
     const subscription = methods.watch((value) => {
-      updateFormData(value as Partial<ReservationFormData>);
+      // React Hook Form의 내부 상태를 plain object로 변환
+      const plainValue = JSON.parse(JSON.stringify(value));
+      updateFormData(plainValue as Partial<ReservationFormData>);
     });
     return () => subscription.unsubscribe();
   }, [methods.watch, updateFormData]);
@@ -244,12 +246,24 @@ function Page() {
     const timeoutId = setTimeout(() => {
       setLocalSelectedAddress(null);
       setDetailAddress('');
-      methods.setValue('customerInfo.address', '');
-      methods.setValue('customerInfo.detailAddress', '');
+
+      // Zustand store에서 관리하는 formData를 업데이트 (plain object로 변환)
+      const currentCustomerInfo = JSON.parse(JSON.stringify(formData.customerInfo));
+      updateFormData({
+        customerInfo: {
+          ...currentCustomerInfo,
+          address: '',
+          detailAddress: '',
+        },
+      });
+
+      // React Hook Form도 동기화
+      methods.setValue('customerInfo.address', '', { shouldValidate: false });
+      methods.setValue('customerInfo.detailAddress', '', { shouldValidate: false });
     }, 0);
 
     return () => clearTimeout(timeoutId);
-  }, [currentService?.id, methods]);
+  }, [currentService?.id, methods, updateFormData, formData.customerInfo]);
 
   // 로딩 중 뒤로가기 차단
   useEffect(() => {
@@ -269,31 +283,66 @@ function Page() {
     (address: AddressSearchResult) => {
       setLocalSelectedAddress(address);
       update({ isAddressSearchDrawerOpen: false });
-      methods.setValue('customerInfo.address', address.roadAddress);
+
+      // Zustand store 업데이트 (plain object로 변환)
+      const currentCustomerInfo = JSON.parse(JSON.stringify(formData.customerInfo));
+      updateFormData({
+        customerInfo: {
+          ...currentCustomerInfo,
+          address: address.roadAddress,
+        },
+      });
+
+      // React Hook Form 동기화
+      methods.setValue('customerInfo.address', address.roadAddress, { shouldValidate: false });
 
       if (currentService) {
         checkEstimateFee();
       }
     },
-    [setLocalSelectedAddress, update, methods, currentService, checkEstimateFee]
+    [setLocalSelectedAddress, update, updateFormData, formData.customerInfo, methods, currentService, checkEstimateFee]
   );
 
   // 주소 삭제 핸들러
   const handleClearAddress = useCallback(() => {
     setLocalSelectedAddress(null);
     setDetailAddress('');
-    methods.setValue('customerInfo.address', '');
-    methods.setValue('customerInfo.detailAddress', '');
+
+    // Zustand store 업데이트 (plain object로 변환)
+    const currentCustomerInfo = JSON.parse(JSON.stringify(formData.customerInfo));
+    updateFormData({
+      customerInfo: {
+        ...currentCustomerInfo,
+        address: '',
+        detailAddress: '',
+      },
+    });
+
+    // React Hook Form 동기화
+    methods.setValue('customerInfo.address', '', { shouldValidate: false });
+    methods.setValue('customerInfo.detailAddress', '', { shouldValidate: false });
+
     resetEstimateFeeInfo();
-  }, [setLocalSelectedAddress, setDetailAddress, methods, resetEstimateFeeInfo]);
+  }, [setLocalSelectedAddress, setDetailAddress, updateFormData, formData.customerInfo, methods, resetEstimateFeeInfo]);
 
   // 상세 주소 변경 핸들러
   const handleDetailAddressChange = useCallback(
     (value: string) => {
       setDetailAddress(value);
-      methods.setValue('customerInfo.detailAddress', value);
+
+      // Zustand store 업데이트 (plain object로 변환)
+      const currentCustomerInfo = JSON.parse(JSON.stringify(formData.customerInfo));
+      updateFormData({
+        customerInfo: {
+          ...currentCustomerInfo,
+          detailAddress: value,
+        },
+      });
+
+      // React Hook Form 동기화
+      methods.setValue('customerInfo.detailAddress', value, { shouldValidate: false });
     },
-    [setDetailAddress, methods]
+    [setDetailAddress, updateFormData, formData.customerInfo, methods]
   );
 
   // 주소 검색 Drawer 열기
