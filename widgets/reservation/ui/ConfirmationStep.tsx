@@ -1,5 +1,6 @@
 import { Card } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
+import { Button } from '@toss/tds-react-native';
 import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -11,9 +12,26 @@ interface ConfirmationStepProps {
    * @default true
    */
   withScrollView?: boolean;
+  /**
+   * 예약 완료 버튼 클릭 핸들러
+   */
+  onSubmit?: () => void;
+  /**
+   * 예약 완료 버튼 로딩 상태
+   */
+  isLoading?: boolean;
+  /**
+   * 예약 완료 버튼 비활성화 여부
+   */
+  isDisabled?: boolean;
 }
 
-export function ConfirmationStep({ withScrollView = true }: ConfirmationStepProps) {
+export function ConfirmationStep({
+  withScrollView = true,
+  onSubmit,
+  isLoading = false,
+  isDisabled = false,
+}: ConfirmationStepProps) {
   const { watch, setValue } = useFormContext<ReservationFormData>();
 
   const selectedService = watch('service');
@@ -72,6 +90,21 @@ export function ConfirmationStep({ withScrollView = true }: ConfirmationStepProp
           </View>
           <Text style={styles.termsText}>이용약관 및 개인정보처리방침에 동의합니다</Text>
         </TouchableOpacity>
+
+        {/* 예약 완료 버튼 */}
+        {onSubmit && (
+          <View style={styles.submitButtonContainer}>
+            <Button
+              display="full"
+              containerStyle={styles.submitButton}
+              disabled={isDisabled || isLoading}
+              loading={isLoading}
+              onPress={onSubmit}
+            >
+              예약 완료
+            </Button>
+          </View>
+        )}
       </Card>
     </>
   );
@@ -165,5 +198,15 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     color: colors.grey700,
+  },
+  submitButtonContainer: {
+    paddingHorizontal: 8,
+    paddingTop: 16,
+    paddingBottom: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.grey100,
+  },
+  submitButton: {
+    borderRadius: 8,
   },
 });

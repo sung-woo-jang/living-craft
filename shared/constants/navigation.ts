@@ -22,7 +22,7 @@ export interface TabBarConfig {
 export const ROUTE_TAB_CONFIG: Record<string, TabBarConfig> = {
   '/': { isVisible: true }, // 홈
   '/portfolio': { isVisible: true }, // 포트폴리오
-  '/reservation': { isVisible: false }, // 예약: 숨김
+  '/reservation': { isVisible: true }, // 예약
   '/reviews': { isVisible: true }, // 리뷰
   '/my': { isVisible: true }, // 마이페이지
 };

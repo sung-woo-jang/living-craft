@@ -3,7 +3,6 @@ import { useServices } from '@shared/hooks';
 import { Card } from '@shared/ui';
 import { AccordionStep, StepKey } from '@shared/ui/accordion-step';
 import { colors } from '@toss/tds-colors';
-import { BottomCTA, Button } from '@toss/tds-react-native';
 import type { AddressSearchResult, ReservationFormData } from '@widgets/reservation';
 import {
   AddressSearchDrawer,
@@ -495,11 +494,6 @@ function Page() {
     [goToStep]
   );
 
-  // 나가기
-  const handleExit = () => {
-    navigation.navigate('/' as never);
-  };
-
   // 예약 완료
   const onSubmit = async () => {
     if (!canProceedToNext('confirmation')) {
@@ -645,36 +639,15 @@ function Page() {
               isExpanded={accordionSteps.confirmation?.isExpanded ?? false}
               onToggle={() => handleToggleStep('confirmation')}
             >
-              <ConfirmationStep withScrollView={false} />
+              <ConfirmationStep
+                withScrollView={false}
+                onSubmit={onSubmit}
+                isLoading={isLoading}
+                isDisabled={!canProceedToNext('confirmation')}
+              />
             </AccordionStep>
           </View>
         </ScrollView>
-
-        <BottomCTA.Double
-          leftButton={
-            <Button
-              type="light"
-              style="weak"
-              display="full"
-              containerStyle={{ borderRadius: 8 }}
-              disabled={isLoading}
-              onPress={handleExit}
-            >
-              나가기
-            </Button>
-          }
-          rightButton={
-            <Button
-              display="full"
-              containerStyle={{ borderRadius: 8 }}
-              disabled={!canProceedToNext('confirmation') || isLoading}
-              loading={isLoading}
-              onPress={onSubmit}
-            >
-              예약 완료
-            </Button>
-          }
-        />
       </View>
 
       {/* 지역 선택 BottomSheet */}
