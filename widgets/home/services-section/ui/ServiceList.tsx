@@ -21,7 +21,7 @@ export const ServiceList = ({ services, onQuotePress }: ServiceListProps) => {
         <View key={service.id} style={[styles.row, index < services.length - 1 && styles.rowBorder]}>
           <View style={[styles.iconContainer, { backgroundColor: service.iconBgColor || colors.grey100 }]}>
             {service.icon?.name ? (
-              <Asset.Icon name={service.icon.name} color={colors.grey700} frameShape={Asset.frameShape.CleanW24} />
+              <Asset.Icon name={service.icon.name} color={service.iconColor || colors.grey700} frameShape={Asset.frameShape.CleanW24} />
             ) : (
               <Text style={styles.iconFallback}>🏠</Text>
             )}

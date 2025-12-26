@@ -196,6 +196,7 @@ export interface Service {
   description: string;
   icon: Icon;
   iconBgColor: string;
+  iconColor: string;
   duration: string;
   requiresTimeSelection: boolean;
   isActive?: boolean;
