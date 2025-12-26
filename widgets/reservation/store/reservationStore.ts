@@ -5,11 +5,9 @@ import { immer } from 'zustand/middleware/immer';
 import { createWithEqualityFn } from 'zustand/traditional';
 
 import { checkEstimateFeeByRegion, getServiceableRegionsForService } from '../api';
-import { DEFAULT_FORM_VALUES } from '../types';
 import type { ReservationState, ReservationStore } from './types';
 
 const initialState: ReservationState = {
-  formData: DEFAULT_FORM_VALUES,
   isLoading: false,
   isEstimateCalendarVisible: false,
   addressSearchQuery: '',
@@ -38,12 +36,6 @@ const reservationStore = createWithEqualityFn(
 
     // 단순 상태 업데이트 통합 함수
     update: (updates) => set((state) => Object.assign(state, updates)),
-
-    // 폼 데이터 관리
-    updateFormData: (data) =>
-      set((state) => {
-        Object.assign(state.formData, data);
-      }),
 
     // 주소 검색 액션
     selectAddress: (address) =>
@@ -127,19 +119,18 @@ const reservationStore = createWithEqualityFn(
     },
 
     // 견적 비용 액션
-    checkEstimateFee: () => {
-      const { formData, addressSelection, services } = get();
-      const { service } = formData;
+    checkEstimateFee: (serviceId) => {
+      const { addressSelection, services } = get();
       const { region, city } = addressSelection;
 
-      if (!service || !region || !city) {
+      if (!serviceId || !region || !city) {
         set((state) => {
           state.addressEstimateInfo = null;
         });
         return;
       }
 
-      const estimateInfo = checkEstimateFeeByRegion(services, service.id, region.id, city.id);
+      const estimateInfo = checkEstimateFeeByRegion(services, serviceId, region.id, city.id);
       set((state) => {
         state.addressEstimateInfo = estimateInfo;
       });

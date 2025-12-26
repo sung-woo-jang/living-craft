@@ -32,10 +32,6 @@ export function AddressSelectionSection({
     update({ isRegionBottomSheetOpen: true });
   }, [update]);
 
-  const handleOpenCitySheet = useCallback(() => {
-    update({ isCityBottomSheetOpen: true });
-  }, [update]);
-
   const handleChangeRegion = useCallback(() => {
     resetRegionSelection();
     onClearAddress();
@@ -73,17 +69,12 @@ export function AddressSelectionSection({
     );
   }
 
-  // 시/도만 선택된 경우: 구/군 선택 버튼 표시
+  // 시/도만 선택된 경우: 구/군 선택 중 메시지 표시
   if (!addressSelection.city) {
     return (
       <View style={styles.selectRegionContainer}>
         <Text style={styles.selectRegionTitle}>지역 선택</Text>
-        <Text style={styles.selectRegionSubtitle}>
-          {addressSelection.region.name}에서 구/군을 선택해주세요
-        </Text>
-        <View style={styles.buttonContainer}>
-          <Button onPress={handleOpenCitySheet}>구/군 선택하기</Button>
-        </View>
+        <Text style={styles.selectRegionSubtitle}>{addressSelection.region.name}의 구/군을 선택 중...</Text>
       </View>
     );
   }

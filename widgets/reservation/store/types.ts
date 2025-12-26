@@ -7,17 +7,14 @@ import {
   AddressSelection,
   CityData,
   RegionData,
-  ReservationFormData,
   ServiceableRegion,
 } from '../types';
 
 /**
  * 예약 UI 상태
+ * Note: 폼 데이터는 React Hook Form으로 관리하고, 여기서는 UI 상태만 관리
  */
 export interface ReservationState {
-  // 폼 데이터 (페이지 간 유지)
-  formData: ReservationFormData;
-
   // UI 상태
   isLoading: boolean;
   // 견적 캘린더
@@ -59,9 +56,6 @@ export interface ReservationActions {
   // 단순 상태 업데이트 통합 함수
   update: (updates: Partial<ReservationState>) => void;
 
-  // 폼 데이터 관리
-  updateFormData: (data: Partial<ReservationFormData>) => void;
-
   // 주소 검색 상태
   selectAddress: (address: AddressSearchResult) => void;
   resetAddressSearch: () => void;
@@ -77,7 +71,7 @@ export interface ReservationActions {
   getFilteredRegionsForService: (serviceId: number) => ServiceableRegion[];
 
   // 견적 비용 액션
-  checkEstimateFee: () => void;
+  checkEstimateFee: (serviceId: number) => void;
   resetEstimateFeeInfo: () => void;
 
   // Accordion 액션 (통합 예약 페이지용)

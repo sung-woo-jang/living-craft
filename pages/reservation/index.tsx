@@ -3,7 +3,7 @@ import { useServices } from '@shared/hooks';
 import { Card } from '@shared/ui';
 import { AccordionStep, StepKey } from '@shared/ui/accordion-step';
 import { colors } from '@toss/tds-colors';
-import type { AddressSearchResult, ReservationFormData } from '@widgets/reservation';
+import type { AddressSearchResult } from '@widgets/reservation';
 import {
   AddressSearchDrawer,
   AddressSelectionSection,
@@ -15,13 +15,12 @@ import {
   DateTimeSummary,
   DEFAULT_FORM_VALUES,
   RegionSelectBottomSheet,
-  reservationStoreApi,
   ServiceSelectionStep,
   ServiceSummary,
   useReservationForm,
   useReservationStore,
 } from '@widgets/reservation';
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { Alert, BackHandler, LayoutAnimation, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -58,8 +57,6 @@ function Page() {
   });
 
   const {
-    formData,
-    updateFormData,
     isLoading,
     reset: resetStore,
     // Accordion 상태
@@ -75,19 +72,16 @@ function Page() {
     cities,
     // 주소 검색 상태
     isAddressSearchDrawerOpen,
-    // 서비스 목록 (지역 필터링용)
-    services: storeServices,
     // 액션
     update,
     loadServices,
     selectRegion,
     selectCity,
+    resetAddressSearch,
     getFilteredRegionsForService,
     checkEstimateFee,
     resetEstimateFeeInfo,
   } = useReservationStore([
-    'formData',
-    'updateFormData',
     'isLoading',
     'reset',
     'accordionSteps',
@@ -100,18 +94,18 @@ function Page() {
     'isCityBottomSheetOpen',
     'cities',
     'isAddressSearchDrawerOpen',
-    'services',
     'update',
     'loadServices',
     'selectRegion',
     'selectCity',
+    'resetAddressSearch',
     'getFilteredRegionsForService',
     'checkEstimateFee',
     'resetEstimateFeeInfo',
   ]);
 
   const { methods, canProceedToNext, handleSubmit } = useReservationForm({
-    initialData: formData,
+    initialData: DEFAULT_FORM_VALUES,
     onSubmitSuccess: () => {
       resetStore();
       resetAccordionSteps();
@@ -125,6 +119,9 @@ function Page() {
 
   // Props에서 타입 안전하게 params 사용
   const serviceIdParam = params?.serviceId ? parseInt(params.serviceId, 10) : null;
+
+  // 서비스 변경 감지를 위한 이전 서비스 ID 추적
+  const prevServiceIdRef = useRef<number | null>(null);
 
   // params 기반 서비스 선택이 이미 처리되었는지 추적
   const paramsProcessedRef = useRef(false);
@@ -146,9 +143,9 @@ function Page() {
 
   // 선택된 서비스에 따라 필터링된 지역 목록
   const filteredRegions = useMemo(() => {
-    if (!currentService || !storeServices || storeServices.length === 0) return [];
+    if (!currentService) return [];
     return getFilteredRegionsForService(currentService.id);
-  }, [currentService, storeServices, getFilteredRegionsForService]);
+  }, [currentService, getFilteredRegionsForService]);
 
   // 서비스가 선택되었는지 여부
   const hasSelectedService = currentService !== null;
@@ -163,36 +160,21 @@ function Page() {
   // 마운트 시 서비스 목록 로드
   useEffect(() => {
     loadServices();
-
-    if (formData.service) {
-      methods.setValue('service', formData.service);
-    }
-  }, []);
+  }, [loadServices]);
 
   // Query params 기반 서비스 자동 선택
   useEffect(() => {
-    if (formData.service) return;
+    if (currentService) return;
     if (paramsProcessedRef.current) return;
 
     if (serviceIdParam && services && services.length > 0) {
       const targetService = services.find((s) => s.id === serviceIdParam);
       if (targetService) {
         methods.setValue('service', targetService);
-        updateFormData({ service: targetService });
         paramsProcessedRef.current = true;
       }
     }
-  }, [serviceIdParam, services, formData.service, methods, updateFormData]);
-
-  // 폼 값 변경 시 store에 저장
-  useEffect(() => {
-    const subscription = methods.watch((value) => {
-      // React Hook Form의 내부 상태를 plain object로 변환
-      const plainValue = JSON.parse(JSON.stringify(value));
-      updateFormData(plainValue as Partial<ReservationFormData>);
-    });
-    return () => subscription.unsubscribe();
-  }, [methods.watch, updateFormData]);
+  }, [serviceIdParam, services, currentService, methods]);
 
   // 구/군 BottomSheet 오픈 시 목록 로드
   useEffect(() => {
@@ -208,61 +190,30 @@ function Page() {
     }
   }, [isCityBottomSheetOpen, addressSelection.region, filteredRegions, update]);
 
-  // 서비스 변경 감지 시 주소 초기화 (Subscribe 패턴)
-  useLayoutEffect(() => {
-    let prevServiceId: number | null = null;
+  // 서비스 변경 시 주소 초기화 핸들러
+  const resetAddressState = useCallback(() => {
+    resetAddressSearch();
+    resetEstimateFeeInfo();
+    setLocalSelectedAddress(null);
+    setDetailAddress('');
+    methods.setValue('customerInfo.address', '');
+    methods.setValue('customerInfo.detailAddress', '');
+  }, [resetAddressSearch, resetEstimateFeeInfo, methods]);
 
-    const unsubscribe = reservationStoreApi.subscribe((state) => {
-      const { formData } = state;
-      const selectedService = formData.service;
-
-      // 서비스가 선택되지 않았으면 스킵
-      if (!selectedService) {
-        prevServiceId = null;
-        return;
-      }
-
-      // 서비스가 변경되었을 때 주소 초기화
-      const isServiceChanged = prevServiceId !== null && selectedService.id !== prevServiceId;
-      if (isServiceChanged) {
-        reservationStoreApi.getState().resetAddressSearch();
-        reservationStoreApi.getState().resetEstimateFeeInfo();
-      }
-
-      prevServiceId = selectedService.id;
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  // 서비스 변경 시 로컬 상태 초기화
+  // 서비스 변경 감지
   useEffect(() => {
-    if (!currentService) return;
+    if (!currentService) {
+      prevServiceIdRef.current = null;
+      return;
+    }
 
-    // 서비스가 변경되면 로컬 주소 상태 초기화 (다음 렌더링에서 실행)
-    const timeoutId = setTimeout(() => {
-      setLocalSelectedAddress(null);
-      setDetailAddress('');
+    if (prevServiceIdRef.current !== null && prevServiceIdRef.current !== currentService.id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 서비스 변경 시 의도적인 상태 초기화
+      resetAddressState();
+    }
 
-      // Zustand store에서 관리하는 formData를 업데이트 (plain object로 변환)
-      const currentCustomerInfo = JSON.parse(JSON.stringify(formData.customerInfo));
-      updateFormData({
-        customerInfo: {
-          ...currentCustomerInfo,
-          address: '',
-          detailAddress: '',
-        },
-      });
-
-      // React Hook Form도 동기화
-      methods.setValue('customerInfo.address', '', { shouldValidate: false });
-      methods.setValue('customerInfo.detailAddress', '', { shouldValidate: false });
-    }, 0);
-
-    return () => clearTimeout(timeoutId);
-  }, [currentService?.id, methods, updateFormData, formData.customerInfo]);
+    prevServiceIdRef.current = currentService.id;
+  }, [currentService?.id, resetAddressState]);
 
   // 로딩 중 뒤로가기 차단
   useEffect(() => {
@@ -282,66 +233,31 @@ function Page() {
     (address: AddressSearchResult) => {
       setLocalSelectedAddress(address);
       update({ isAddressSearchDrawerOpen: false });
-
-      // Zustand store 업데이트 (plain object로 변환)
-      const currentCustomerInfo = JSON.parse(JSON.stringify(formData.customerInfo));
-      updateFormData({
-        customerInfo: {
-          ...currentCustomerInfo,
-          address: address.roadAddress,
-        },
-      });
-
-      // React Hook Form 동기화
-      methods.setValue('customerInfo.address', address.roadAddress, { shouldValidate: false });
+      methods.setValue('customerInfo.address', address.roadAddress);
 
       if (currentService) {
-        checkEstimateFee();
+        checkEstimateFee(currentService.id);
       }
     },
-    [setLocalSelectedAddress, update, updateFormData, formData.customerInfo, methods, currentService, checkEstimateFee]
+    [update, methods, currentService, checkEstimateFee]
   );
 
   // 주소 삭제 핸들러
   const handleClearAddress = useCallback(() => {
     setLocalSelectedAddress(null);
     setDetailAddress('');
-
-    // Zustand store 업데이트 (plain object로 변환)
-    const currentCustomerInfo = JSON.parse(JSON.stringify(formData.customerInfo));
-    updateFormData({
-      customerInfo: {
-        ...currentCustomerInfo,
-        address: '',
-        detailAddress: '',
-      },
-    });
-
-    // React Hook Form 동기화
-    methods.setValue('customerInfo.address', '', { shouldValidate: false });
-    methods.setValue('customerInfo.detailAddress', '', { shouldValidate: false });
-
+    methods.setValue('customerInfo.address', '');
+    methods.setValue('customerInfo.detailAddress', '');
     resetEstimateFeeInfo();
-  }, [setLocalSelectedAddress, setDetailAddress, updateFormData, formData.customerInfo, methods, resetEstimateFeeInfo]);
+  }, [methods, resetEstimateFeeInfo]);
 
   // 상세 주소 변경 핸들러
   const handleDetailAddressChange = useCallback(
     (value: string) => {
       setDetailAddress(value);
-
-      // Zustand store 업데이트 (plain object로 변환)
-      const currentCustomerInfo = JSON.parse(JSON.stringify(formData.customerInfo));
-      updateFormData({
-        customerInfo: {
-          ...currentCustomerInfo,
-          detailAddress: value,
-        },
-      });
-
-      // React Hook Form 동기화
-      methods.setValue('customerInfo.detailAddress', value, { shouldValidate: false });
+      methods.setValue('customerInfo.detailAddress', value);
     },
-    [setDetailAddress, updateFormData, formData.customerInfo, methods]
+    [methods]
   );
 
   // 주소 검색 Drawer 열기
@@ -351,10 +267,7 @@ function Page() {
 
   // 시/도 선택 시 구/군 BottomSheet 오픈 핸들러
   const handleBackToRegion = useCallback(() => {
-    update({
-      isCityBottomSheetOpen: false,
-      isRegionBottomSheetOpen: true,
-    });
+    update({ isCityBottomSheetOpen: false, isRegionBottomSheetOpen: true });
   }, [update]);
 
   // 단계 완료 및 자동 스크롤
@@ -504,10 +417,14 @@ function Page() {
   };
 
   // 선택된 서비스에 대해 필터링된 지역 목록
-  const serviceableRegionsList = filteredRegions.map((r) => ({
-    id: r.id,
-    name: r.name,
-  }));
+  const serviceableRegionsList = useMemo(
+    () =>
+      filteredRegions.map((r) => ({
+        id: r.id,
+        name: r.name,
+      })),
+    [filteredRegions]
+  );
 
   // 주소 정보 섹션 렌더링
   const renderAddressSection = () => {

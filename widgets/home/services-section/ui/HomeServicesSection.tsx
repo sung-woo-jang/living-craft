@@ -2,7 +2,6 @@ import { createRoute } from '@granite-js/react-native';
 import { Service } from '@shared/api/types';
 import { useServices } from '@shared/hooks';
 import { SectionCard } from '@shared/ui';
-import { useReservationStore } from '@widgets/reservation';
 
 import { ServiceList } from './ServiceList';
 import { ServiceListSkeleton } from './ServiceListSkeleton';
@@ -16,17 +15,13 @@ const TempRoute = createRoute('/_layout' as any, { component: () => null });
  */
 export const HomeServicesSection = () => {
   const navigation = TempRoute.useNavigation();
-  const updateFormData = useReservationStore(['updateFormData']).updateFormData;
 
   const { data: services, isLoading } = useServices();
   const isEmpty = !services || services.length === 0;
 
   const handleQuotePress = (service: Service) => {
-    // 클릭한 서비스를 미리 선택
-    updateFormData({ service });
-
-    // 예약 페이지로 이동
-    navigation.navigate('/reservation' as any);
+    // 예약 페이지로 이동 (서비스 ID를 파라미터로 전달)
+    navigation.navigate('/reservation' as any, { serviceId: String(service.id) });
   };
 
   return (

@@ -4,7 +4,6 @@ import { useBottomNavHeight, usePortfolio, useServices } from '@shared/hooks';
 import { Card, Carousel, SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Skeleton } from '@toss/tds-react-native';
-import { useReservationStore } from '@widgets/reservation';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const Route = createRoute('/portfolio/:id', {
@@ -23,7 +22,6 @@ function Page() {
   const navigation = Route.useNavigation();
   const params = Route.useParams();
   const bottomNavHeight = useBottomNavHeight();
-  const updateFormData = useReservationStore(['updateFormData']).updateFormData;
 
   const portfolioId = Number(params?.id) || 1;
   const { data: portfolio, isLoading: isLoadingPortfolio } = usePortfolio(portfolioId);
@@ -34,12 +32,13 @@ function Page() {
 
     // 포트폴리오 카테고리에 맞는 서비스 찾기
     const matchingService = services.find((s) => s.title === portfolio.category || portfolio.category.includes(s.title));
-    if (matchingService) {
-      updateFormData({ service: matchingService });
-    }
 
-    // 예약 페이지로 이동
-    navigation.navigate('/reservation' as any);
+    // 예약 페이지로 이동 (서비스 ID를 파라미터로 전달)
+    if (matchingService) {
+      navigation.navigate('/reservation' as any, { serviceId: String(matchingService.id) });
+    } else {
+      navigation.navigate('/reservation' as any);
+    }
   };
 
   if (isLoadingPortfolio) {
