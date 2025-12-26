@@ -1,6 +1,6 @@
 import { Image } from '@granite-js/react-native';
 import { createRoute } from '@granite-js/react-native';
-import { useBottomNavHeight, usePortfolio, useServices } from '@shared/hooks';
+import { useBottomNavHeight, usePortfolio } from '@shared/hooks';
 import { Card, Carousel, SectionCard } from '@shared/ui';
 import { colors } from '@toss/tds-colors';
 import { Skeleton } from '@toss/tds-react-native';
@@ -25,17 +25,13 @@ function Page() {
 
   const portfolioId = Number(params?.id) || 1;
   const { data: portfolio, isLoading: isLoadingPortfolio } = usePortfolio(portfolioId);
-  const { data: services } = useServices();
 
   const handleInquiryPress = () => {
-    if (!portfolio || !services) return;
+    if (!portfolio) return;
 
-    // 포트폴리오 카테고리에 맞는 서비스 찾기
-    const matchingService = services.find((s) => s.title === portfolio.category || portfolio.category.includes(s.title));
-
-    // 예약 페이지로 이동 (서비스 ID를 파라미터로 전달)
-    if (matchingService) {
-      navigation.navigate('/reservation' as any, { serviceId: String(matchingService.id) });
+    // 포트폴리오에 연결된 서비스 ID로 예약 페이지 이동
+    if (portfolio.serviceId > 0) {
+      navigation.navigate('/reservation' as any, { serviceId: String(portfolio.serviceId) });
     } else {
       navigation.navigate('/reservation' as any);
     }
