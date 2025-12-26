@@ -14,6 +14,7 @@ import {
   DateTimeSelectionStep,
   DateTimeSummary,
   DEFAULT_FORM_VALUES,
+  getServiceableRegionsForService,
   RegionSelectBottomSheet,
   ServiceSelectionStep,
   ServiceSummary,
@@ -74,11 +75,9 @@ function Page() {
     isAddressSearchDrawerOpen,
     // 액션
     update,
-    loadServices,
     selectRegion,
     selectCity,
     resetAddressSearch,
-    getFilteredRegionsForService,
     checkEstimateFee,
     resetEstimateFeeInfo,
   } = useReservationStore([
@@ -95,11 +94,9 @@ function Page() {
     'cities',
     'isAddressSearchDrawerOpen',
     'update',
-    'loadServices',
     'selectRegion',
     'selectCity',
     'resetAddressSearch',
-    'getFilteredRegionsForService',
     'checkEstimateFee',
     'resetEstimateFeeInfo',
   ]);
@@ -141,11 +138,11 @@ function Page() {
   // React Hook Form에서 직접 watch
   const currentService = methods.watch('service');
 
-  // 선택된 서비스에 따라 필터링된 지역 목록
+  // 선택된 서비스에 따라 필터링된 지역 목록 (TanStack Query의 services 직접 사용)
   const filteredRegions = useMemo(() => {
-    if (!currentService) return [];
-    return getFilteredRegionsForService(currentService.id);
-  }, [currentService, getFilteredRegionsForService]);
+    if (!currentService || !services) return [];
+    return getServiceableRegionsForService(services, currentService.id);
+  }, [currentService, services]);
 
   // 서비스가 선택되었는지 여부
   const hasSelectedService = currentService !== null;
@@ -156,11 +153,6 @@ function Page() {
     if (!addressSelection.city) return addressSelection.region.name;
     return `${addressSelection.region.name} ${addressSelection.city.name}`;
   }, [addressSelection]);
-
-  // 마운트 시 서비스 목록 로드
-  useEffect(() => {
-    loadServices();
-  }, [loadServices]);
 
   // Query params 기반 서비스 자동 선택
   useEffect(() => {
@@ -235,11 +227,11 @@ function Page() {
       update({ isAddressSearchDrawerOpen: false });
       methods.setValue('customerInfo.address', address.roadAddress);
 
-      if (currentService) {
-        checkEstimateFee(currentService.id);
+      if (currentService && services) {
+        checkEstimateFee(currentService.id, services);
       }
     },
-    [update, methods, currentService, checkEstimateFee]
+    [update, methods, currentService, checkEstimateFee, services]
   );
 
   // 주소 삭제 핸들러

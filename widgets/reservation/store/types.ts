@@ -7,7 +7,6 @@ import {
   AddressSelection,
   CityData,
   RegionData,
-  ServiceableRegion,
 } from '../types';
 
 /**
@@ -37,10 +36,6 @@ export interface ReservationState {
   isLoadingRegions: boolean;
   isLoadingCities: boolean;
 
-  // 서비스 목록 (각 서비스가 가능 지역 포함)
-  services: Service[];
-  isLoadingServices: boolean;
-
   // 견적 비용 상태
   addressEstimateInfo: AddressEstimateInfo | null;
   isCheckingEstimateFee: boolean;
@@ -66,12 +61,8 @@ export interface ReservationActions {
   selectCity: (city: CityData) => void;
   resetRegionSelection: () => void;
 
-  // 서비스 목록 액션
-  loadServices: () => Promise<void>;
-  getFilteredRegionsForService: (serviceId: number) => ServiceableRegion[];
-
   // 견적 비용 액션
-  checkEstimateFee: (serviceId: number) => void;
+  checkEstimateFee: (serviceId: number, services: Service[]) => void;
   resetEstimateFeeInfo: () => void;
 
   // Accordion 액션 (통합 예약 페이지용)

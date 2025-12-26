@@ -1,10 +1,9 @@
-import { getServices } from '@shared/api/services';
 import { StoreWithShallow, useStoreWithShallow } from '@shared/model';
 import { getNextStep, initialAccordionSteps, STEP_ORDER } from '@shared/ui/accordion-step';
 import { immer } from 'zustand/middleware/immer';
 import { createWithEqualityFn } from 'zustand/traditional';
 
-import { checkEstimateFeeByRegion, getServiceableRegionsForService } from '../api';
+import { checkEstimateFeeByRegion } from '../api';
 import type { ReservationState, ReservationStore } from './types';
 
 const initialState: ReservationState = {
@@ -23,8 +22,6 @@ const initialState: ReservationState = {
   cities: [],
   isLoadingRegions: false,
   isLoadingCities: false,
-  services: [],
-  isLoadingServices: false,
   addressEstimateInfo: null,
   isCheckingEstimateFee: false,
   accordionSteps: initialAccordionSteps,
@@ -93,37 +90,12 @@ const reservationStore = createWithEqualityFn(
         state.cities = [];
       }),
 
-    // 서비스 목록 로드
-    loadServices: async () => {
-      set((state) => {
-        state.isLoadingServices = true;
-      });
-
-      try {
-        const services = await getServices();
-        set((state) => {
-          state.services = services;
-          state.isLoadingServices = false;
-        });
-      } catch {
-        set((state) => {
-          state.isLoadingServices = false;
-        });
-      }
-    },
-
-    getFilteredRegionsForService: (serviceId) => {
-      const { services } = get();
-      if (!serviceId) return [];
-      return getServiceableRegionsForService(services, serviceId);
-    },
-
     // 견적 비용 액션
-    checkEstimateFee: (serviceId) => {
-      const { addressSelection, services } = get();
+    checkEstimateFee: (serviceId, services) => {
+      const { addressSelection } = get();
       const { region, city } = addressSelection;
 
-      if (!serviceId || !region || !city) {
+      if (!serviceId || !region || !city || !services || services.length === 0) {
         set((state) => {
           state.addressEstimateInfo = null;
         });
