@@ -5,7 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ReservationFormData } from '@types';
-import { PhotoSection } from '@components/reservation/PhotoSection';
+import { PhotoSection } from './PhotoSection';
 
 interface CustomerInfoStepProps {
   /**

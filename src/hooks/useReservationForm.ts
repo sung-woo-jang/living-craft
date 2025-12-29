@@ -1,4 +1,4 @@
-import { useCreateReservation } from '@hooks';
+import { useCreateReservation } from '@api';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { Alert } from 'react-native';
 

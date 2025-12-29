@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 
 import type { ReservationFormData } from '@types';
-import { SummaryRow } from '@components/reservation/SummaryRow';
+import { SummaryRow } from './SummaryRow';
 
 /**
  * 전화번호를 표시용 형식으로 변환

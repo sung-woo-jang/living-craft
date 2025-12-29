@@ -1,11 +1,9 @@
 import { createRoute } from '@granite-js/react-native';
 import { colors } from '@toss/tds-colors';
-import {
-  ConfirmationStepContainer,
-  CustomerStepContainer,
-  DateTimeStepContainer,
-  ServiceStepContainer,
-} from '@components/reservation';
+import { ConfirmationStepContainer } from '@components/reservation/ConfirmationStepContainer';
+import { CustomerStepContainer } from '@components/reservation/CustomerStepContainer';
+import { DateTimeStepContainer } from '@components/reservation/DateTimeStepContainer';
+import { ServiceStepContainer } from '@components/reservation/ServiceStepContainer';
 import { ScrollProvider } from '@contexts';
 import { useReservationForm } from '@hooks';
 import { useReservationStore } from '@store';
@@ -35,6 +33,8 @@ export const Route = createRoute<ReservationPageParams>('/reservation', {
 
 function Page() {
   const navigation = Route.useNavigation();
+  const params = Route.useParams();
+  const serviceIdParam = params?.serviceId ? parseInt(params.serviceId, 10) : null;
 
   // ===== Store =====
   const { isLoading, reset: resetStore, resetAccordionSteps } = useReservationStore([
@@ -84,8 +84,7 @@ function Page() {
             keyboardShouldPersistTaps="handled"
             automaticallyAdjustKeyboardInsets
           >
-            {/* Props 없이 렌더링! */}
-            <ServiceStepContainer />
+            <ServiceStepContainer serviceIdParam={serviceIdParam} />
             <DateTimeStepContainer />
             <CustomerStepContainer />
             <ConfirmationStepContainer />

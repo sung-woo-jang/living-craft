@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 
 import type { ReservationFormData } from '@types';
-import { SummaryRow } from '@components/reservation/SummaryRow';
+import { SummaryRow } from './SummaryRow';
 
 /**
  * 서비스 선택 단계의 요약 정보

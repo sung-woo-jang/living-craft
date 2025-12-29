@@ -2,7 +2,7 @@ import { createRoute } from '@granite-js/react-native';
 import { useBottomNavHeight, usePortfolios, useRefresh } from '@hooks';
 import { SectionCard } from '@components/ui';
 import { colors } from '@toss/tds-colors';
-import { PortfolioListItem } from '@components/portfolio';
+import { PortfolioListItem } from '@components/portfolio/PortfolioListItem';
 import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export const Route = createRoute('/portfolio', {

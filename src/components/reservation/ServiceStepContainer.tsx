@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { LayoutAnimation, View } from 'react-native';
 
-import { Route as ReservationRoute } from '../../../pages/reservation';
 import { getServiceableRegionsForService } from '@api';
 import { useScrollContext } from '@contexts';
 import { useReservationValidation } from '@hooks';
@@ -12,10 +11,14 @@ import { scheduleScrollToStep } from '@utils';
 import { useReservationStore } from '@store';
 import type { ReservationFormData } from '@types';
 import { ServiceSelectionStep } from './ServiceSelectionStep';
-import { ServiceSummary } from '@components/reservation/ServiceSummary';
-import { AddressManagementSection } from '@components/reservation/AddressManagementSection';
+import { ServiceSummary } from './ServiceSummary';
+import { AddressManagementSection } from './AddressManagementSection';
 
-export function ServiceStepContainer() {
+interface ServiceStepContainerProps {
+  serviceIdParam?: number | null;
+}
+
+export function ServiceStepContainer({ serviceIdParam }: ServiceStepContainerProps) {
   // ===== Context =====
   const { scrollViewRef, stepRefs } = useScrollContext();
 
@@ -42,10 +45,6 @@ export function ServiceStepContainer() {
 
   // ===== Data Fetching =====
   const { data: services } = useServices();
-
-  // ===== Route Params =====
-  const params = ReservationRoute.useParams();
-  const serviceIdParam = params?.serviceId ? parseInt(params.serviceId, 10) : null;
 
   // ===== Computed =====
   const currentService = watch('service');

@@ -7,7 +7,7 @@ import { useReservationValidation } from '@hooks';
 import { scheduleScrollToStep } from '@utils';
 import { useReservationStore } from '@store';
 import { DateTimeSelectionStep } from './DateTimeSelectionStep';
-import { DateTimeSummary } from '@components/reservation/DateTimeSummary';
+import { DateTimeSummary } from './DateTimeSummary';
 
 export function DateTimeStepContainer() {
   // ===== Context =====

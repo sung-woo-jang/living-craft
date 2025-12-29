@@ -7,7 +7,7 @@ import { useReservationValidation } from '@hooks';
 import { scheduleScrollToStep } from '@utils';
 import { useReservationStore } from '@store';
 import { CustomerInfoStep } from './CustomerInfoStep';
-import { CustomerSummary } from '@components/reservation/CustomerSummary';
+import { CustomerSummary } from './CustomerSummary';
 
 export function CustomerStepContainer() {
   // ===== Context =====
