@@ -4,7 +4,7 @@ import { FilterOption, FilterTabs } from '@components/ui/filter-tabs';
 import { createRoute } from '@granite-js/react-native';
 import { useBottomNavHeight, useMyReservations, useRefresh } from '@hooks';
 import { colors } from '@toss/tds-colors';
-import { Skeleton } from '@toss/tds-react-native';
+import { Asset, Skeleton } from '@toss/tds-react-native';
 import { useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -128,11 +128,25 @@ function Page() {
 
               <View style={styles.cardDetails}>
                 <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>📅 견적 날짜</Text>
+                  <View style={styles.detailLabelContainer}>
+                    <Asset.Icon
+                      name="icon-calendar-check-blue"
+                      frameShape={Asset.frameShape.CleanW20}
+                      color={colors.blue500}
+                    />
+                    <Text style={styles.detailLabel}>견적 날짜</Text>
+                  </View>
                   <Text style={styles.detailValue}>{item.estimateDate}</Text>
                 </View>
                 <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>🕐 시간</Text>
+                  <View style={styles.detailLabelContainer}>
+                    <Asset.Icon
+                      name="icon-clock"
+                      frameShape={Asset.frameShape.CleanW20}
+                      color={colors.grey600}
+                    />
+                    <Text style={styles.detailLabel}>시간</Text>
+                  </View>
                   <Text style={styles.detailValue}>{item.estimateTime}</Text>
                 </View>
               </View>
@@ -174,7 +188,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 16,
@@ -195,11 +209,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   reservationCard: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -220,7 +234,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   statusText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -244,13 +258,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  detailLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   detailLabel: {
     fontSize: 14,
-    color: colors.grey600,
+    color: colors.grey700,
+    fontWeight: '500',
   },
   detailValue: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
     color: colors.grey900,
   },
   cardActions: {
@@ -274,7 +294,7 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.red500,
     borderRadius: 8,
@@ -294,7 +314,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   reviewButtonText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 14,
     fontWeight: '600',
   },
