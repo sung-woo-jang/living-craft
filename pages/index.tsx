@@ -66,5 +66,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     backgroundColor: colors.greyBackground,
+    paddingHorizontal: 4,
   },
 });

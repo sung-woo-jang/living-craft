@@ -33,15 +33,13 @@ export const Route = createRoute<ReservationPageParams>('/reservation', {
 
 function Page() {
   const navigation = Route.useNavigation();
-  const params = Route.useParams();
-  const serviceIdParam = params?.serviceId ? parseInt(params.serviceId, 10) : null;
 
   // ===== Store =====
-  const { isLoading, reset: resetStore, resetAccordionSteps } = useReservationStore([
-    'isLoading',
-    'reset',
-    'resetAccordionSteps',
-  ]);
+  const {
+    isLoading,
+    reset: resetStore,
+    resetAccordionSteps,
+  } = useReservationStore(['isLoading', 'reset', 'resetAccordionSteps']);
 
   // ===== Form =====
   const { methods } = useReservationForm({
@@ -84,7 +82,7 @@ function Page() {
             keyboardShouldPersistTaps="handled"
             automaticallyAdjustKeyboardInsets
           >
-            <ServiceStepContainer serviceIdParam={serviceIdParam} />
+            <ServiceStepContainer />
             <DateTimeStepContainer />
             <CustomerStepContainer />
             <ConfirmationStepContainer />
@@ -115,7 +113,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingVertical: 16,
-    paddingHorizontal: 16,
+    paddingHorizontal: 4,
     gap: 12,
   },
 });

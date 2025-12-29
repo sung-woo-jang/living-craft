@@ -114,22 +114,18 @@ export function AccordionStep({
 
   return (
     <View style={styles.container}>
-      <Card>
+      <Card
+        style={{
+          paddingVertical: 0,
+          paddingHorizontal: 0,
+        }}
+      >
         {/* 헤더 (항상 표시) */}
-        <TouchableOpacity
-          onPress={handleToggle}
-          disabled={isLocked}
-          activeOpacity={0.7}
-          style={styles.header}
-        >
+        <TouchableOpacity onPress={handleToggle} disabled={isLocked} activeOpacity={0.7} style={styles.header}>
           <View style={styles.headerLeft}>
             <StepBadge number={stepNumber} status={status} />
             <Text
-              style={[
-                styles.title,
-                isLocked && styles.titleLocked,
-                status === 'completed' && styles.titleCompleted,
-              ]}
+              style={[styles.title, isLocked && styles.titleLocked, status === 'completed' && styles.titleCompleted]}
             >
               {title}
             </Text>

@@ -1,8 +1,8 @@
 import { getServiceableRegionsForService } from '@api';
 import { AccordionStep } from '@components/ui/accordion-step';
 import { useScrollContext } from '@contexts';
-import { useServices } from '@hooks';
-import { useReservationValidation } from '@hooks';
+import { useReservationValidation, useServices } from '@hooks';
+import { Route } from '@pages/reservation';
 import { useReservationStore } from '@store';
 import type { ReservationFormData } from '@types';
 import { safeLayoutAnimation, scheduleScrollToStep } from '@utils';
@@ -14,30 +14,22 @@ import { AddressManagementSection } from './AddressManagementSection';
 import { ServiceSelectionStep } from './ServiceSelectionStep';
 import { ServiceSummary } from './ServiceSummary';
 
-interface ServiceStepContainerProps {
-  serviceIdParam?: number | null;
-}
-
-export function ServiceStepContainer({ serviceIdParam }: ServiceStepContainerProps) {
+export function ServiceStepContainer() {
   // ===== Context =====
   const { scrollViewRef, stepRefs } = useScrollContext();
+  const params = Route.useParams();
+  const serviceIdParam = params?.serviceId ? parseInt(params.serviceId, 10) : null;
 
   // ===== Store =====
-  const {
-    accordionSteps,
-    toggleStepExpanded,
-    completeStep,
-    goToStep,
-    resetAddressSearch,
-    resetEstimateFeeInfo,
-  } = useReservationStore([
-    'accordionSteps',
-    'toggleStepExpanded',
-    'completeStep',
-    'goToStep',
-    'resetAddressSearch',
-    'resetEstimateFeeInfo',
-  ]);
+  const { accordionSteps, toggleStepExpanded, completeStep, goToStep, resetAddressSearch, resetEstimateFeeInfo } =
+    useReservationStore([
+      'accordionSteps',
+      'toggleStepExpanded',
+      'completeStep',
+      'goToStep',
+      'resetAddressSearch',
+      'resetEstimateFeeInfo',
+    ]);
 
   // ===== Form =====
   const { setValue, watch } = useFormContext<ReservationFormData>();
