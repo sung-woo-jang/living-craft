@@ -1,11 +1,10 @@
 import { AccordionStep } from '@components/ui/accordion-step';
-import { useCallback } from 'react';
-import { LayoutAnimation, View } from 'react-native';
-
 import { useScrollContext } from '@contexts';
 import { useReservationValidation } from '@hooks';
-import { scheduleScrollToStep } from '@utils';
 import { useReservationStore } from '@store';
+import { safeLayoutAnimation, scheduleScrollToStep } from '@utils';
+import { View } from 'react-native';
+
 import { DateTimeSelectionStep } from './DateTimeSelectionStep';
 import { DateTimeSummary } from './DateTimeSummary';
 
@@ -26,24 +25,24 @@ export function DateTimeStepContainer() {
   const canProceed = canProceedToNext('datetime');
 
   // ===== 핸들러 =====
-  const handleToggle = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  const handleToggle = () => {
+    safeLayoutAnimation();
     toggleStepExpanded('datetime');
-  }, [toggleStepExpanded]);
+  };
 
-  const handleComplete = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  const handleComplete = () => {
+    safeLayoutAnimation();
     completeStep('datetime');
 
     // 자동 스크롤
     scheduleScrollToStep(scrollViewRef, stepRefs.current.customer);
-  }, [completeStep, scrollViewRef, stepRefs]);
+  };
 
-  const handleEdit = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    goToStep('datetime');
-    scheduleScrollToStep(scrollViewRef, stepRefs.current.datetime);
-  }, [goToStep, scrollViewRef, stepRefs]);
+  const handleEdit = () => {
+    safeLayoutAnimation();
+    goToStep('service');
+    scheduleScrollToStep(scrollViewRef, stepRefs.current.service);
+  };
 
   const accordionStep = accordionSteps.datetime!;
 

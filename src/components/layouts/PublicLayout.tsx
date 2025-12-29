@@ -1,6 +1,6 @@
 import { useNavigationState } from '@react-navigation/native';
-import { colors } from '@toss/tds-colors';
 import { useReservationStore } from '@store';
+import { colors } from '@toss/tds-colors';
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

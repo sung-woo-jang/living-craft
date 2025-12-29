@@ -2,14 +2,14 @@
  * 로그인 Mutation 훅
  */
 
+import type { LoginResponse } from '@api';
 import { MOCK_LOGIN_RESPONSE, mockDelay } from '@mocks';
-import { showSuccessToast } from '@utils/toast';
 import { useMutation } from '@tanstack/react-query';
+import { showSuccessToast } from '@utils/toast';
 
 import { useAuthStore } from '../../../store/authStore';
 import { axiosInstance } from '../../axios';
 import { AUTH_API } from '../../endpoints';
-import type { LoginResponse } from '@api';
 
 interface LoginParams {
   authorizationCode: string;

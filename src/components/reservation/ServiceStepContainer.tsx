@@ -1,18 +1,18 @@
-import { useServices } from '@hooks';
-import { AccordionStep } from '@components/ui/accordion-step';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { LayoutAnimation, View } from 'react-native';
-
 import { getServiceableRegionsForService } from '@api';
+import { AccordionStep } from '@components/ui/accordion-step';
 import { useScrollContext } from '@contexts';
+import { useServices } from '@hooks';
 import { useReservationValidation } from '@hooks';
-import { scheduleScrollToStep } from '@utils';
 import { useReservationStore } from '@store';
 import type { ReservationFormData } from '@types';
+import { safeLayoutAnimation, scheduleScrollToStep } from '@utils';
+import { useEffect, useMemo, useRef } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { View } from 'react-native';
+
+import { AddressManagementSection } from './AddressManagementSection';
 import { ServiceSelectionStep } from './ServiceSelectionStep';
 import { ServiceSummary } from './ServiceSummary';
-import { AddressManagementSection } from './AddressManagementSection';
 
 interface ServiceStepContainerProps {
   serviceIdParam?: number | null;
@@ -62,32 +62,32 @@ export function ServiceStepContainer({ serviceIdParam }: ServiceStepContainerPro
   const prevServiceIdRef = useRef<number | null>(null);
 
   // ===== 핸들러 =====
-  const handleToggle = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  const handleToggle = () => {
+    safeLayoutAnimation();
     toggleStepExpanded('service');
-  }, [toggleStepExpanded]);
+  };
 
-  const handleComplete = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  const handleComplete = () => {
+    safeLayoutAnimation();
     completeStep('service');
 
     // 자동 스크롤
     scheduleScrollToStep(scrollViewRef, stepRefs.current.datetime);
-  }, [completeStep, scrollViewRef, stepRefs]);
+  };
 
-  const handleEdit = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  const handleEdit = () => {
+    safeLayoutAnimation();
     goToStep('service');
     scheduleScrollToStep(scrollViewRef, stepRefs.current.service);
-  }, [goToStep, scrollViewRef, stepRefs]);
+  };
 
   // ===== 서비스 변경 시 주소 초기화 핸들러 =====
-  const resetAddressState = useCallback(() => {
+  const resetAddressState = () => {
     resetAddressSearch();
     resetEstimateFeeInfo();
     setValue('customerInfo.address', '');
     setValue('customerInfo.detailAddress', '');
-  }, [resetAddressSearch, resetEstimateFeeInfo, setValue]);
+  };
 
   // ===== Query params 기반 서비스 자동 선택 =====
   useEffect(() => {
@@ -110,12 +110,18 @@ export function ServiceStepContainer({ serviceIdParam }: ServiceStepContainerPro
       return;
     }
 
-    if (prevServiceIdRef.current !== null && prevServiceIdRef.current !== currentService.id) {
-      resetAddressState();
+    // 초기 마운트 시에는 실행하지 않음
+    if (prevServiceIdRef.current === null) {
+      prevServiceIdRef.current = currentService.id;
+      return;
     }
 
-    prevServiceIdRef.current = currentService.id;
-  }, [currentService?.id, resetAddressState]);
+    // 실제로 서비스가 변경된 경우에만 주소 초기화
+    if (prevServiceIdRef.current !== currentService.id) {
+      resetAddressState();
+      prevServiceIdRef.current = currentService.id;
+    }
+  }, [currentService?.id]);
 
   const accordionStep = accordionSteps.service!;
 

@@ -1,15 +1,7 @@
 import { colors } from '@toss/tds-colors';
 import { Button } from '@toss/tds-react-native';
 import React from 'react';
-import {
-  LayoutAnimation,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  UIManager,
-  View,
-} from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, UIManager, View } from 'react-native';
 
 import { Card } from '../card';
 import { StatusIcon } from './StatusIcon';
@@ -117,16 +109,6 @@ export function AccordionStep({
 
   const handleToggle = () => {
     if (isLocked) return;
-
-    // 펼침/접힘 애니메이션
-    LayoutAnimation.configureNext(
-      LayoutAnimation.create(
-        250,
-        LayoutAnimation.Types.easeInEaseOut,
-        LayoutAnimation.Properties.opacity
-      )
-    );
-
     onToggle();
   };
 

@@ -1,6 +1,6 @@
+import { Carousel, SectionCard } from '@components/ui';
 import { createRoute } from '@granite-js/react-native';
 import { usePortfolios } from '@hooks';
-import { Carousel, SectionCard } from '@components/ui';
 import { colors } from '@toss/tds-colors';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

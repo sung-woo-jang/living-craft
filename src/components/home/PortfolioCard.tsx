@@ -1,5 +1,5 @@
-import { Image } from '@granite-js/react-native';
 import { Portfolio } from '@api/types';
+import { Image } from '@granite-js/react-native';
 import { colors } from '@toss/tds-colors';
 import { Badge } from '@toss/tds-react-native';
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';

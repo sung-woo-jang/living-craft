@@ -2,11 +2,11 @@
  * 이미지 업로드 Mutation 훅
  */
 
+import type { MultipleImageUploadResponse } from '@api';
 import { useMutation } from '@tanstack/react-query';
 
 import { formInstance } from '../../axios';
 import { API } from '../../endpoints';
-import type { MultipleImageUploadResponse } from '@api';
 
 interface UploadImagesParams {
   files: File[];

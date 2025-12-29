@@ -1,7 +1,7 @@
+import { BOTTOM_NAV_ITEMS, ROUTE_TAB_CONFIG } from '@constants';
 import { createRoute } from '@granite-js/react-native';
 import { useNavigationState } from '@react-navigation/native';
 import { animated, useSpring } from '@react-spring/native';
-import { BOTTOM_NAV_ITEMS, ROUTE_TAB_CONFIG } from '@constants';
 import { colors } from '@toss/tds-colors';
 import { Asset, shadow, useShadow } from '@toss/tds-react-native';
 import type React from 'react';

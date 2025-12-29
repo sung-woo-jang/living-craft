@@ -1,7 +1,7 @@
-import { createRoute } from '@granite-js/react-native';
 import { Service } from '@api/types';
-import { useServices } from '@hooks';
 import { SectionCard } from '@components/ui';
+import { createRoute } from '@granite-js/react-native';
+import { useServices } from '@hooks';
 
 import { ServiceList } from './ServiceList';
 import { ServiceListSkeleton } from './ServiceListSkeleton';

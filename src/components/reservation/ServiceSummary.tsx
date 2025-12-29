@@ -1,7 +1,7 @@
+import type { ReservationFormData } from '@types';
 import { useFormContext } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 
-import type { ReservationFormData } from '@types';
 import { SummaryRow } from './SummaryRow';
 
 /**

@@ -1,8 +1,8 @@
-import { createRoute } from '@granite-js/react-native';
 import type { Promotion } from '@api/types';
-import { useIncrementPromotionClick, usePromotions } from '@hooks';
 import { Card } from '@components/ui/card';
 import { Carousel } from '@components/ui/carousel';
+import { createRoute } from '@granite-js/react-native';
+import { useIncrementPromotionClick, usePromotions } from '@hooks';
 import { Dimensions, Linking, StyleSheet } from 'react-native';
 
 import { PromoItem } from './PromoItem';

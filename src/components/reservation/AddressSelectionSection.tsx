@@ -1,10 +1,9 @@
+import { useReservationStore } from '@store';
 import { colors } from '@toss/tds-colors';
 import { Button, TextField } from '@toss/tds-react-native';
-import { useCallback, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-
-import { useReservationStore } from '@store';
 import type { AddressSearchResult } from '@types';
+import { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface Props {
   selectedAddress: AddressSearchResult | null;
@@ -28,15 +27,15 @@ export function AddressSelectionSection({
     'resetRegionSelection',
   ]);
 
-  const handleOpenRegionSheet = useCallback(() => {
+  const handleOpenRegionSheet = () => {
     update({ isRegionBottomSheetOpen: true });
-  }, [update]);
+  };
 
-  const handleChangeRegion = useCallback(() => {
+  const handleChangeRegion = () => {
     resetRegionSelection();
     onClearAddress();
     update({ isRegionBottomSheetOpen: true });
-  }, [resetRegionSelection, onClearAddress, update]);
+  };
 
   // 선택된 주소에서 시/도 + 구/군 부분 제외하고 표시
   // 예: "인천광역시 남동구 숙골로 456" → "숙골로 456"

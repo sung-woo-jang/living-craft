@@ -2,10 +2,10 @@
  * 사용자 관련 Query 훅
  */
 
+import { generateQueryKeysFromUrl } from '@hooks/query-keys';
 import { MOCK_REVIEWS, MOCK_USER, mockDelay } from '@mocks';
 import { useQuery } from '@tanstack/react-query';
 
-import { generateQueryKeysFromUrl } from '@hooks/query-keys';
 import { axiosInstance } from '../axios';
 import { API } from '../endpoints';
 import type { MyReviewsParams, Review, User } from '../types';

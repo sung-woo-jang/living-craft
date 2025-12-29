@@ -2,9 +2,8 @@ import { Image } from '@granite-js/react-native';
 import { usePhotoManager } from '@hooks';
 import { colors } from '@toss/tds-colors';
 import { Asset } from '@toss/tds-react-native';
-import { ImageStyle, Pressable, StyleSheet, Text, View } from 'react-native';
-
 import { ImageState } from '@types';
+import { ImageStyle, Pressable, StyleSheet, Text, View } from 'react-native';
 
 interface PhotoSectionProps {
   photos: ImageState[];

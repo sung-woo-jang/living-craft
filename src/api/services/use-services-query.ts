@@ -2,9 +2,9 @@
  * 서비스 관련 Query 훅 및 API 함수
  */
 
+import { generateQueryKeysFromUrl } from '@hooks/query-keys';
 import { useQuery } from '@tanstack/react-query';
 
-import { generateQueryKeysFromUrl } from '@hooks/query-keys';
 import { axiosInstance } from '../axios';
 import { API } from '../endpoints';
 import type {

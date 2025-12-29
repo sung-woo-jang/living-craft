@@ -1,11 +1,10 @@
+import { searchAddress } from '@api';
 import { colors } from '@toss/tds-colors';
 import { Skeleton, TextField } from '@toss/tds-react-native';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import type { AddressSearchResult } from '@types';
+import { useEffect, useRef, useState } from 'react';
 import { Keyboard, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-
-import { searchAddress } from '@api';
-import type { AddressSearchResult } from '@types';
 
 interface RBSheetRef {
   open: () => void;
@@ -35,14 +34,14 @@ export function AddressSearchDrawer({ isOpen, regionPrefix, onClose, onSelect }:
   }, [isOpen]);
 
   // Drawer가 닫힐 때 상태 초기화
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     setSearchQuery('');
     setSearchResults([]);
     setHasSearched(false);
     onClose();
-  }, [onClose]);
+  };
 
-  const handleSearch = useCallback(async () => {
+  const handleSearch = async () => {
     if (!searchQuery.trim()) {
       return;
     }
@@ -60,18 +59,15 @@ export function AddressSearchDrawer({ isOpen, regionPrefix, onClose, onSelect }:
     } finally {
       setIsSearching(false);
     }
-  }, [searchQuery, regionPrefix]);
+  };
 
-  const handleSelect = useCallback(
-    (address: AddressSearchResult) => {
-      onSelect(address);
-      // 상태 초기화 후 닫기
-      setSearchQuery('');
-      setSearchResults([]);
-      setHasSearched(false);
-    },
-    [onSelect]
-  );
+  const handleSelect = (address: AddressSearchResult) => {
+    onSelect(address);
+    // 상태 초기화 후 닫기
+    setSearchQuery('');
+    setSearchResults([]);
+    setHasSearched(false);
+  };
 
   return (
     <RBSheet

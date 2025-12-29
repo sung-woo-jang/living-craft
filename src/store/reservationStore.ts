@@ -1,9 +1,9 @@
-import { StoreWithShallow, useStoreWithShallow } from '@types';
+import { checkEstimateFeeByRegion } from '@api/serviceableRegions';
 import { getNextStep, initialAccordionSteps, STEP_ORDER } from '@components/ui/accordion-step';
+import { StoreWithShallow, useStoreWithShallow } from '@types';
 import { immer } from 'zustand/middleware/immer';
 import { createWithEqualityFn } from 'zustand/traditional';
 
-import { checkEstimateFeeByRegion } from '@api/serviceableRegions';
 import type { ReservationState, ReservationStore } from '../types/reservationStore';
 
 const initialState: ReservationState = {

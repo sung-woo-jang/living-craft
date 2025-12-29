@@ -1,9 +1,8 @@
 import { colors } from '@toss/tds-colors';
-import { useCallback, useEffect, useRef } from 'react';
+import type { RegionData } from '@types';
+import { useEffect, useRef } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-
-import type { RegionData } from '@types';
 
 interface RBSheetRef {
   open: () => void;
@@ -29,12 +28,9 @@ export function RegionSelectBottomSheet({ isOpen, regions, isLoading, onClose, o
     }
   }, [isOpen]);
 
-  const handleSelect = useCallback(
-    (region: RegionData) => {
-      onSelect(region);
-    },
-    [onSelect]
-  );
+  const handleSelect = (region: RegionData) => {
+    onSelect(region);
+  };
 
   return (
     <RBSheet

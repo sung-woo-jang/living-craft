@@ -1,7 +1,7 @@
+import { Card, Carousel, SectionCard } from '@components/ui';
 import { Image } from '@granite-js/react-native';
 import { createRoute } from '@granite-js/react-native';
 import { useBottomNavHeight, usePortfolio } from '@hooks';
-import { Card, Carousel, SectionCard } from '@components/ui';
 import { colors } from '@toss/tds-colors';
 import { Skeleton } from '@toss/tds-react-native';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';

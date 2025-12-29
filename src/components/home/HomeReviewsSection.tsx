@@ -1,5 +1,5 @@
-import { useReviews } from '@hooks';
 import { Carousel, SectionCard } from '@components/ui';
+import { useReviews } from '@hooks';
 import { colors } from '@toss/tds-colors';
 import { Dimensions } from 'react-native';
 

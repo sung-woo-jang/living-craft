@@ -3,8 +3,8 @@
  */
 
 import { mockDelay } from '@mocks';
-import { showSuccessToast } from '@utils/toast';
 import { useMutation } from '@tanstack/react-query';
+import { showSuccessToast } from '@utils/toast';
 
 import { useAuthStore } from '../../../store/authStore';
 import { axiosInstance } from '../../axios';

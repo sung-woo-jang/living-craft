@@ -30,8 +30,8 @@ export {
 } from './auth';
 
 // Services
-export { getServices, useAvailableDates, useAvailableTimes, useServices } from './services';
 export { checkEstimateFeeByRegion, getServiceableRegionsForService } from './serviceableRegions';
+export { getServices, useAvailableDates, useAvailableTimes, useServices } from './services';
 
 // Reservations
 export {

@@ -1,7 +1,6 @@
 import { colors } from '@toss/tds-colors';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
 import { StepKey } from '@types';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface ReservationActionsProps {
   currentStep: StepKey;

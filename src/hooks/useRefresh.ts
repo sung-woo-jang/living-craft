@@ -3,7 +3,7 @@
  */
 
 import type { UseQueryResult } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 /**
  * Pull-to-Refresh 기능을 위한 커스텀 훅
@@ -41,7 +41,7 @@ import { useCallback, useState } from 'react';
 export function useRefresh(queries: UseQueryResult | UseQueryResult[]) {
   const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = useCallback(async () => {
+  const onRefresh = async () => {
     setRefreshing(true);
 
     try {
@@ -56,7 +56,7 @@ export function useRefresh(queries: UseQueryResult | UseQueryResult[]) {
     } finally {
       setRefreshing(false);
     }
-  }, [queries]);
+  };
 
   return { refreshing, onRefresh };
 }

@@ -1,5 +1,5 @@
 import { colors } from '@toss/tds-colors';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 
@@ -46,15 +46,12 @@ export const Carousel = <T extends CarouselItem>({
   };
 
   // 프로그래매틱 스크롤
-  const scrollToIndex = useCallback(
-    (index: number) => {
-      flatListRef.current?.scrollToIndex({
-        index,
-        animated: true,
-      });
-    },
-    []
-  );
+  const scrollToIndex = (index: number) => {
+    flatListRef.current?.scrollToIndex({
+      index,
+      animated: true,
+    });
+  };
 
   // 자동 스크롤 훅
   useAutoPlay(autoPlay, autoPlayInterval, currentIndex, data.length, scrollToIndex);

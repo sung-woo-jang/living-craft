@@ -1,10 +1,9 @@
 import { colors } from '@toss/tds-colors';
 import { IconButton, Skeleton } from '@toss/tds-react-native';
-import { useCallback, useEffect, useRef } from 'react';
+import type { CityData, RegionData } from '@types';
+import { useEffect, useRef } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-
-import type { CityData, RegionData } from '@types';
 
 interface RBSheetRef {
   open: () => void;
@@ -40,19 +39,16 @@ export function CitySelectBottomSheet({
     }
   }, [isOpen]);
 
-  const handleSelect = useCallback(
-    (city: CityData) => {
-      onSelect(city);
-    },
-    [onSelect]
-  );
+  const handleSelect = (city: CityData) => {
+    onSelect(city);
+  };
 
-  const handleBackPress = useCallback(() => {
+  const handleBackPress = () => {
     sheetRef.current?.close();
     setTimeout(() => {
       onBackToRegion();
     }, 300);
-  }, [onBackToRegion]);
+  };
 
   return (
     <RBSheet

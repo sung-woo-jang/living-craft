@@ -1,6 +1,6 @@
+import { EmptyState } from '@components/ui/empty-state';
 import { createRoute } from '@granite-js/react-native';
 import { useBottomNavHeight, useMyReviews, useRefresh } from '@hooks';
-import { EmptyState } from '@components/ui/empty-state';
 import { colors } from '@toss/tds-colors';
 import { Asset, Skeleton } from '@toss/tds-react-native';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';

@@ -1,13 +1,13 @@
 import type { Service } from '@api/types';
 import { Card } from '@components/ui';
+import { useReservationStore } from '@store';
 import { colors } from '@toss/tds-colors';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { AddressSearchResult, ReservationFormData, ServiceableRegion } from '@types';
+import { buildRegionPrefix } from '@utils';
+import { useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { buildRegionPrefix } from '@utils';
-import { useReservationStore } from '@store';
-import type { AddressSearchResult, ReservationFormData, ServiceableRegion } from '@types';
 import { AddressSearchDrawer } from './AddressSearchDrawer';
 import { AddressSelectionSection } from './AddressSelectionSection';
 import { CitySelectBottomSheet } from './CitySelectBottomSheet';
@@ -24,7 +24,7 @@ export function AddressManagementSection({
   services,
   filteredRegions,
 }: AddressManagementSectionProps) {
-  const { setValue } = useFormContext<ReservationFormData>();
+  const { setValue, watch } = useFormContext<ReservationFormData>();
 
   // ===== Store =====
   const {
@@ -51,6 +51,10 @@ export function AddressManagementSection({
     'checkEstimateFee',
   ]);
 
+  // ===== React Hook Form 값 감시 =====
+  const formAddress = watch('customerInfo.address');
+  const formDetailAddress = watch('customerInfo.detailAddress');
+
   // ===== 로컬 상태 =====
   const [localSelectedAddress, setLocalSelectedAddress] = useState<AddressSearchResult | null>(null);
   const [detailAddress, setDetailAddress] = useState('');
@@ -67,6 +71,24 @@ export function AddressManagementSection({
     [filteredRegions]
   );
 
+  // ===== React Hook Form 값을 로컬 상태로 복원 =====
+  useEffect(() => {
+    // 주소가 있는데 로컬 상태가 비어있으면 복원
+    if (formAddress && !localSelectedAddress) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocalSelectedAddress({
+        roadAddress: formAddress,
+        jibunAddress: '',
+        zipCode: '',
+      });
+    }
+
+    // 상세주소 복원
+    if (formDetailAddress && !detailAddress) {
+      setDetailAddress(formDetailAddress);
+    }
+  }, [formAddress, formDetailAddress, localSelectedAddress, detailAddress]);
+
   // ===== 구/군 BottomSheet 데이터 로딩 =====
   useEffect(() => {
     if (isCityBottomSheetOpen && addressSelection.region && filteredRegions.length > 0) {
@@ -82,42 +104,36 @@ export function AddressManagementSection({
   }, [isCityBottomSheetOpen, addressSelection.region, filteredRegions, update]);
 
   // ===== 핸들러 =====
-  const handleAddressSelect = useCallback(
-    (address: AddressSearchResult) => {
-      setLocalSelectedAddress(address);
-      update({ isAddressSearchDrawerOpen: false });
-      setValue('customerInfo.address', address.roadAddress);
+  const handleAddressSelect = (address: AddressSearchResult) => {
+    setLocalSelectedAddress(address);
+    update({ isAddressSearchDrawerOpen: false });
+    setValue('customerInfo.address', address.roadAddress);
 
-      if (currentService && services) {
-        checkEstimateFee(currentService.id, services);
-      }
-    },
-    [setLocalSelectedAddress, update, setValue, currentService, checkEstimateFee, services]
-  );
+    if (currentService && services) {
+      checkEstimateFee(currentService.id, services);
+    }
+  };
 
-  const handleClearAddress = useCallback(() => {
+  const handleClearAddress = () => {
     setLocalSelectedAddress(null);
     setDetailAddress('');
     setValue('customerInfo.address', '');
     setValue('customerInfo.detailAddress', '');
     resetEstimateFeeInfo();
-  }, [setLocalSelectedAddress, setDetailAddress, setValue, resetEstimateFeeInfo]);
+  };
 
-  const handleDetailAddressChange = useCallback(
-    (value: string) => {
-      setDetailAddress(value);
-      setValue('customerInfo.detailAddress', value);
-    },
-    [setDetailAddress, setValue]
-  );
+  const handleDetailAddressChange = (value: string) => {
+    setDetailAddress(value);
+    setValue('customerInfo.detailAddress', value);
+  };
 
-  const handleOpenSearchDrawer = useCallback(() => {
+  const handleOpenSearchDrawer = () => {
     update({ isAddressSearchDrawerOpen: true });
-  }, [update]);
+  };
 
-  const handleBackToRegion = useCallback(() => {
+  const handleBackToRegion = () => {
     update({ isCityBottomSheetOpen: false, isRegionBottomSheetOpen: true });
-  }, [update]);
+  };
 
   // ===== 서비스 미선택 시 빈 상태 =====
   if (!currentService) {

@@ -1,8 +1,8 @@
 import { AppsInToss } from '@apps-in-toss/framework';
+import { PublicLayout } from '@components/layouts/PublicLayout';
 import type { InitialProps } from '@granite-js/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TDSProvider } from '@toss/tds-react-native';
-import { PublicLayout } from '@components/layouts/PublicLayout';
 import type { PropsWithChildren } from 'react';
 
 import { context } from '../require.context';

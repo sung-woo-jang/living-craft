@@ -1,11 +1,10 @@
-import { useServices } from '@hooks';
 import { SectionCard } from '@components/ui';
+import { useServices } from '@hooks';
 import { colors } from '@toss/tds-colors';
 import { Asset, Skeleton } from '@toss/tds-react-native';
+import { ReservationFormData } from '@types';
 import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import { ReservationFormData } from '@types';
 
 interface ServiceSelectionStepProps {
   /**

@@ -1,10 +1,10 @@
 import { Card } from '@components/ui';
 import { colors } from '@toss/tds-colors';
 import { TextField } from '@toss/tds-react-native';
+import { ReservationFormData } from '@types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { ReservationFormData } from '@types';
 import { PhotoSection } from './PhotoSection';
 
 interface CustomerInfoStepProps {

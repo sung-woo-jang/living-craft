@@ -1,5 +1,5 @@
-import { ImageResponse } from '@apps-in-toss/framework';
 import { Service, TimeSlotDto } from '@api/types';
+import { ImageResponse } from '@apps-in-toss/framework';
 
 export interface ImageState extends ImageResponse {
   previewUri: string;

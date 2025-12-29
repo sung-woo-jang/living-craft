@@ -1,5 +1,4 @@
 import { fetchAlbumPhotos, ImageResponse, openCamera } from '@apps-in-toss/framework';
-import { useCallback } from 'react';
 
 import { usePermissionGate } from './usePermissionGate';
 
@@ -42,7 +41,7 @@ export function usePhotoManager({
   const canAddMore = photos.length < maxCount;
   const remainingCount = maxCount - photos.length;
 
-  const capturePhoto = useCallback(async () => {
+  const capturePhoto = async () => {
     if (!canAddMore) return;
 
     try {
@@ -59,9 +58,9 @@ export function usePhotoManager({
     } catch (error) {
       console.error('카메라를 불러오는 데 실패했어요:', error);
     }
-  }, [canAddMore, cameraPermissionGate, base64, photos, onChange]);
+  };
 
-  const selectFromAlbum = useCallback(async () => {
+  const selectFromAlbum = async () => {
     if (!canAddMore) return;
 
     try {
@@ -81,14 +80,11 @@ export function usePhotoManager({
     } catch (error) {
       console.error('앨범을 가져오는 데 실패했어요:', error);
     }
-  }, [canAddMore, albumPermissionGate, remainingCount, base64, photos, maxCount, onChange]);
+  };
 
-  const deletePhoto = useCallback(
-    (id: string) => {
-      onChange(photos.filter((photo) => photo.id !== id));
-    },
-    [photos, onChange]
-  );
+  const deletePhoto = (id: string) => {
+    onChange(photos.filter((photo) => photo.id !== id));
+  };
 
   return {
     photos,

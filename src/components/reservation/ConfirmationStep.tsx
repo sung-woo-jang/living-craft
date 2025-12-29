@@ -1,10 +1,9 @@
 import { Card } from '@components/ui';
 import { colors } from '@toss/tds-colors';
 import { Button } from '@toss/tds-react-native';
+import { ReservationFormData } from '@types';
 import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import { ReservationFormData } from '@types';
 
 interface ConfirmationStepProps {
   /**

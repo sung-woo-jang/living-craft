@@ -1,13 +1,12 @@
-import { useCreateReservation } from '@hooks';
 import { AccordionStep } from '@components/ui/accordion-step';
-import { useCallback } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { Alert, LayoutAnimation, View } from 'react-native';
-
 import { useScrollContext } from '@contexts';
-import { useReservationValidation } from '@hooks';
+import { useCreateReservation, useReservationValidation } from '@hooks';
 import { useReservationStore } from '@store';
 import type { ReservationFormData } from '@types';
+import { safeLayoutAnimation } from '@utils';
+import { useFormContext } from 'react-hook-form';
+import { Alert, View } from 'react-native';
+
 import { ConfirmationStep } from './ConfirmationStep';
 
 export function ConfirmationStepContainer() {
@@ -31,12 +30,12 @@ export function ConfirmationStepContainer() {
   const { mutateAsync: createReservation } = useCreateReservation();
 
   // ===== 핸들러 =====
-  const handleToggle = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  const handleToggle = () => {
+    safeLayoutAnimation();
     toggleStepExpanded('confirmation');
-  }, [toggleStepExpanded]);
+  };
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = async () => {
     if (!canProceed) {
       Alert.alert('알림', '이용약관에 동의해주세요.');
       return;
@@ -78,7 +77,7 @@ export function ConfirmationStepContainer() {
     } finally {
       update({ isLoading: false });
     }
-  }, [canProceed, getValues, createReservation, update]);
+  };
 
   const accordionStep = accordionSteps.confirmation!;
 
