@@ -3,7 +3,6 @@
  * TypedAxiosInstance를 사용한 타입 안전한 Axios 인스턴스
  */
 
-import { API_BASE_URL as ENV_API_BASE_URL } from '@env';
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
 
 import { useAuthStore } from '../store/authStore';
@@ -25,7 +24,7 @@ export enum ContentType {
  * API 베이스 URL
  * 환경 변수에서 API_BASE_URL을 가져오거나 기본값 사용
  */
-const BASE_URL = ENV_API_BASE_URL || 'http://localhost:8000/api';
+const BASE_URL = process.env.API_BASE_URL || 'http://localhost:8000/api';
 
 // 디버깅용 로그
 if (__DEV__) {

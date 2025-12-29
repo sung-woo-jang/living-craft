@@ -1,5 +1,3 @@
-import { NAVER_CLIENT_ID, NAVER_CLIENT_SECRET } from '@env';
-
 import { AddressSearchResult, NaverLocalSearchItem } from '../types';
 
 const NAVER_LOCAL_SEARCH_URL = 'https://openapi.naver.com/v1/search/local.json';
@@ -37,8 +35,8 @@ export async function searchAddress(query: string, regionPrefix: string = 'Ïù∏Ï≤
     const response = await fetch(`${NAVER_LOCAL_SEARCH_URL}?${params.toString()}`, {
       method: 'GET',
       headers: {
-        'X-Naver-Client-Id': NAVER_CLIENT_ID,
-        'X-Naver-Client-Secret': NAVER_CLIENT_SECRET,
+        'X-Naver-Client-Id': process.env.NAVER_CLIENT_ID || '',
+        'X-Naver-Client-Secret': process.env.NAVER_CLIENT_SECRET || '',
       },
     });
 
