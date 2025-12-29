@@ -2,6 +2,7 @@ export * from './AddressSearchDrawer';
 export * from './AddressSelectionSection';
 export * from './CitySelectBottomSheet';
 export * from './ConfirmationStep';
+export * from './containers';
 export * from './CustomerInfoStep';
 export * from './DateTimeSelectionStep';
 export * from './PhotoSection';
