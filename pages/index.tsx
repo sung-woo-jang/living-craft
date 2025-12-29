@@ -1,10 +1,10 @@
 import { createRoute } from '@granite-js/react-native';
-import { useBottomNavHeight, usePortfolios, usePromotions, useRefresh, useReviews, useServices } from '@shared/hooks';
+import { useBottomNavHeight, usePortfolios, usePromotions, useRefresh, useReviews, useServices } from '@hooks';
 import { colors } from '@toss/tds-colors';
-import { HomePortfolioSection } from '@widgets/home/portfolio-section';
-import { HomePromoCarouselSection } from '@widgets/home/promo-carousel-section';
-import { HomeReviewsSection } from '@widgets/home/reviews-section';
-import { HomeServicesSection } from '@widgets/home/services-section';
+import { HomePortfolioSection } from '@components/home';
+import { HomePromoCarouselSection } from '@components/home';
+import { HomeReviewsSection } from '@components/home';
+import { HomeServicesSection } from '@components/home';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 export const Route = createRoute('/', {

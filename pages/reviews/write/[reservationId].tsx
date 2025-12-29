@@ -1,5 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
-import { useBottomNavHeight } from '@shared/hooks';
+import { useBottomNavHeight } from '@hooks';
 import { colors } from '@toss/tds-colors';
 import { Asset, TextField } from '@toss/tds-react-native';
 import { useState } from 'react';

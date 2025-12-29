@@ -4,12 +4,12 @@ import {
   ConfirmationStepContainer,
   CustomerStepContainer,
   DateTimeStepContainer,
-  DEFAULT_FORM_VALUES,
-  ScrollProvider,
   ServiceStepContainer,
-  useReservationForm,
-  useReservationStore,
-} from '@widgets/reservation';
+} from '@components/reservation';
+import { ScrollProvider } from '@contexts';
+import { useReservationForm } from '@hooks';
+import { useReservationStore } from '@store';
+import { DEFAULT_FORM_VALUES } from '@types';
 import { useEffect } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { Alert, BackHandler, ScrollView, StyleSheet, Text, View } from 'react-native';

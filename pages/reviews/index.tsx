@@ -1,7 +1,7 @@
 import { createRoute } from '@granite-js/react-native';
-import { useBottomNavHeight, useRefresh, useReviews } from '@shared/hooks';
-import { EmptyState } from '@shared/ui/empty-state';
-import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
+import { useBottomNavHeight, useRefresh, useReviews } from '@hooks';
+import { EmptyState } from '@components/ui/empty-state';
+import { FilterOption, FilterTabs } from '@components/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
 import { Asset, Skeleton } from '@toss/tds-react-native';
 import { useState } from 'react';

@@ -1,8 +1,8 @@
 import { createRoute } from '@granite-js/react-native';
-import { ReservationStatus } from '@shared/api/types';
-import { useBottomNavHeight, useMyReservations, useRefresh } from '@shared/hooks';
-import { EmptyState } from '@shared/ui/empty-state';
-import { FilterOption, FilterTabs } from '@shared/ui/filter-tabs';
+import { ReservationStatus } from '@api/types';
+import { useBottomNavHeight, useMyReservations, useRefresh } from '@hooks';
+import { EmptyState } from '@components/ui/empty-state';
+import { FilterOption, FilterTabs } from '@components/ui/filter-tabs';
 import { colors } from '@toss/tds-colors';
 import { Skeleton } from '@toss/tds-react-native';
 import { useState } from 'react';

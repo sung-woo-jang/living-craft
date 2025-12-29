@@ -1,7 +1,7 @@
 import { createRoute, useNavigation } from '@granite-js/react-native';
-import { MENU_ITEMS } from '@shared/constants';
-import { useBottomNavHeight, useLogout, useMe } from '@shared/hooks';
-import { Card } from '@shared/ui';
+import { MENU_ITEMS } from '@constants';
+import { useBottomNavHeight, useLogout, useMe } from '@hooks';
+import { Card } from '@components/ui';
 import { colors } from '@toss/tds-colors';
 import { Asset, Button, Skeleton } from '@toss/tds-react-native';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
