@@ -2,11 +2,10 @@ import { getServiceableRegionsForService } from '@api';
 import { AccordionStep } from '@components/ui/accordion-step';
 import { useScrollContext } from '@contexts';
 import { useReservationValidation, useServices } from '@hooks';
-import { Route } from '@pages/reservation';
 import { useReservationStore } from '@store';
 import type { ReservationFormData } from '@types';
 import { safeLayoutAnimation, scheduleScrollToStep } from '@utils';
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { View } from 'react-native';
 
@@ -14,11 +13,13 @@ import { AddressManagementSection } from './AddressManagementSection';
 import { ServiceSelectionStep } from './ServiceSelectionStep';
 import { ServiceSummary } from './ServiceSummary';
 
-export function ServiceStepContainer() {
+export interface ServiceStepContainerProps {
+  serviceIdParam: number | null;
+}
+
+export function ServiceStepContainer({ serviceIdParam }: ServiceStepContainerProps) {
   // ===== Context =====
   const { scrollViewRef, stepRefs } = useScrollContext();
-  const params = Route.useParams();
-  const serviceIdParam = params?.serviceId ? parseInt(params.serviceId, 10) : null;
 
   // ===== Store =====
   const { accordionSteps, toggleStepExpanded, completeStep, goToStep, resetAddressSearch, resetEstimateFeeInfo } =
@@ -74,12 +75,12 @@ export function ServiceStepContainer() {
   };
 
   // ===== 서비스 변경 시 주소 초기화 핸들러 =====
-  const resetAddressState = () => {
+  const resetAddressState = useCallback(() => {
     resetAddressSearch();
     resetEstimateFeeInfo();
     setValue('customerInfo.address', '');
     setValue('customerInfo.detailAddress', '');
-  };
+  }, [resetAddressSearch, resetEstimateFeeInfo, setValue]);
 
   // ===== Query params 기반 서비스 자동 선택 =====
   useEffect(() => {
@@ -113,7 +114,7 @@ export function ServiceStepContainer() {
       resetAddressState();
       prevServiceIdRef.current = currentService.id;
     }
-  }, [currentService?.id]);
+  }, [currentService?.id, resetAddressState]);
 
   const accordionStep = accordionSteps.service!;
 

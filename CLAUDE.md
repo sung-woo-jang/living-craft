@@ -44,29 +44,41 @@ yarn test
 
 ### 디렉토리 구조
 
-프로젝트는 Feature-Sliced Design에 영향을 받은 계층 구조를 사용합니다:
-
 ```
 living-craft-front/
 ├── pages/              # 라우트 페이지 (파일 기반 라우팅)
-├── widgets/            # 페이지를 구성하는 독립적인 기능 단위
-├── shared/             # 공용 리소스
-│   ├── ui/            # 재사용 가능한 UI 컴포넌트
-│   ├── hooks/         # 공용 커스텀 훅
-│   ├── types/         # 타입 정의
-│   └── constants/     # 상수 정의
 └── src/
-    ├── _app.tsx       # 앱 루트 컴포넌트
-    └── router.gen.ts  # 자동 생성된 라우터 (수정 금지)
+    ├── components/     # 도메인별 컴포넌트
+    │   ├── ui/        # 재사용 가능한 일반 UI 컴포넌트
+    │   ├── home/      # 홈 도메인 컴포넌트
+    │   ├── reservation/ # 예약 도메인 컴포넌트
+    │   ├── portfolio/ # 포트폴리오 도메인 컴포넌트
+    │   └── layouts/   # 레이아웃 컴포넌트
+    ├── hooks/          # 공용 커스텀 훅
+    ├── api/            # API 호출 함수
+    ├── store/          # Zustand 상태 관리
+    ├── types/          # 타입 정의
+    ├── utils/          # 유틸리티 함수
+    ├── constants/      # 상수 정의
+    ├── contexts/       # React Context
+    ├── mocks/          # Mock 데이터
+    ├── _app.tsx        # 앱 루트 컴포넌트
+    └── router.gen.ts   # 자동 생성된 라우터 (수정 금지)
 ```
 
 ### Path Alias
 
 TypeScript와 Babel 모두에서 다음 경로 별칭을 사용합니다:
 
-- `@shared/*` → `shared/*`
-- `@widgets/*` → `widgets/*`
-- `@pages/*` → `pages/*`
+- `@components/*` → `src/components/*`
+- `@hooks/*` → `src/hooks/*`
+- `@api/*` → `src/api/*`
+- `@store/*` → `src/store/*`
+- `@types/*` → `src/types/*`
+- `@utils/*` → `src/utils/*`
+- `@constants/*` → `src/constants/*`
+- `@contexts/*` → `src/contexts/*`
+- `@mocks/*` → `src/mocks/*`
 
 ### 라우팅 시스템
 
@@ -75,22 +87,25 @@ TypeScript와 Babel 모두에서 다음 경로 별칭을 사용합니다:
 - 동적 라우트는 `[id].tsx` 형식의 파일명을 사용합니다
 - `src/router.gen.ts`는 자동 생성되므로 직접 수정하지 마세요
 
-### 계층 구조 원칙
+### 디렉토리 조직
 
-1. **pages**: 라우트 페이지. 주로 widgets를 조합하여 화면을 구성합니다
-2. **widgets**: 특정 도메인에 종속된 기능 단위 컴포넌트
-    - 예: `widgets/home/hero`, `widgets/layouts/public-layout`
-    - 각 widget은 자체 `ui/` 디렉토리를 가질 수 있습니다
-3. **shared**: 도메인에 독립적인 공용 리소스
-    - `shared/ui`: 재사용 가능한 컴포넌트 (Carousel, Drawer, FilterTabs 등)
-    - `shared/hooks`: 공용 훅 (useBoolean 등)
-    - `shared/constants`: 상수 데이터
+- **pages**: Granite 파일 기반 라우팅으로 관리되는 라우트 페이지
+- **src/components**: 도메인별로 폴더 구분
+  - `components/ui`: 재사용 가능한 일반 UI 컴포넌트 (Carousel, Card, FilterTabs, AccordionStep 등)
+  - `components/{domain}`: 도메인별 컴포넌트 (home, reservation, portfolio, layouts 등)
+- **src/hooks**: 공용 커스텀 훅 (useServices, useReservationForm, useReservationValidation 등)
+- **src/api**: API 호출 함수 및 요청 유틸리티
+- **src/store**: Zustand 상태 관리 (useReservationStore 등)
+- **src/types**: 타입 정의 (ReservationFormData, Service 등)
+- **src/utils**: 유틸리티 함수 (날짜 포맷팅, 검증 등)
+- **src/constants**: 상수 데이터 (기본값, Mock 데이터 등)
+- **src/contexts**: React Context (ScrollContext 등)
 
 ### 의존성 규칙
 
-- **pages** → widgets, shared를 import 가능
-- **widgets** → shared만 import 가능 (다른 widgets는 import 불가)
-- **shared** → 다른 계층을 import하지 않음 (자기 완결적)
+- **pages**는 `src/components`의 컴포넌트를 import 가능
+- **컴포넌트**들은 `src/hooks`, `src/api`, `src/store`, `src/types`, `src/utils`, `src/constants`, `src/contexts`를 자유롭게 import 가능
+- **순환 참조 피하기**: 컴포넌트가 Route를 직접 import하지 않고, props나 context를 통해 데이터 전달
 
 ## 주요 기술 스택
 
@@ -111,18 +126,17 @@ TypeScript와 Babel 모두에서 다음 경로 별칭을 사용합니다:
     - `pages/about.tsx` → `/about`
     - `pages/portfolio/[id].tsx` → `/portfolio/:id`
 
-### 새 위젯 추가하기
+### 새 컴포넌트 추가하기
 
-1. `widgets/` 디렉토리에 도메인별 폴더 생성
-2. `ui/` 서브디렉토리에 컴포넌트 작성
-3. `index.ts`에서 export
-4. shared의 컴포넌트만 import하여 사용
+#### 도메인 컴포넌트
+1. `src/components/{domain}/` 디렉토리에 컴포넌트 파일 생성
+2. 필요한 hooks, store, types 등을 import
+3. 도메인 로직이 포함된 컴포넌트 작성
 
-### 공용 컴포넌트 추가하기
-
-1. `shared/ui/` 디렉토리에 컴포넌트 폴더 생성
-2. 컴포넌트 작성 및 index.ts에서 export
-3. `shared/ui/index.ts`에 재export 추가
+#### 공용 UI 컴포넌트
+1. `src/components/ui/` 디렉토리에 컴포넌트 폴더 생성
+2. 재사용 가능하고 도메인에 독립적인 컴포넌트 작성
+3. TDS 컴포넌트를 확장하거나 커스터마이징
 
 ### 타입 안정성
 

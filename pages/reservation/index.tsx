@@ -9,7 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useReservationStore } from '@store';
 import { colors } from '@toss/tds-colors';
 import { DEFAULT_FORM_VALUES } from '@types';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { Alert, BackHandler, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -34,6 +34,10 @@ export const Route = createRoute<ReservationPageParams>('/reservation', {
 
 function Page() {
   const navigation = Route.useNavigation();
+
+  // ===== Params =====
+  const params = Route.useParams();
+  const serviceIdParam = params?.serviceId ? parseInt(params.serviceId, 10) : null;
 
   // ===== Store =====
   const {
@@ -65,17 +69,19 @@ function Page() {
   }, [isLoading]);
 
   // ===== 페이지 이탈 시 상태 초기화 =====
-  useFocusEffect(() => {
-    // cleanup 함수 반환 (페이지 blur 시 실행)
-    return () => {
-      // 로딩 중이 아닐 때만 초기화 (API 요청 중 상태 보호)
-      if (!isLoading) {
-        resetStore();
-        resetAccordionSteps();
-        methods.reset(DEFAULT_FORM_VALUES);
-      }
-    };
-  });
+  useFocusEffect(
+    useCallback(() => {
+      // cleanup 함수 반환 (페이지 blur 시 실행)
+      return () => {
+        // 로딩 중이 아닐 때만 초기화 (API 요청 중 상태 보호)
+        if (!isLoading) {
+          resetStore();
+          resetAccordionSteps();
+          methods.reset(DEFAULT_FORM_VALUES);
+        }
+      };
+    }, [isLoading, resetStore, resetAccordionSteps, methods]),
+  );
 
   // ===== 로딩 상태 =====
   if (isLoading) {
@@ -96,7 +102,7 @@ function Page() {
             keyboardShouldPersistTaps="handled"
             automaticallyAdjustKeyboardInsets
           >
-            <ServiceStepContainer />
+            <ServiceStepContainer serviceIdParam={serviceIdParam} />
             <DateTimeStepContainer />
             <CustomerStepContainer />
             <ConfirmationStepContainer />

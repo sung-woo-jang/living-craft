@@ -4,9 +4,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["*"],
-      "@shared/*": ["shared/*"],
-      "@widgets/*": ["widgets/*"],
-      "@pages/*": ["pages/*"],
       "@components": ["src/components"],
       "@components/*": ["src/components/*"],
       "@hooks": ["src/hooks"],

@@ -6,9 +6,6 @@ module.exports = {
       {
         root: ['.'],
         alias: {
-          '@shared': './shared',
-          '@widgets': './widgets',
-          '@pages': './pages',
           '@components': './src/components',
           '@hooks': './src/hooks',
           '@api': './src/api',
