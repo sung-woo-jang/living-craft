@@ -1,12 +1,10 @@
 import type { Service } from '@api/types';
-import { Card } from '@components/ui';
+import { Card, InlineEmptyState, SectionHeader } from '@components/ui';
 import { useReservationStore } from '@store';
-import { colors } from '@toss/tds-colors';
 import type { AddressSearchResult, ReservationFormData, ServiceableRegion } from '@types';
 import { buildRegionPrefix } from '@utils';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { StyleSheet, Text, View } from 'react-native';
 
 import { AddressSearchDrawer } from './AddressSearchDrawer';
 import { AddressSelectionSection } from './AddressSelectionSection';
@@ -19,11 +17,7 @@ interface AddressManagementSectionProps {
   filteredRegions: ServiceableRegion[];
 }
 
-export function AddressManagementSection({
-  currentService,
-  services,
-  filteredRegions,
-}: AddressManagementSectionProps) {
+export function AddressManagementSection({ currentService, services, filteredRegions }: AddressManagementSectionProps) {
   const { setValue, watch } = useFormContext<ReservationFormData>();
 
   // ===== Store =====
@@ -104,15 +98,18 @@ export function AddressManagementSection({
   }, [isCityBottomSheetOpen, addressSelection.region, filteredRegions, update]);
 
   // ===== 핸들러 =====
-  const handleAddressSelect = (address: AddressSearchResult) => {
-    setLocalSelectedAddress(address);
-    update({ isAddressSearchDrawerOpen: false });
-    setValue('customerInfo.address', address.roadAddress);
+  const handleAddressSelect = useCallback(
+    (address: AddressSearchResult) => {
+      setLocalSelectedAddress(address);
+      update({ isAddressSearchDrawerOpen: false });
+      setValue('customerInfo.address', address.roadAddress);
 
-    if (currentService && services) {
-      checkEstimateFee(currentService.id, services);
-    }
-  };
+      if (currentService && services) {
+        checkEstimateFee(currentService.id, services);
+      }
+    },
+    [update, setValue, currentService, services, checkEstimateFee]
+  );
 
   const handleClearAddress = () => {
     setLocalSelectedAddress(null);
@@ -139,14 +136,12 @@ export function AddressManagementSection({
   if (!currentService) {
     return (
       <Card>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>서비스 지역</Text>
-          <Text style={styles.sectionSubtitle}>먼저 서비스를 선택해주세요</Text>
-        </View>
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyStateText}>위에서 원하시는 서비스를 선택하시면</Text>
-          <Text style={styles.emptyStateText}>해당 서비스가 가능한 지역을 선택하실 수 있습니다</Text>
-        </View>
+        <SectionHeader title="서비스 지역" subtitle="먼저 서비스를 선택해주세요" style={{ paddingHorizontal: 8 }} />
+        <InlineEmptyState
+          message="위에서 원하시는 서비스를 선택하시면"
+          subMessage="해당 서비스가 가능한 지역을 선택하실 수 있습니다"
+          style={{ paddingVertical: 40 }}
+        />
       </Card>
     );
   }
@@ -154,10 +149,7 @@ export function AddressManagementSection({
   return (
     <>
       <Card>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>서비스 지역</Text>
-          <Text style={styles.sectionSubtitle}>서비스를 받으실 지역을 선택해주세요</Text>
-        </View>
+        <SectionHeader title="서비스 지역" subtitle="서비스를 받으실 지역을 선택해주세요" style={{ paddingHorizontal: 8 }} />
 
         <AddressSelectionSection
           selectedAddress={localSelectedAddress}
@@ -199,31 +191,3 @@ export function AddressManagementSection({
   );
 }
 
-const styles = StyleSheet.create({
-  sectionHeader: {
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.grey900,
-    marginBottom: 4,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: colors.grey600,
-  },
-  emptyState: {
-    paddingVertical: 40,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-  },
-  emptyStateText: {
-    fontSize: 14,
-    color: colors.grey600,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-});

@@ -1,4 +1,5 @@
 import { searchAddress } from '@api';
+import { InlineEmptyState, ListSeparator, SectionHeader } from '@components/ui';
 import { colors } from '@toss/tds-colors';
 import { Skeleton, TextField } from '@toss/tds-react-native';
 import type { AddressSearchResult } from '@types';
@@ -82,10 +83,7 @@ export function AddressSearchDrawer({ isOpen, regionPrefix, onClose, onSelect }:
         draggableIcon: styles.draggableIcon,
       }}
     >
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>주소 검색</Text>
-        <Text style={styles.headerDescription}>건물명, 도로명 또는 지번으로 검색하세요</Text>
-      </View>
+      <SectionHeader title="주소 검색" subtitle="건물명, 도로명 또는 지번으로 검색하세요" />
 
       <View style={styles.searchContainer}>
         <TextField
@@ -112,10 +110,7 @@ export function AddressSearchDrawer({ isOpen, regionPrefix, onClose, onSelect }:
             ))}
           </View>
         ) : hasSearched && searchResults.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
-            <Text style={styles.emptySubtext}>다른 검색어로 다시 시도해주세요</Text>
-          </View>
+          <InlineEmptyState message="검색 결과가 없습니다." subMessage="다른 검색어로 다시 시도해주세요" />
         ) : searchResults.length > 0 ? (
           searchResults.map((item, index) => (
             <View key={`${item.roadAddress}-${index}`}>
@@ -128,7 +123,7 @@ export function AddressSearchDrawer({ isOpen, regionPrefix, onClose, onSelect }:
                   {item.jibunAddress}
                 </Text>
               </TouchableOpacity>
-              {index < searchResults.length - 1 && <View style={styles.separator} />}
+              {index < searchResults.length - 1 && <ListSeparator />}
             </View>
           ))
         ) : (
@@ -149,21 +144,6 @@ const styles = StyleSheet.create({
   draggableIcon: {
     backgroundColor: colors.grey300,
     width: 40,
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 12,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.grey900,
-    marginBottom: 4,
-  },
-  headerDescription: {
-    fontSize: 14,
-    color: colors.grey600,
   },
   searchContainer: {
     paddingHorizontal: 20,
@@ -186,20 +166,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.grey200,
-  },
-  emptyContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-    gap: 8,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.grey600,
-    fontWeight: '500',
-  },
-  emptySubtext: {
-    fontSize: 14,
-    color: colors.grey500,
   },
   guideContainer: {
     paddingVertical: 40,
@@ -228,10 +194,5 @@ const styles = StyleSheet.create({
   addressJibun: {
     fontSize: 14,
     color: colors.grey600,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: colors.grey200,
-    marginHorizontal: 20,
   },
 });

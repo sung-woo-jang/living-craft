@@ -1,3 +1,4 @@
+import { InlineEmptyState, ListSeparator, SectionHeader } from '@components/ui';
 import { colors } from '@toss/tds-colors';
 import type { RegionData } from '@types';
 import { useEffect, useRef } from 'react';
@@ -45,10 +46,7 @@ export function RegionSelectBottomSheet({ isOpen, regions, isLoading, onClose, o
         draggableIcon: styles.draggableIcon,
       }}
     >
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>시/도 선택</Text>
-        <Text style={styles.headerDescription}>서비스를 받으실 시/도를 선택해주세요</Text>
-      </View>
+      <SectionHeader title="시/도 선택" subtitle="서비스를 받으실 시/도를 선택해주세요" showBorder />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
         {isLoading ? (
@@ -57,16 +55,14 @@ export function RegionSelectBottomSheet({ isOpen, regions, isLoading, onClose, o
             <Text style={styles.loadingText}>지역 정보를 불러오는 중...</Text>
           </View>
         ) : regions.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>사용 가능한 지역이 없습니다.</Text>
-          </View>
+          <InlineEmptyState message="사용 가능한 지역이 없습니다." />
         ) : (
           regions.map((item, index) => (
             <View key={item.id}>
               <TouchableOpacity style={styles.regionItem} onPress={() => handleSelect(item)}>
                 <Text style={styles.regionText}>{item.name}</Text>
               </TouchableOpacity>
-              {index < regions.length - 1 && <View style={styles.separator} />}
+              {index < regions.length - 1 && <ListSeparator />}
             </View>
           ))
         )}
@@ -84,23 +80,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey300,
     width: 40,
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.grey200,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.grey900,
-    marginBottom: 4,
-  },
-  headerDescription: {
-    fontSize: 14,
-    color: colors.grey600,
-  },
   scrollView: {
     flex: 1,
   },
@@ -117,11 +96,6 @@ const styles = StyleSheet.create({
     color: colors.grey900,
     fontWeight: '500',
   },
-  separator: {
-    height: 1,
-    backgroundColor: colors.grey200,
-    marginHorizontal: 20,
-  },
   loadingContainer: {
     paddingVertical: 60,
     alignItems: 'center',
@@ -129,14 +103,6 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: colors.grey600,
-  },
-  emptyContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
     color: colors.grey600,
   },
 });

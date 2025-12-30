@@ -1,6 +1,6 @@
 import { colors } from '@toss/tds-colors';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 import { Card } from '../card';
 
@@ -17,6 +17,7 @@ interface SectionCardProps {
    * 섹션 본문 내용
    */
   children: React.ReactNode;
+  style?: ViewStyle;
 }
 
 interface LoadingProps {
@@ -69,9 +70,9 @@ interface ContentProps {
  * </SectionCard>
  * ```
  */
-export const SectionCard = ({ title, subtitle, children }: SectionCardProps) => {
+export const SectionCard = ({ title, subtitle, children, style }: SectionCardProps) => {
   return (
-    <Card>
+    <Card style={style}>
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
         {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}

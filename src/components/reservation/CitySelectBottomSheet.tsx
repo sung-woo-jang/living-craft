@@ -1,3 +1,4 @@
+import { InlineEmptyState, ListSeparator, SectionHeader } from '@components/ui';
 import { colors } from '@toss/tds-colors';
 import { IconButton, Skeleton } from '@toss/tds-react-native';
 import type { CityData, RegionData } from '@types';
@@ -63,13 +64,14 @@ export function CitySelectBottomSheet({
         draggableIcon: styles.draggableIcon,
       }}
     >
-      <View style={styles.header}>
-        <View style={styles.headerRow}>
+      <SectionHeader
+        title="구/군 선택"
+        subtitle={selectedRegion ? `${selectedRegion.name}의 구/군을 선택해주세요` : undefined}
+        leftAction={
           <IconButton name="icon-arrow-back-ios-mono" onPress={handleBackPress} accessibilityLabel="시/도 재선택" />
-          <Text style={styles.headerTitle}>구/군 선택</Text>
-        </View>
-        {selectedRegion && <Text style={styles.headerDescription}>{`${selectedRegion.name}의 구/군을 선택해주세요`}</Text>}
-      </View>
+        }
+        showBorder
+      />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
         {isLoading ? (
@@ -81,16 +83,14 @@ export function CitySelectBottomSheet({
             ))}
           </View>
         ) : cities.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>해당 지역에 서비스 가능한 구/군이 없습니다.</Text>
-          </View>
+          <InlineEmptyState message="해당 지역에 서비스 가능한 구/군이 없습니다." />
         ) : (
           cities.map((item, index) => (
             <View key={item.id}>
               <TouchableOpacity style={styles.cityItem} onPress={() => handleSelect(item)}>
                 <Text style={styles.cityText}>{item.name}</Text>
               </TouchableOpacity>
-              {index < cities.length - 1 && <View style={styles.separator} />}
+              {index < cities.length - 1 && <ListSeparator />}
             </View>
           ))
         )}
@@ -108,29 +108,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey300,
     width: 40,
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.grey200,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.grey900,
-  },
-  headerDescription: {
-    fontSize: 14,
-    color: colors.grey600,
-    marginTop: 4,
-    marginLeft: 40,
-  },
   scrollView: {
     flex: 1,
   },
@@ -147,11 +124,6 @@ const styles = StyleSheet.create({
     color: colors.grey900,
     fontWeight: '500',
   },
-  separator: {
-    height: 1,
-    backgroundColor: colors.grey200,
-    marginHorizontal: 20,
-  },
   loadingContainer: {
     paddingVertical: 8,
     paddingHorizontal: 20,
@@ -160,15 +132,5 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.grey200,
-  },
-  emptyContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.grey600,
-    textAlign: 'center',
-    paddingHorizontal: 40,
   },
 });
