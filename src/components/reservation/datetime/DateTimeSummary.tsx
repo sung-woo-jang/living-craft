@@ -2,7 +2,7 @@ import type { ReservationFormData } from '@types';
 import { useFormContext } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 
-import { SummaryRow } from './SummaryRow';
+import { SummaryRow } from '../shared/SummaryRow';
 
 /**
  * 날짜를 표시용 문자열로 변환

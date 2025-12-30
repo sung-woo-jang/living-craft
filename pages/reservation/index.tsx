@@ -1,7 +1,7 @@
-import { ConfirmationStepContainer } from '@components/reservation/ConfirmationStepContainer';
-import { CustomerStepContainer } from '@components/reservation/CustomerStepContainer';
-import { DateTimeStepContainer } from '@components/reservation/DateTimeStepContainer';
-import { ServiceStepContainer } from '@components/reservation/ServiceStepContainer';
+import { ConfirmationStepContainer } from '@components/reservation/confirmation/ConfirmationStepContainer';
+import { CustomerStepContainer } from '@components/reservation/customer/CustomerStepContainer';
+import { DateTimeStepContainer } from '@components/reservation/datetime/DateTimeStepContainer';
+import { ServiceStepContainer } from '@components/reservation/service/ServiceStepContainer';
 import { ScrollProvider } from '@contexts';
 import { createRoute } from '@granite-js/react-native';
 import { useReservationForm } from '@hooks';
