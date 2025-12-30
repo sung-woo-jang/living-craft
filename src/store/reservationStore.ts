@@ -78,7 +78,11 @@ const reservationStore = createWithEqualityFn(
 
     selectCity: (city) =>
       set((state) => {
-        state.addressSelection.city = city;
+        // 완전히 새 객체로 교체하여 shallow equality 비교가 확실히 실패하도록 보장
+        state.addressSelection = {
+          region: state.addressSelection.region,
+          city: city,
+        };
         state.isCityBottomSheetOpen = false;
       }),
 

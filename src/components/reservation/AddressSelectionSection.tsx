@@ -56,7 +56,7 @@ export function AddressSelectionSection({
   }, [selectedAddress, addressSelection]);
 
   // 지역 미선택 시: 시/도 선택 버튼
-  if (!addressSelection.region) {
+  if (!addressSelection.region || !addressSelection.city) {
     return (
       <View style={styles.selectRegionContainer}>
         <Text style={styles.selectRegionTitle}>지역 선택</Text>
@@ -64,16 +64,6 @@ export function AddressSelectionSection({
         <View style={styles.buttonContainer}>
           <Button onPress={handleOpenRegionSheet}>시/도 선택하기</Button>
         </View>
-      </View>
-    );
-  }
-
-  // 시/도만 선택된 경우: 구/군 선택 중 메시지 표시
-  if (!addressSelection.city) {
-    return (
-      <View style={styles.selectRegionContainer}>
-        <Text style={styles.selectRegionTitle}>지역 선택</Text>
-        <Text style={styles.selectRegionSubtitle}>{addressSelection.region.name}의 구/군을 선택 중...</Text>
       </View>
     );
   }
