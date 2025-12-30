@@ -1,6 +1,5 @@
 import { Card, Carousel, SectionCard } from '@components/ui';
-import { Image } from '@granite-js/react-native';
-import { createRoute } from '@granite-js/react-native';
+import { createRoute, Image } from '@granite-js/react-native';
 import { useBottomNavHeight, usePortfolio } from '@hooks';
 import { colors } from '@toss/tds-colors';
 import { Skeleton } from '@toss/tds-react-native';
@@ -132,6 +131,15 @@ function Page() {
         <SectionCard title="프로젝트 소개">
           <SectionCard.Content>
             <Text style={styles.description}>{portfolio.detailedDescription}</Text>
+          </SectionCard.Content>
+          <SectionCard.Content>
+            <View style={styles.tagsContainer}>
+              {portfolio.tags.map((tag: string, index: number) => (
+                <View key={index} style={styles.tag}>
+                  <Text style={styles.tagText}>#{tag}</Text>
+                </View>
+              ))}
+            </View>
           </SectionCard.Content>
         </SectionCard>
 

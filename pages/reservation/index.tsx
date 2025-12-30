@@ -5,6 +5,7 @@ import { ServiceStepContainer } from '@components/reservation/ServiceStepContain
 import { ScrollProvider } from '@contexts';
 import { createRoute } from '@granite-js/react-native';
 import { useReservationForm } from '@hooks';
+import { useFocusEffect } from '@react-navigation/native';
 import { useReservationStore } from '@store';
 import { colors } from '@toss/tds-colors';
 import { DEFAULT_FORM_VALUES } from '@types';
@@ -62,6 +63,19 @@ function Page() {
     BackHandler.addEventListener('hardwareBackPress', handleBackPress);
     return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
   }, [isLoading]);
+
+  // ===== 페이지 이탈 시 상태 초기화 =====
+  useFocusEffect(() => {
+    // cleanup 함수 반환 (페이지 blur 시 실행)
+    return () => {
+      // 로딩 중이 아닐 때만 초기화 (API 요청 중 상태 보호)
+      if (!isLoading) {
+        resetStore();
+        resetAccordionSteps();
+        methods.reset(DEFAULT_FORM_VALUES);
+      }
+    };
+  });
 
   // ===== 로딩 상태 =====
   if (isLoading) {

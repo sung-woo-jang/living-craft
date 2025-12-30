@@ -1,14 +1,9 @@
-import { useNavigationState } from '@react-navigation/native';
-import { useReservationStore } from '@store';
 import { colors } from '@toss/tds-colors';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BottomNavigation } from './BottomNavigation';
-
-// 예약 플로우 경로 목록 (통합 페이지)
-const RESERVATION_ROUTES = ['/reservation'];
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -16,19 +11,6 @@ interface PublicLayoutProps {
 
 export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   const insets = useSafeAreaInsets();
-  const { reset: resetReservation } = useReservationStore(['reset']);
-
-  // 현재 라우트 감지
-  const currentRouteName = useNavigationState((state) => state?.routes[state.index]?.name);
-
-  // 예약 플로우 이탈 시 상태 초기화
-  useEffect(() => {
-    const isInReservationFlow = RESERVATION_ROUTES.some((route) => currentRouteName === route);
-
-    if (!isInReservationFlow && currentRouteName) {
-      resetReservation();
-    }
-  }, [currentRouteName, resetReservation]);
 
   return (
     <View style={styles.container}>
