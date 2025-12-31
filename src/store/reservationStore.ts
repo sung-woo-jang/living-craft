@@ -32,7 +32,9 @@ const reservationStore = createWithEqualityFn(
     ...initialState,
 
     // 단순 상태 업데이트 통합 함수
-    update: (updates) => set((state) => Object.assign(state, updates)),
+    update: (updates) => {
+      set((state) => Object.assign(state, updates));
+    },
 
     // 주소 검색 액션
     selectAddress: (address) =>
@@ -195,7 +197,7 @@ const reservationStore = createWithEqualityFn(
       set((state) => {
         Object.assign(state, initialState);
       }),
-  })),
+  }))
 );
 
 /**

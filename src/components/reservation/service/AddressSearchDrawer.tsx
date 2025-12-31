@@ -146,8 +146,6 @@ const styles = StyleSheet.create({
     width: 40,
   },
   searchContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.grey200,
   },

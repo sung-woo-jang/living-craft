@@ -148,17 +148,31 @@ export function AddressManagementSection({ currentService, services, filteredReg
 
   return (
     <>
-      <Card>
-        <SectionHeader title="서비스 지역" subtitle="서비스를 받으실 지역을 선택해주세요" style={{ paddingHorizontal: 8 }} />
+      <SectionHeader
+        title="서비스 지역"
+        subtitle="서비스를 받으실 지역을 선택해주세요"
+        style={{
+          // Spacing: 상하 간격 10px, 좌우 간격 8px (가이드)
+          paddingVertical: 10,
+          paddingHorizontal: 8,
 
-        <AddressSelectionSection
-          selectedAddress={localSelectedAddress}
-          detailAddress={detailAddress}
-          onOpenSearchDrawer={handleOpenSearchDrawer}
-          onClearAddress={handleClearAddress}
-          onDetailAddressChange={handleDetailAddressChange}
-        />
-      </Card>
+          // Margin: 좌우 마진 10px (가이드 - 화면 너비에 꽉 차게 배치할 때)
+          marginHorizontal: 10,
+          marginRight: 10,
+          marginLeft: 10,
+
+          // Margin: 상하 간격 10px (가이드)
+          marginBottom: 10,
+        }}
+      />
+
+      <AddressSelectionSection
+        selectedAddress={localSelectedAddress}
+        detailAddress={detailAddress}
+        onOpenSearchDrawer={handleOpenSearchDrawer}
+        onClearAddress={handleClearAddress}
+        onDetailAddressChange={handleDetailAddressChange}
+      />
 
       {/* 지역 선택 BottomSheet */}
       <RegionSelectBottomSheet
@@ -190,4 +204,3 @@ export function AddressManagementSection({ currentService, services, filteredReg
     </>
   );
 }
-

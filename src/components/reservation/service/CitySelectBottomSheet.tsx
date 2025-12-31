@@ -68,7 +68,15 @@ export function CitySelectBottomSheet({
         title="구/군 선택"
         subtitle={selectedRegion ? `${selectedRegion.name}의 구/군을 선택해주세요` : undefined}
         leftAction={
-          <IconButton name="icon-arrow-back-ios-mono" onPress={handleBackPress} accessibilityLabel="시/도 재선택" />
+          <IconButton
+            name="icon-arrow-back-ios-mono"
+            onPress={handleBackPress}
+            accessibilityLabel="시/도 재선택"
+            style={{
+              padding: 0,
+              paddingRight: 10,
+            }}
+          />
         }
         showBorder
       />

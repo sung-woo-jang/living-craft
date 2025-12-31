@@ -117,7 +117,8 @@ export function AddressSelectionSection({
 
 const styles = StyleSheet.create({
   selectRegionContainer: {
-    paddingTop: 20,
+    // paddingVertical: 20,
+
     alignItems: 'center',
   },
   buttonContainer: {
