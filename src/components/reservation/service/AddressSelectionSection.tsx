@@ -1,6 +1,7 @@
+import { Card } from '@components/ui';
 import { useReservationStore } from '@store';
 import { colors } from '@toss/tds-colors';
-import { Button, TextField } from '@toss/tds-react-native';
+import { Asset, Button, TextField } from '@toss/tds-react-native';
 import type { AddressSearchResult } from '@types';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -101,15 +102,19 @@ export function AddressSelectionSection({
 
       {/* 견적 비용 안내 */}
       {selectedAddress && addressEstimateInfo?.hasEstimateFee && (
-        <View style={styles.estimateContainer}>
-          <Text style={styles.estimateIcon}>⚠️</Text>
-          <View style={styles.estimateTextContainer}>
-            <Text style={styles.estimateTitle}>도서/원거리 지역</Text>
-            <Text style={styles.estimateDescription}>
-              추가비용 {addressEstimateInfo.estimateFee?.toLocaleString()}원이 발생할 수 있습니다
-            </Text>
+        <Card>
+          <View style={styles.estimateContainer}>
+            <View style={styles.iconWrapper}>
+              <Asset.Icon name="icon-warning-circle-fill" frameShape={Asset.frameShape.CleanW20} />
+            </View>
+            <View style={styles.estimateTextContainer}>
+              <Text style={styles.estimateTitle}>도서/원거리 지역</Text>
+              <Text style={styles.estimateDescription}>
+                추가비용 {addressEstimateInfo.estimateFee?.toLocaleString()}원이 발생할 수 있습니다
+              </Text>
+            </View>
           </View>
-        </View>
+        </Card>
       )}
     </>
   );
@@ -117,8 +122,6 @@ export function AddressSelectionSection({
 
 const styles = StyleSheet.create({
   selectRegionContainer: {
-    // paddingVertical: 20,
-
     alignItems: 'center',
   },
   buttonContainer: {
@@ -126,15 +129,15 @@ const styles = StyleSheet.create({
   },
   estimateContainer: {
     flexDirection: 'row',
-    backgroundColor: colors.yellow100,
+    backgroundColor: colors.yellow50,
     borderRadius: 12,
     padding: 16,
     marginTop: 12,
     alignItems: 'flex-start',
   },
-  estimateIcon: {
-    fontSize: 16,
+  iconWrapper: {
     marginRight: 12,
+    marginTop: 2,
   },
   estimateTextContainer: {
     flex: 1,
@@ -142,12 +145,12 @@ const styles = StyleSheet.create({
   estimateTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: colors.yellow900,
+    color: colors.orange900,
     marginBottom: 4,
   },
   estimateDescription: {
     fontSize: 14,
-    color: colors.yellow800,
+    color: colors.orange800,
     lineHeight: 20,
   },
 });

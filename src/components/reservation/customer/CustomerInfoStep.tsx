@@ -25,55 +25,55 @@ export function CustomerInfoStep({ withScrollView = true }: CustomerInfoStepProp
           <Text style={styles.sectionTitle}>고객 정보</Text>
           <Text style={styles.sectionSubtitle}>예약자 정보를 입력해주세요</Text>
         </View>
-
-        <Controller
-          control={control}
-          name="customerInfo.name"
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              variant="box"
-              label="이름 *"
-              labelOption="sustain"
-              placeholder="이름을 입력해주세요"
-              value={value}
-              onChangeText={onChange}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="customerInfo.phone"
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              variant="box"
-              label="연락처 *"
-              labelOption="sustain"
-              placeholder="010-1234-5678"
-              keyboardType="phone-pad"
-              value={value}
-              onChangeText={onChange}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="customerInfo.memo"
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              variant="box"
-              label="추가 요청사항"
-              labelOption="sustain"
-              placeholder="추가로 요청하실 사항이 있으시면 입력해주세요"
-              multiline
-              numberOfLines={4}
-              value={value}
-              onChangeText={onChange}
-            />
-          )}
-        />
       </Card>
+
+      <Controller
+        control={control}
+        name="customerInfo.name"
+        render={({ field: { onChange, value } }) => (
+          <TextField
+            variant="box"
+            label="이름 *"
+            labelOption="sustain"
+            placeholder="이름을 입력해주세요"
+            value={value}
+            onChangeText={onChange}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="customerInfo.phone"
+        render={({ field: { onChange, value } }) => (
+          <TextField
+            variant="box"
+            label="연락처 *"
+            labelOption="sustain"
+            placeholder="010-1234-5678"
+            keyboardType="phone-pad"
+            value={value}
+            onChangeText={onChange}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="customerInfo.memo"
+        render={({ field: { onChange, value } }) => (
+          <TextField
+            variant="box"
+            label="추가 요청사항"
+            labelOption="sustain"
+            placeholder="추가로 요청하실 사항이 있으시면 입력해주세요"
+            multiline
+            numberOfLines={4}
+            value={value}
+            onChangeText={onChange}
+          />
+        )}
+      />
 
       <Card>
         <Controller
@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
   sectionHeader: {
     paddingHorizontal: 8,
     paddingTop: 8,
-    paddingBottom: 16,
   },
   sectionTitle: {
     fontSize: 18,

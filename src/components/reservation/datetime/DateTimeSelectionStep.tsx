@@ -4,7 +4,7 @@ import { formatDateToString, parseStringToDate } from '@components/ui/calendar-b
 import { useAvailableDates, useAvailableTimes } from '@hooks';
 import { useReservationStore } from '@store';
 import { colors } from '@toss/tds-colors';
-import { Skeleton } from '@toss/tds-react-native';
+import { Asset, Skeleton } from '@toss/tds-react-native';
 import { ReservationFormData } from '@types';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -27,10 +27,7 @@ interface DateTimeSelectionStepProps {
 
 export function DateTimeSelectionStep({ withScrollView = true }: DateTimeSelectionStepProps) {
   const { watch, setValue } = useFormContext<ReservationFormData>();
-  const { isEstimateCalendarVisible, update } = useReservationStore([
-    'isEstimateCalendarVisible',
-    'update',
-  ]);
+  const { isEstimateCalendarVisible, update } = useReservationStore(['isEstimateCalendarVisible', 'update']);
 
   const selectedService = watch('service');
   // 견적 날짜/시간
@@ -85,86 +82,81 @@ export function DateTimeSelectionStep({ withScrollView = true }: DateTimeSelecti
   };
 
   const content = (
-    <>
-      {/* 견적 희망 날짜/시간 섹션 */}
-      <Card>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>견적 희망 날짜/시간</Text>
-          <Text style={styles.sectionSubtitle}>견적을 받고 싶은 날짜와 시간을 선택해주세요</Text>
-        </View>
+    // 견적 희망 날짜/시간 섹션
+    <Card>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>견적 희망 날짜/시간</Text>
+        <Text style={styles.sectionSubtitle}>견적을 받고 싶은 날짜와 시간을 선택해주세요</Text>
+      </View>
 
-        {/* 견적 날짜 선택 */}
-        <TouchableOpacity
-          style={styles.dateInputButton}
-          onPress={() => update({ isEstimateCalendarVisible: true })}
-        >
-          <Text style={estimateDate ? styles.dateInputTextSelected : styles.dateInputText}>
-            {estimateDate || '날짜를 선택해주세요'}
-          </Text>
-        </TouchableOpacity>
+      {/* 견적 날짜 선택 */}
+      <TouchableOpacity style={styles.dateInputButton} onPress={() => update({ isEstimateCalendarVisible: true })}>
+        <Text style={estimateDate ? styles.dateInputTextSelected : styles.dateInputText}>
+          {estimateDate || '날짜를 선택해주세요'}
+        </Text>
+      </TouchableOpacity>
 
-        {/* 견적 시간 선택 */}
-        {estimateDate && (
-          <View style={styles.timeSlotSection}>
-            <Text style={styles.timeSlotLabel}>시간 선택</Text>
-            {isLoadingEstimateTimes ? (
-              <View style={styles.timeSlotGrid}>
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <Skeleton key={i} width={72} height={44} />
-                ))}
-              </View>
-            ) : estimateTimesResponse?.isAvailable === false ? (
-              <View style={styles.unavailableNotice}>
-                <Text style={styles.unavailableText}>
-                  {estimateTimesResponse?.reason || '예약이 불가능한 날짜입니다.'}
-                </Text>
-              </View>
-            ) : (
-              <View style={styles.timeSlotGrid}>
-                {estimateTimesResponse?.times?.map((slot) => (
-                  <TouchableOpacity
-                    key={slot.time}
+      {/* 견적 시간 선택 */}
+      {estimateDate && (
+        <View style={styles.timeSlotSection}>
+          <Text style={styles.timeSlotLabel}>시간 선택</Text>
+          {isLoadingEstimateTimes ? (
+            <View style={styles.timeSlotGrid}>
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Skeleton key={i} width={72} height={44} />
+              ))}
+            </View>
+          ) : estimateTimesResponse?.isAvailable === false ? (
+            <View style={styles.unavailableNotice}>
+              <Text style={styles.unavailableText}>
+                {estimateTimesResponse?.reason || '예약이 불가능한 날짜입니다.'}
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.timeSlotGrid}>
+              {estimateTimesResponse?.times?.map((slot) => (
+                <TouchableOpacity
+                  key={slot.time}
+                  style={[
+                    styles.timeSlot,
+                    estimateTimeSlot?.time === slot.time && styles.timeSlotSelected,
+                    !slot.available && styles.timeSlotDisabled,
+                  ]}
+                  onPress={() => slot.available && setValue('estimateTimeSlot', slot)}
+                  disabled={!slot.available}
+                >
+                  <Text
                     style={[
-                      styles.timeSlot,
-                      estimateTimeSlot?.time === slot.time && styles.timeSlotSelected,
-                      !slot.available && styles.timeSlotDisabled,
+                      styles.timeSlotText,
+                      estimateTimeSlot?.time === slot.time && styles.timeSlotTextSelected,
+                      !slot.available && styles.timeSlotTextDisabled,
                     ]}
-                    onPress={() => slot.available && setValue('estimateTimeSlot', slot)}
-                    disabled={!slot.available}
                   >
-                    <Text
-                      style={[
-                        styles.timeSlotText,
-                        estimateTimeSlot?.time === slot.time && styles.timeSlotTextSelected,
-                        !slot.available && styles.timeSlotTextDisabled,
-                      ]}
-                    >
-                      {slot.time}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-          </View>
-        )}
-      </Card>
+                    {slot.time}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
+      )}
 
       {/* 시공 일정 안내 */}
       {estimateTimeSlot && (
-        <Card>
-          <View style={styles.constructionNotice}>
-            <Text style={styles.constructionNoticeIcon}>📋</Text>
-            <View style={styles.constructionNoticeTextContainer}>
-              <Text style={styles.constructionNoticeTitle}>시공 일정 안내</Text>
-              <Text style={styles.constructionNoticeDescription}>
-                시공 일정은 견적 방문 후 상담을 통해 확정됩니다.{'\n'}
-                견적 방문 시 작업 범위와 일정을 함께 조율해 드립니다.
-              </Text>
-            </View>
+        <View style={styles.constructionNotice}>
+          <View style={styles.constructionNoticeIconWrapper}>
+            <Asset.Icon name="icon-info-circle-fill" color={colors.blue600} frameShape={Asset.frameShape.CleanW24} />
           </View>
-        </Card>
+          <View style={styles.constructionNoticeTextContainer}>
+            <Text style={styles.constructionNoticeTitle}>시공 일정 안내</Text>
+            <Text style={styles.constructionNoticeDescription}>
+              시공 일정은 견적 방문 후 상담을 통해 확정됩니다.{'\n'}
+              견적 방문 시 작업 범위와 일정을 함께 조율해 드립니다.
+            </Text>
+          </View>
+        </View>
       )}
-    </>
+    </Card>
   );
 
   return (
@@ -251,7 +243,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   timeSlot: {
-    minWidth: 72,
+    width: '31%',
     backgroundColor: colors.grey50,
     borderRadius: 8,
     paddingVertical: 12,
@@ -288,7 +280,7 @@ const styles = StyleSheet.create({
   },
   constructionNotice: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingHorizontal: 12,
     paddingVertical: 16,
     gap: 12,
@@ -297,8 +289,8 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderRadius: 8,
   },
-  constructionNoticeIcon: {
-    fontSize: 32,
+  constructionNoticeIconWrapper: {
+    marginTop: 2,
   },
   constructionNoticeTextContainer: {
     flex: 1,
@@ -306,12 +298,12 @@ const styles = StyleSheet.create({
   constructionNoticeTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.grey900,
+    color: colors.blue900,
     marginBottom: 4,
   },
   constructionNoticeDescription: {
     fontSize: 14,
-    color: colors.grey600,
+    color: colors.blue800,
     lineHeight: 20,
   },
 });
