@@ -59,8 +59,6 @@ export function AddressSelectionSection({
   if (!addressSelection.region || !addressSelection.city) {
     return (
       <View style={styles.selectRegionContainer}>
-        <Text style={styles.selectRegionTitle}>지역 선택</Text>
-        <Text style={styles.selectRegionSubtitle}>먼저 서비스를 받으실 지역을 선택해주세요</Text>
         <View style={styles.buttonContainer}>
           <Button onPress={handleOpenRegionSheet}>시/도 선택하기</Button>
         </View>
@@ -119,22 +117,8 @@ export function AddressSelectionSection({
 
 const styles = StyleSheet.create({
   selectRegionContainer: {
-    paddingVertical: 32,
-    paddingHorizontal: 32,
+    paddingTop: 20,
     alignItems: 'center',
-  },
-  selectRegionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.grey900,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  selectRegionSubtitle: {
-    fontSize: 14,
-    color: colors.grey600,
-    marginBottom: 24,
-    textAlign: 'center',
   },
   buttonContainer: {
     alignItems: 'center',

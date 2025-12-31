@@ -22,15 +22,25 @@ export function ServiceStepContainer({ serviceIdParam }: ServiceStepContainerPro
   const { scrollViewRef, stepRefs } = useScrollContext();
 
   // ===== Store =====
-  const { accordionSteps, toggleStepExpanded, completeStep, goToStep, resetAddressSearch, resetEstimateFeeInfo } =
-    useReservationStore([
-      'accordionSteps',
-      'toggleStepExpanded',
-      'completeStep',
-      'goToStep',
-      'resetAddressSearch',
-      'resetEstimateFeeInfo',
-    ]);
+  const {
+    accordionSteps,
+    toggleStepExpanded,
+    completeStep,
+    goToStep,
+    resetAddressSearch,
+    resetEstimateFeeInfo,
+    addressSelection,
+    update,
+  } = useReservationStore([
+    'accordionSteps',
+    'toggleStepExpanded',
+    'completeStep',
+    'goToStep',
+    'resetAddressSearch',
+    'resetEstimateFeeInfo',
+    'addressSelection',
+    'update',
+  ]);
 
   // ===== Form =====
   const { setValue, watch } = useFormContext<ReservationFormData>();
@@ -115,6 +125,13 @@ export function ServiceStepContainer({ serviceIdParam }: ServiceStepContainerPro
       prevServiceIdRef.current = currentService.id;
     }
   }, [currentService?.id, resetAddressState]);
+
+  // ===== 서비스 선택 시 자동으로 지역 선택 시트 열기 =====
+  useEffect(() => {
+    if (currentService && !addressSelection.region && !addressSelection.city) {
+      update({ isRegionBottomSheetOpen: true });
+    }
+  }, [currentService?.id, addressSelection.region, addressSelection.city, update]);
 
   const accordionStep = accordionSteps.service!;
 
